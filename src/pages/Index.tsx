@@ -8,6 +8,7 @@ import AboutSection from "@/components/AboutSection";
 import TestimonialSection from "@/components/TestimonialSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
+import GuruChat from "@/components/GuruChat";
 
 const Index = () => {
   return (
@@ -24,6 +25,7 @@ const Index = () => {
         <ContactSection />
       </main>
       <Footer />
+      <GuruChat />
     </div>
   );
 };
