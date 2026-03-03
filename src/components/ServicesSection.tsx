@@ -1,0 +1,147 @@
+import { motion } from "framer-motion";
+import { ArrowRight, Globe, Bot, Palette, Check } from "lucide-react";
+
+const services = [
+  {
+    icon: Globe,
+    title: "Websites",
+    tagline: "Your 24/7 salesperson",
+    description: "Fast, beautiful websites that turn visitors into paying customers. Mobile-ready and built to grow with you.",
+    price: "$499",
+    features: [
+      "Custom design & development",
+      "Mobile-friendly & fast",
+      "SEO-ready from day one",
+      "Free support for 30 days",
+    ],
+    popular: false,
+  },
+  {
+    icon: Bot,
+    title: "AI Automations",
+    tagline: "Work smarter, not harder",
+    description: "Let AI handle the boring stuff — customer replies, scheduling, data entry — so you can focus on what matters.",
+    price: "$299",
+    features: [
+      "Custom AI chatbots",
+      "Workflow automation",
+      "Smart email & messaging",
+      "Monthly performance reports",
+    ],
+    popular: true,
+  },
+  {
+    icon: Palette,
+    title: "Branding & Design",
+    tagline: "Look like a million bucks",
+    description: "A complete brand identity that makes people remember you — logo, colors, fonts, and everything in between.",
+    price: "$399",
+    features: [
+      "Logo & visual identity",
+      "Brand style guide",
+      "Social media templates",
+      "Business card & stationery",
+    ],
+    popular: false,
+  },
+];
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 40 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.12, duration: 0.5, ease: "easeOut" as const },
+  }),
+};
+
+const ServicesSection = () => {
+  return (
+    <section id="services" className="py-20 px-6">
+      <div className="mx-auto max-w-6xl">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-14"
+        >
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
+            What We <span className="text-gradient-copper">Offer</span>
+          </h2>
+          <p className="text-sm text-muted-foreground max-w-lg mx-auto">
+            Three powerful services to get your business online, automated, and looking amazing.
+          </p>
+        </motion.div>
+
+        <div className="grid md:grid-cols-3 gap-5">
+          {services.map((service, i) => (
+            <motion.div
+              key={service.title}
+              custom={i}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={cardVariants}
+              whileHover={{ y: -6, transition: { type: "spring", stiffness: 300, damping: 20 } }}
+              className={`group relative p-7 rounded-3xl border transition-all duration-300 cursor-pointer ${
+                service.popular
+                  ? "bg-primary/5 border-primary/30 shadow-[0_0_40px_-10px_hsl(var(--primary)/0.2)]"
+                  : "bg-card border-border hover:border-primary/20"
+              }`}
+            >
+              {service.popular && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-widest">
+                  Most Popular
+                </div>
+              )}
+
+              <div className="relative">
+                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-5 transition-colors duration-300 ${
+                  service.popular ? "bg-primary/15" : "bg-secondary group-hover:bg-primary/10"
+                }`}>
+                  <service.icon className="w-5 h-5 text-primary" />
+                </div>
+
+                <h3 className="text-lg font-bold mb-1">{service.title}</h3>
+                <p className="text-xs text-primary font-medium mb-3">{service.tagline}</p>
+                <p className="text-muted-foreground text-xs leading-relaxed mb-5">{service.description}</p>
+
+                <div className="mb-5">
+                  <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Starting from</span>
+                  <p className="text-3xl font-bold text-gradient-copper">{service.price}</p>
+                </div>
+
+                <ul className="space-y-2.5 mb-6">
+                  {service.features.map((feature) => (
+                    <li key={feature} className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <Check className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+
+                <motion.a
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  href="#contact"
+                  className={`w-full inline-flex items-center justify-center gap-2 py-3 rounded-2xl text-xs font-semibold transition-all duration-300 ${
+                    service.popular
+                      ? "btn-ios bg-primary text-primary-foreground"
+                      : "btn-ios-ghost text-foreground"
+                  }`}
+                >
+                  <span>Get Started</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </motion.a>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default ServicesSection;

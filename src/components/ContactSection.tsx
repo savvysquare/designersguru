@@ -1,0 +1,50 @@
+import { motion } from "framer-motion";
+import { Mail, MessageCircle } from "lucide-react";
+
+const ContactSection = () => {
+  return (
+    <section id="contact" className="py-20 px-6">
+      <div className="mx-auto max-w-4xl text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">
+            Let's <span className="text-gradient-copper">Talk</span>
+          </h2>
+          <p className="text-sm text-muted-foreground mb-10 max-w-md mx-auto">
+            Have a project in mind? Reach out and let's make it happen.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <motion.a
+              whileHover={{ scale: 1.04, y: -2 }}
+              whileTap={{ scale: 0.96 }}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
+              href="mailto:hello@designers.guru"
+              className="btn-ios inline-flex items-center gap-2.5 px-8 py-3.5 bg-primary text-primary-foreground rounded-2xl text-sm font-semibold"
+            >
+              <Mail className="w-4 h-4" />
+              Send Us an Email
+            </motion.a>
+            <motion.a
+              whileHover={{ scale: 1.04, y: -2 }}
+              whileTap={{ scale: 0.96 }}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
+              href="https://wa.me/2349061989669"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-ios-ghost inline-flex items-center gap-2.5 px-8 py-3.5 text-foreground rounded-2xl text-sm font-medium"
+            >
+              <MessageCircle className="w-4 h-4" />
+              Chat on WhatsApp
+            </motion.a>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+};
+
+export default ContactSection;

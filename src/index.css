@@ -1,0 +1,149 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+@tailwind base;
+
+html {
+  scroll-behavior: smooth;
+}
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 4%;
+    --foreground: 30 10% 90%;
+
+    --card: 0 0% 7%;
+    --card-foreground: 30 10% 90%;
+
+    --popover: 0 0% 7%;
+    --popover-foreground: 30 10% 90%;
+
+    --primary: 25 85% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 30 10% 80%;
+
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 50%;
+
+    --accent: 25 85% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 0 0% 14%;
+    --input: 0 0% 14%;
+    --ring: 25 85% 55%;
+
+    --radius: 0.75rem;
+
+    --copper: 25 85% 55%;
+    --copper-glow: 25 100% 65%;
+    --copper-dark: 25 70% 35%;
+    --surface-elevated: 0 0% 9%;
+    --surface-glass: 0 0% 100% / 0.03;
+
+    --sidebar-background: 0 0% 6%;
+    --sidebar-foreground: 30 10% 90%;
+    --sidebar-primary: 25 85% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 12%;
+    --sidebar-accent-foreground: 30 10% 90%;
+    --sidebar-border: 0 0% 14%;
+    --sidebar-ring: 25 85% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+}
+
+@layer utilities {
+  .text-gradient-copper {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(25 85% 55%), hsl(35 100% 70%));
+  }
+
+  .glow-copper {
+    box-shadow: 0 0 60px -10px hsl(25 85% 55% / 0.3);
+  }
+
+  .glass-surface {
+    background: hsl(0 0% 100% / 0.03);
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(0 0% 100% / 0.06);
+  }
+
+  .btn-ios {
+    @apply relative overflow-hidden;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: 0 2px 8px hsl(25 85% 55% / 0.25), inset 0 1px 0 hsl(0 0% 100% / 0.15);
+  }
+
+  .btn-ios:hover {
+    transform: scale(1.03) translateY(-1px);
+    box-shadow: 0 6px 20px hsl(25 85% 55% / 0.35), inset 0 1px 0 hsl(0 0% 100% / 0.2);
+  }
+
+  .btn-ios:active {
+    transform: scale(0.97);
+    box-shadow: 0 1px 4px hsl(25 85% 55% / 0.2), inset 0 1px 0 hsl(0 0% 100% / 0.1);
+  }
+
+  .btn-ios-ghost {
+    @apply relative overflow-hidden;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    background: hsl(0 0% 100% / 0.04);
+    border: 1px solid hsl(0 0% 100% / 0.08);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .btn-ios-ghost:hover {
+    transform: scale(1.03) translateY(-1px);
+    background: hsl(0 0% 100% / 0.08);
+    border-color: hsl(25 85% 55% / 0.3);
+    box-shadow: 0 4px 16px hsl(25 85% 55% / 0.15);
+  }
+
+  .btn-ios-ghost:active {
+    transform: scale(0.97);
+  }
+
+  .animate-marquee {
+    animation: marquee 30s linear infinite;
+  }
+
+  .animate-marquee-reverse {
+    animation: marquee-reverse 30s linear infinite;
+  }
+
+  .gradient-radial {
+    background: radial-gradient(ellipse at center, hsl(25 85% 55% / 0.08) 0%, transparent 70%);
+  }
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes marquee-reverse {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
