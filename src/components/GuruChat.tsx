@@ -49,7 +49,7 @@ export default function GuruChat() {
           {
             role: "assistant",
             content:
-              "Hey there! 👋 I'm **Guru**, your personal project consultant at Guru Designers.\n\nWe build beautiful websites, powerful AI automations, and premium brand identities that get real results.\n\nI'd love to help you figure out exactly what you need — no pressure, just a great conversation! 😊\n\n**So, what brings you here today?** Are you looking to launch a new website, automate your business, or build out your brand?",
+              "Hey! 👋 I'm **Guru** — your project consultant at Guru Designers.\n\n**What brings you here today?**",
           },
         ]);
       }, 300);

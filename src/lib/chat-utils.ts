@@ -55,9 +55,11 @@ export function checkInvoiceTrigger(text: string): boolean {
 export function extractClientInfo(messages: Array<{ role: string; content: string }>): {
   name: string | null;
   email: string | null;
+  phone: string | null;
 } {
   let name: string | null = null;
   let email: string | null = null;
+  let phone: string | null = null;
 
   const fullText = messages.map((m) => m.content).join(" ");
 
@@ -65,7 +67,11 @@ export function extractClientInfo(messages: Array<{ role: string; content: strin
   const emailMatch = fullText.match(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b/);
   if (emailMatch) email = emailMatch[0];
 
-  // Name patterns from AI messages like "Great, [Name]!" or user saying "I'm [Name]" or "My name is [Name]"
+  // Phone pattern (international formats)
+  const phoneMatch = fullText.match(/(?:\+?[\d\s\-().]{7,20})/);
+  if (phoneMatch) phone = phoneMatch[0].trim();
+
+  // Name patterns
   const namePatterns = [
     /(?:great|perfect|wonderful|nice to meet you)[,!]?\s+([A-Z][a-z]+)/,
     /(?:my name is|i'm|i am)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)/i,
@@ -76,5 +82,5 @@ export function extractClientInfo(messages: Array<{ role: string; content: strin
     if (m) { name = m[1]; break; }
   }
 
-  return { name, email };
+  return { name, email, phone };
 }
