@@ -11,99 +11,84 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { reference, orderId, method } = await req.json();
-
-    if (!reference || !orderId) {
-      return new Response(JSON.stringify({ error: "Reference and orderId are required" }), {
-        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    const { reference, orderId, method, amountPaid, trancheIndex, totalTranches, trancheLabel } = await req.json();
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Get order
-    const { data: order, error: orderError } = await supabase
+    const { data: order, error: orderErr } = await supabase
       .from("orders")
-      .select("*, clients(*)")
+      .select("id, invoice_number, total_usd, status")
       .eq("id", orderId)
       .single();
 
-    if (orderError || !order) {
+    if (orderErr || !order) {
       return new Response(JSON.stringify({ error: "Order not found" }), {
         status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    let verificationSuccess = false;
-    let gatewayResponse: Record<string, unknown> = {};
+    const { data: existingPayments } = await supabase
+      .from("payments")
+      .select("amount_usd, status")
+      .eq("order_id", orderId)
+      .eq("status", "paid");
 
-    if (method === "paystack") {
-      // Verify with Paystack TEST API
-      const paystackKey = Deno.env.get("PAYSTACK_SECRET_KEY");
-      if (paystackKey) {
-        const verifyRes = await fetch(`https://api.paystack.co/transaction/verify/${reference}`, {
-          headers: { Authorization: `Bearer ${paystackKey}` },
-        });
-        const verifyData = await verifyRes.json();
-        gatewayResponse = verifyData;
-        verificationSuccess = verifyData?.data?.status === "success";
-      } else {
-        // TEST MODE: simulate success for references starting with "TEST_"
-        verificationSuccess = reference.startsWith("TEST_") || reference.startsWith("mock_");
-        gatewayResponse = { status: "test_mode", reference };
-      }
-    } else if (method === "paypal") {
-      // TEST MODE: simulate success
-      verificationSuccess = true;
-      gatewayResponse = { status: "test_mode", reference, method: "paypal" };
-    }
+    const previouslyPaid = (existingPayments || []).reduce(
+      (sum: number, p: { amount_usd: number }) => sum + Number(p.amount_usd), 0
+    );
 
-    if (verificationSuccess) {
-      // Update order status to paid
-      await supabase
-        .from("orders")
-        .update({ status: "paid", payment_method: method, payment_reference: reference })
-        .eq("id", orderId);
-
-      // Record payment
-      await supabase.from("payments").insert({
+    const { data: payment, error: payErr } = await supabase
+      .from("payments")
+      .insert({
         order_id: orderId,
-        amount_usd: order.total_usd,
-        method: method as "paystack" | "paypal",
-        status: "success",
+        amount_usd: amountPaid,
+        method,
+        status: "paid",
         transaction_reference: reference,
-        gateway_response: gatewayResponse,
         paid_at: new Date().toISOString(),
-      });
+        gateway_response: { test: true, reference, tranche_index: trancheIndex, total_tranches: totalTranches, tranche_label: trancheLabel },
+      })
+      .select()
+      .single();
 
-      return new Response(
-        JSON.stringify({
-          success: true,
-          status: "paid",
-          order: {
-            id: order.id,
-            invoiceNumber: order.invoice_number,
-            clientName: order.clients?.name,
-            clientEmail: order.clients?.email,
-            total: order.total_usd,
-            lineItems: order.line_items,
-          },
-        }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    } else {
-      return new Response(
-        JSON.stringify({ success: false, status: "failed", message: "Payment verification failed" }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
+    if (payErr) throw payErr;
+
+    const totalPaidNow = previouslyPaid + amountPaid;
+    const isFullyPaid = totalPaidNow >= Number(order.total_usd);
+    const newStatus = isFullyPaid ? "paid" : "partial_payment";
+
+    await supabase.from("orders").update({ status: newStatus, payment_method: method, payment_reference: reference }).eq("id", orderId);
+
+    return new Response(
+      JSON.stringify({
+        success: true,
+        isFullyPaid,
+        totalPaid: totalPaidNow,
+        remaining: Math.max(0, Number(order.total_usd) - totalPaidNow),
+        orderStatus: newStatus,
+        receiptData: {
+          invoiceNumber: order.invoice_number,
+          amountPaid,
+          totalPaid: totalPaidNow,
+          remaining: Math.max(0, Number(order.total_usd) - totalPaidNow),
+          isFullyPaid,
+          trancheLabel,
+          trancheIndex,
+          totalTranches,
+          method,
+          reference,
+          paidAt: payment.paid_at,
+        },
+      }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
   } catch (error) {
     console.error("verify-payment error:", error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Verification failed" }),
+      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
