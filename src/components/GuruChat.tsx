@@ -2,9 +2,9 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   X, Send, MessageCircle, Loader2, ShoppingCart, ChevronDown,
-  CreditCard, CheckCircle, Shield, Copy, Check, Banknote
+  CreditCard, CheckCircle, Shield, Copy, Check, Banknote, User, Mail, Phone
 } from "lucide-react";
-import { getSessionToken, parseCartFromMessage, checkInvoiceTrigger, extractClientInfo, LineItem } from "@/lib/chat-utils";
+import { getSessionToken, parseCartFromMessage, checkInvoiceTrigger, LineItem } from "@/lib/chat-utils";
 
 interface Message {
   role: "user" | "assistant";
@@ -90,13 +90,154 @@ const PAYMENT_METHODS = [
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
+// ─── In-chat Contact Form Card ────────────────────────────────────────────────
+function ContactFormCard({ onSubmit }: { onSubmit: (name: string, email: string, phone: string) => void }) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [errors, setErrors] = useState<{ name?: string; email?: string; phone?: string }>({});
+  const [submitting, setSubmitting] = useState(false);
+
+  const validate = () => {
+    const e: typeof errors = {};
+    if (!name.trim() || name.trim().length < 2) e.name = "Please enter your full name";
+    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) e.email = "Please enter a valid email";
+    if (!phone.trim() || phone.trim().length < 6) e.phone = "Please enter your phone number";
+    return e;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const errs = validate();
+    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
+    setSubmitting(true);
+    await new Promise(r => setTimeout(r, 400));
+    onSubmit(name.trim(), email.trim(), phone.trim());
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12, scale: 0.97 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ type: "spring", stiffness: 300, damping: 24 }}
+      className="w-full rounded-2xl overflow-hidden my-2"
+      style={{ background: "hsl(0 0% 9%)", border: "1px solid hsl(25 85% 55% / 0.3)" }}
+    >
+      <div
+        className="px-4 py-3 flex items-center gap-2.5"
+        style={{ background: "linear-gradient(135deg, hsl(25 85% 55% / 0.12), hsl(35 100% 70% / 0.06))", borderBottom: "1px solid hsl(0 0% 15%)" }}
+      >
+        <div
+          className="w-8 h-8 rounded-xl flex items-center justify-center text-primary-foreground"
+          style={{ background: "linear-gradient(135deg, hsl(25 85% 55%), hsl(35 100% 70%))" }}
+        >
+          <User className="w-4 h-4" />
+        </div>
+        <div>
+          <p className="text-xs font-semibold text-foreground">Your Details</p>
+          <p className="text-[10px] text-muted-foreground">Almost there — just need these to generate your invoice</p>
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit} className="px-4 py-3 space-y-3">
+        {/* Name */}
+        <div className="space-y-1">
+          <label className="text-[10px] uppercase tracking-wide text-muted-foreground flex items-center gap-1">
+            <User className="w-3 h-3" /> Full Name
+          </label>
+          <input
+            type="text"
+            value={name}
+            onChange={e => { setName(e.target.value); setErrors(p => ({ ...p, name: undefined })); }}
+            placeholder="John Smith"
+            autoComplete="name"
+            className="w-full rounded-xl px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-all"
+            style={{
+              background: "hsl(0 0% 7%)",
+              border: `1px solid ${errors.name ? "hsl(0 84% 60% / 0.6)" : "hsl(0 0% 18%)"}`,
+            }}
+            onFocus={e => (e.target.style.borderColor = "hsl(25 85% 55% / 0.6)")}
+            onBlur={e => (e.target.style.borderColor = errors.name ? "hsl(0 84% 60% / 0.6)" : "hsl(0 0% 18%)")}
+          />
+          {errors.name && <p className="text-[10px] text-red-400">{errors.name}</p>}
+        </div>
+
+        {/* Email */}
+        <div className="space-y-1">
+          <label className="text-[10px] uppercase tracking-wide text-muted-foreground flex items-center gap-1">
+            <Mail className="w-3 h-3" /> Email Address
+          </label>
+          <input
+            type="email"
+            value={email}
+            onChange={e => { setEmail(e.target.value); setErrors(p => ({ ...p, email: undefined })); }}
+            placeholder="john@company.com"
+            autoComplete="email"
+            className="w-full rounded-xl px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-all"
+            style={{
+              background: "hsl(0 0% 7%)",
+              border: `1px solid ${errors.email ? "hsl(0 84% 60% / 0.6)" : "hsl(0 0% 18%)"}`,
+            }}
+            onFocus={e => (e.target.style.borderColor = "hsl(25 85% 55% / 0.6)")}
+            onBlur={e => (e.target.style.borderColor = errors.email ? "hsl(0 84% 60% / 0.6)" : "hsl(0 0% 18%)")}
+          />
+          {errors.email && <p className="text-[10px] text-red-400">{errors.email}</p>}
+        </div>
+
+        {/* Phone */}
+        <div className="space-y-1">
+          <label className="text-[10px] uppercase tracking-wide text-muted-foreground flex items-center gap-1">
+            <Phone className="w-3 h-3" /> Phone / WhatsApp
+          </label>
+          <input
+            type="tel"
+            value={phone}
+            onChange={e => { setPhone(e.target.value); setErrors(p => ({ ...p, phone: undefined })); }}
+            placeholder="+1 234 567 8900"
+            autoComplete="tel"
+            className="w-full rounded-xl px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-all"
+            style={{
+              background: "hsl(0 0% 7%)",
+              border: `1px solid ${errors.phone ? "hsl(0 84% 60% / 0.6)" : "hsl(0 0% 18%)"}`,
+            }}
+            onFocus={e => (e.target.style.borderColor = "hsl(25 85% 55% / 0.6)")}
+            onBlur={e => (e.target.style.borderColor = errors.phone ? "hsl(0 84% 60% / 0.6)" : "hsl(0 0% 18%)")}
+          />
+          {errors.phone && <p className="text-[10px] text-red-400">{errors.phone}</p>}
+        </div>
+
+        <motion.button
+          type="submit"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          disabled={submitting}
+          className="w-full py-3 rounded-xl flex items-center justify-center gap-2 text-primary-foreground font-semibold text-sm disabled:opacity-60"
+          style={{
+            background: "linear-gradient(135deg, hsl(25 85% 55%), hsl(35 100% 70%))",
+            boxShadow: "0 4px 16px hsl(25 85% 55% / 0.35)",
+          }}
+        >
+          {submitting
+            ? <><Loader2 className="w-4 h-4 animate-spin" /> Generating Invoice...</>
+            : <><CreditCard className="w-4 h-4" /> Generate My Invoice</>
+          }
+        </motion.button>
+        <p className="text-[10px] text-center text-muted-foreground">
+          <Shield className="w-3 h-3 inline mr-1" />
+          Your details are secure and private
+        </p>
+      </form>
+    </motion.div>
+  );
+}
+
 // ─── In-chat Invoice Card ─────────────────────────────────────────────────────
 function InvoiceCard({
   data,
-  onStartPayment,
+  autoShowPayment,
 }: {
   data: InvoiceData;
-  onStartPayment: () => void;
+  autoShowPayment?: boolean;
 }) {
   const dueDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
   return (
@@ -174,20 +315,14 @@ function InvoiceCard({
           </div>
         </div>
 
-        {/* CTA */}
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={onStartPayment}
-          className="w-full py-3 rounded-xl flex items-center justify-center gap-2 text-primary-foreground font-semibold text-sm"
-          style={{
-            background: "linear-gradient(135deg, hsl(25 85% 55%), hsl(35 100% 70%))",
-            boxShadow: "0 4px 16px hsl(25 85% 55% / 0.35)",
-          }}
-        >
-          <CreditCard className="w-4 h-4" />
-          Pay Now — ${data.total.toLocaleString()} USD
-        </motion.button>
+        {autoShowPayment && (
+          <div className="rounded-xl px-3 py-2 text-[10px] text-green-400 flex items-center gap-1.5"
+            style={{ background: "hsl(142 70% 45% / 0.08)", border: "1px solid hsl(142 70% 45% / 0.2)" }}>
+            <CheckCircle className="w-3 h-3 flex-shrink-0" />
+            Payment options ready below ↓
+          </div>
+        )}
+
         <p className="text-[10px] text-center text-muted-foreground">
           <Shield className="w-3 h-3 inline mr-1" />
           Secure payment · 7-day validity
@@ -475,8 +610,13 @@ function ReceiptCard({
         </div>
 
         {receipt.isFullyPaid ? (
-          <div className="pt-2 text-xs text-center text-muted-foreground">
-            🚀 Our team will contact you within <strong className="text-foreground">24 hours</strong> to kick off your project!
+          <div
+            className="rounded-xl p-3 mt-1 text-xs space-y-1"
+            style={{ background: "hsl(142 70% 45% / 0.06)", border: "1px solid hsl(142 70% 45% / 0.2)" }}
+          >
+            <p className="text-green-400 font-semibold">🚀 You're all set, {clientName}!</p>
+            <p className="text-muted-foreground"><strong className="text-foreground">We will contact you immediately we see your payment</strong> — usually within minutes.</p>
+            <p className="text-muted-foreground text-[10px]">Check your inbox for a confirmation email.</p>
           </div>
         ) : nextTranche ? (
           <div
@@ -486,7 +626,7 @@ function ReceiptCard({
             <p className="text-muted-foreground">
               Next: <strong className="text-foreground">{nextTranche.label}</strong> — ${nextTranche.amount.toLocaleString()} USD
             </p>
-            <p className="text-[10px] text-muted-foreground mt-0.5">We'll reach out before your next payment is due.</p>
+            <p className="text-[10px] text-muted-foreground mt-0.5"><strong className="text-foreground">We will contact you immediately</strong> we see your first payment and keep you updated before each milestone.</p>
           </div>
         ) : null}
       </div>
@@ -504,6 +644,7 @@ export default function GuruChat() {
   const [showCart, setShowCart] = useState(false);
 
   // In-chat UI states
+  const [showContactForm, setShowContactForm] = useState(false);
   const [invoiceData, setInvoiceData] = useState<InvoiceData | null>(null);
   const [showInvoice, setShowInvoice] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
@@ -521,7 +662,7 @@ export default function GuruChat() {
     }
   }, [isOpen, messages.length]);
 
-  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, isLoading, showInvoice, showPayment, receipts]);
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, isLoading, showInvoice, showPayment, showContactForm, receipts]);
   useEffect(() => { if (isOpen) inputRef.current?.focus(); }, [isOpen]);
 
   const streamChat = useCallback(async (userMessage: string) => {
@@ -581,12 +722,9 @@ export default function GuruChat() {
         setShowCart(true);
       }
 
-      // Invoice trigger
-      if (checkInvoiceTrigger(assistantText)) {
-        const { name, email, phone } = extractClientInfo([...newMessages, { role: "assistant", content: assistantText }]);
-        if (name && email && cart.items.length > 0) {
-          await generateInvoice(name, email, phone, cart);
-        }
+      // Invoice trigger → show contact form instead of extracting from text
+      if (checkInvoiceTrigger(assistantText) && cart.items.length > 0 && !showContactForm && !showInvoice) {
+        setShowContactForm(true);
       }
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : "Something went wrong";
@@ -594,9 +732,14 @@ export default function GuruChat() {
     } finally {
       setIsLoading(false);
     }
-  }, [messages, sessionToken, cart]);
+  }, [messages, sessionToken, cart, showContactForm, showInvoice]);
 
-  const generateInvoice = async (name: string, email: string, phone: string | null, cartData: CartState) => {
+  const handleContactFormSubmit = async (name: string, email: string, phone: string) => {
+    setShowContactForm(false);
+    await generateInvoice(name, email, phone, cart);
+  };
+
+  const generateInvoice = async (name: string, email: string, phone: string, cartData: CartState) => {
     try {
       const subtotal = cartData.items.reduce((s, i) => s + i.price, 0);
       const discountAmount = subtotal * (cartData.discountPct / 100);
@@ -610,9 +753,9 @@ export default function GuruChat() {
       });
       const data = await resp.json();
       if (data.success) {
-        setInvoiceData({ ...data.order, clientPhone: phone || undefined, discountAmount: data.order.discountAmount || 0 });
+        setInvoiceData({ ...data.order, clientPhone: phone, discountAmount: data.order.discountAmount || 0 });
         setShowInvoice(true);
-        setShowPayment(false);
+        setShowPayment(true); // auto-show payment immediately
         setReceipts([]);
       }
     } catch (err) { console.error("Invoice generation failed:", err); }
@@ -622,24 +765,38 @@ export default function GuruChat() {
     setReceipts((prev) => [...prev, { receipt, nextTranche }]);
     if (receipt.isFullyPaid) {
       setShowPayment(false);
-      // Add a final congrats message
       setTimeout(() => {
         setMessages((prev) => [...prev, {
           role: "assistant",
-          content: `🎉 **All done, ${invoiceData?.clientName}!** Payment confirmed. Our team will reach out within 24 hours to kick off your project. Can't wait to build something amazing with you!`,
+          content: `🎉 **Payment confirmed, ${invoiceData?.clientName}!**\n\nYour project is now locked in. Our team is already excited to get started.\n\n**We will contact you immediately — watch your inbox and phone for our message within minutes!**`,
         }]);
       }, 500);
     }
   };
 
+  // Format message — bold last paragraph, handle markdown
   const formatMessage = (text: string) => {
-    text = text.replace(/<<<GENERATE_INVOICE>>>/g, "");
-    text = text.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
-    text = text.replace(/^[-•]\s+(.+)$/gm, "<li>$1</li>");
-    text = text.replace(/(<li>.*<\/li>\n?)+/g, (m) => `<ul class="list-disc list-inside space-y-1 my-2">${m}</ul>`);
-    text = text.replace(/\n\n/g, "<br/><br/>");
-    text = text.replace(/\n/g, "<br/>");
-    return text;
+    text = text.replace(/<<<GENERATE_INVOICE>>>/g, "").trim();
+
+    // Split into paragraphs
+    const paragraphs = text.split(/\n\n+/);
+    const formattedParagraphs = paragraphs.map((para, idx) => {
+      let p = para;
+      // Bold inline **text**
+      p = p.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+      // Lists
+      p = p.replace(/^[-•]\s+(.+)$/gm, "<li>$1</li>");
+      p = p.replace(/(<li>.*<\/li>\n?)+/g, (m) => `<ul class="list-disc list-inside space-y-1 my-1">${m}</ul>`);
+      // Inline newlines
+      p = p.replace(/\n/g, "<br/>");
+      // Bold the last paragraph
+      if (idx === paragraphs.length - 1 && paragraphs.length > 1) {
+        p = `<strong>${p}</strong>`;
+      }
+      return p;
+    });
+
+    return formattedParagraphs.join("<br/><br/>");
   };
 
   const handleSend = () => { if (!input.trim() || isLoading) return; streamChat(input.trim()); };
@@ -791,19 +948,30 @@ export default function GuruChat() {
                   </motion.div>
                 )}
 
+                {/* In-chat Contact Form */}
+                {showContactForm && (
+                  <div className="flex justify-start">
+                    <div className="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold text-primary-foreground mr-2 flex-shrink-0 mt-0.5"
+                      style={{ background: "linear-gradient(135deg, hsl(25 85% 55%), hsl(35 100% 70%))" }}>G</div>
+                    <div className="flex-1 min-w-0">
+                      <ContactFormCard onSubmit={handleContactFormSubmit} />
+                    </div>
+                  </div>
+                )}
+
                 {/* In-chat Invoice */}
                 {showInvoice && invoiceData && (
                   <div className="flex justify-start">
-                    <div className="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold text-primary-foreground mr-2 flex-shrink-0 mt-0.5 flex-shrink-0"
+                    <div className="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold text-primary-foreground mr-2 flex-shrink-0 mt-0.5"
                       style={{ background: "linear-gradient(135deg, hsl(25 85% 55%), hsl(35 100% 70%))" }}>G</div>
                     <div className="flex-1 min-w-0">
-                      <InvoiceCard data={invoiceData} onStartPayment={() => { setShowPayment(true); }} />
+                      <InvoiceCard data={invoiceData} autoShowPayment={showPayment} />
                     </div>
                   </div>
                 )}
 
                 {/* In-chat Payment */}
-                {showPayment && invoiceData && receipts.length < (TRANCHE_PLANS.find(() => true)?.getTranches(invoiceData.total).length ?? 1) && (
+                {showPayment && invoiceData && (
                   <div className="flex justify-start">
                     <div className="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold text-primary-foreground mr-2 flex-shrink-0 mt-0.5"
                       style={{ background: "linear-gradient(135deg, hsl(25 85% 55%), hsl(35 100% 70%))" }}>G</div>
