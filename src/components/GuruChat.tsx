@@ -994,13 +994,44 @@ export default function GuruChat() {
                   </motion.div>
                 )}
 
-                {/* In-chat Contact Form */}
-                {showContactForm && (
+                {/* In-chat Contact Form — stays visible while generating, replaced by invoice once done */}
+                {(showContactForm || invoiceGenerating) && !showInvoice && (
                   <div className="flex justify-start">
                     <div className="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold text-primary-foreground mr-2 flex-shrink-0 mt-0.5"
                       style={{ background: "linear-gradient(135deg, hsl(25 85% 55%), hsl(35 100% 70%))" }}>G</div>
                     <div className="flex-1 min-w-0">
-                      <ContactFormCard onSubmit={handleContactFormSubmit} />
+                      {showContactForm && !invoiceGenerating && (
+                        <ContactFormCard onSubmit={handleContactFormSubmit} />
+                      )}
+                      {invoiceGenerating && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="w-full rounded-2xl px-4 py-4 flex items-center gap-3"
+                          style={{ background: "hsl(0 0% 9%)", border: "1px solid hsl(25 85% 55% / 0.3)" }}
+                        >
+                          <Loader2 className="w-5 h-5 animate-spin flex-shrink-0" style={{ color: "hsl(25 85% 55%)" }} />
+                          <div>
+                            <p className="text-sm font-semibold text-foreground">Generating your invoice…</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">Just a moment</p>
+                          </div>
+                        </motion.div>
+                      )}
+                      {invoiceError && !invoiceGenerating && (
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className="w-full rounded-2xl px-4 py-3 space-y-2"
+                          style={{ background: "hsl(0 0% 9%)", border: "1px solid hsl(0 84% 60% / 0.4)" }}
+                        >
+                          <p className="text-xs text-red-400">{invoiceError}</p>
+                          <button
+                            onClick={() => { setInvoiceError(""); setShowContactForm(true); }}
+                            className="text-xs font-semibold px-3 py-1.5 rounded-xl"
+                            style={{ background: "hsl(25 85% 55% / 0.15)", color: "hsl(25 85% 65%)" }}
+                          >Try again</button>
+                        </motion.div>
+                      )}
                     </div>
                   </div>
                 )}
