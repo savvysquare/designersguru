@@ -359,6 +359,31 @@ function CopyField({ label, value }: { label: string; value: string }) {
 function PaymentCard({ data }: { data: InvoiceData }) {
   const [selectedPlan, setSelectedPlan] = useState("full");
   const [selectedRegion, setSelectedRegion] = useState<"international" | "nigerian">("international");
+  const [ngnRate, setNgnRate] = useState<number | null>(null);
+  const [rateLoading, setRateLoading] = useState(false);
+
+  const isNigerian = selectedRegion === "nigerian";
+
+  // Fetch live NGN rate whenever Nigerian tab is selected
+  useEffect(() => {
+    if (!isNigerian || ngnRate !== null) return;
+    setRateLoading(true);
+    fetch("https://open.er-api.com/v6/latest/USD")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d?.rates?.NGN) setNgnRate(d.rates.NGN);
+      })
+      .catch(() => setNgnRate(1600)) // fallback rate
+      .finally(() => setRateLoading(false));
+  }, [isNigerian, ngnRate]);
+
+  const formatAmt = (usd: number) => {
+    if (isNigerian && ngnRate) {
+      const ngn = Math.round(usd * ngnRate);
+      return `₦${ngn.toLocaleString("en-NG")}`;
+    }
+    return `$${usd.toLocaleString()} USD`;
+  };
 
   const plan = TRANCHE_PLANS.find((p) => p.id === selectedPlan)!;
   const tranches = plan.getTranches(data.total);
@@ -374,7 +399,14 @@ function PaymentCard({ data }: { data: InvoiceData }) {
       {/* Header */}
       <div className="px-4 py-3 border-b border-border/40">
         <p className="text-sm font-semibold text-foreground">How to Pay</p>
-        <p className="text-xs text-muted-foreground">{data.invoiceNumber} · ${data.total.toLocaleString()} USD total</p>
+        <p className="text-xs text-muted-foreground">
+          {data.invoiceNumber} · ${data.total.toLocaleString()} USD total
+          {isNigerian && ngnRate && (
+            <span className="ml-1" style={{ color: "hsl(142 70% 55%)" }}>
+              · ₦{Math.round(data.total * ngnRate).toLocaleString("en-NG")}
+            </span>
+          )}
+        </p>
       </div>
 
       <div className="px-4 py-3 space-y-4">
@@ -412,7 +444,10 @@ function PaymentCard({ data }: { data: InvoiceData }) {
                   <p className="text-[10px] text-muted-foreground">{p.description}</p>
                 </div>
                 <span className="text-xs font-bold text-foreground whitespace-nowrap">
-                  ${p.getTranches(data.total)[0].amount.toLocaleString()} now
+                  {rateLoading && isNigerian
+                    ? <Loader2 className="w-3 h-3 animate-spin inline" />
+                    : formatAmt(p.getTranches(data.total)[0].amount)
+                  } now
                 </span>
               </button>
             ))}
@@ -428,7 +463,9 @@ function PaymentCard({ data }: { data: InvoiceData }) {
                     <div className="w-1.5 h-1.5 rounded-full" style={{ background: i === 0 ? "hsl(25 85% 55%)" : "hsl(0 0% 30%)" }} />
                     <span className={i === 0 ? "text-foreground" : "text-muted-foreground"}>{t.label}</span>
                   </div>
-                  <span className={i === 0 ? "font-semibold text-foreground" : "text-muted-foreground"}>${t.amount.toLocaleString()}</span>
+                  <span className={i === 0 ? "font-semibold text-foreground" : "text-muted-foreground"}>
+                    {formatAmt(t.amount)}
+                  </span>
                 </div>
               ))}
               <p className="text-[10px] text-muted-foreground pt-1 border-t border-border/30">
@@ -483,9 +520,23 @@ function PaymentCard({ data }: { data: InvoiceData }) {
         {/* Amount to transfer */}
         <div className="rounded-xl p-3" style={{ background: "hsl(25 85% 55% / 0.08)", border: "1px solid hsl(25 85% 55% / 0.2)" }}>
           <p className="text-[10px] uppercase tracking-wide text-muted-foreground mb-1">Amount to Transfer Now</p>
-          <p className="text-lg font-bold" style={{ color: "hsl(25 85% 65%)" }}>
-            ${tranches[0].amount.toLocaleString()} USD
-          </p>
+          {rateLoading && isNigerian ? (
+            <div className="flex items-center gap-2">
+              <Loader2 className="w-4 h-4 animate-spin" style={{ color: "hsl(25 85% 65%)" }} />
+              <span className="text-sm text-muted-foreground">Fetching live rate…</span>
+            </div>
+          ) : (
+            <>
+              <p className="text-lg font-bold" style={{ color: "hsl(25 85% 65%)" }}>
+                {formatAmt(tranches[0].amount)}
+              </p>
+              {isNigerian && ngnRate && (
+                <p className="text-[10px] text-muted-foreground mt-0.5">
+                  ≈ ${tranches[0].amount.toLocaleString()} USD · rate: ₦{Math.round(ngnRate).toLocaleString()}/$ (live)
+                </p>
+              )}
+            </>
+          )}
           <p className="text-[10px] text-muted-foreground mt-0.5">{tranches[0].label}</p>
         </div>
 
