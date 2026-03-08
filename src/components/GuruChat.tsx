@@ -630,6 +630,8 @@ export default function GuruChat() {
 
   // In-chat UI states
   const [showContactForm, setShowContactForm] = useState(false);
+  const [invoiceGenerating, setInvoiceGenerating] = useState(false);
+  const [invoiceError, setInvoiceError] = useState("");
   const [invoiceData, setInvoiceData] = useState<InvoiceData | null>(null);
   const [showInvoice, setShowInvoice] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
@@ -638,6 +640,11 @@ export default function GuruChat() {
   const [sessionToken] = useState(() => getSessionToken());
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  // Always-current refs to avoid stale closures
+  const messagesRef = useRef<Message[]>([]);
+  const cartRef = useRef<CartState>({ items: [], discountPct: 0, total: 0 });
+  useEffect(() => { messagesRef.current = messages; }, [messages]);
+  useEffect(() => { cartRef.current = cart; }, [cart]);
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
