@@ -91,7 +91,7 @@ serve(async (req) => {
         discount_pct: discountPct,
         discount_usd: discountAmount,
         total_usd: total,
-        status: "invoiced",
+        status: "awaiting_payment",
         chat_summary: chatSummary || "",
       })
       .select()
