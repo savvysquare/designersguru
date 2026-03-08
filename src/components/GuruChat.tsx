@@ -722,8 +722,13 @@ export default function GuruChat() {
         setShowCart(true);
       }
 
-      // Invoice trigger → show contact form instead of extracting from text
-      if (checkInvoiceTrigger(assistantText) && cart.items.length > 0 && !showContactForm && !showInvoice) {
+      // Contact collection trigger → show contact form
+      if (checkContactTrigger(assistantText) && !showContactForm && !showInvoice) {
+        setShowContactForm(true);
+      }
+
+      // Legacy invoice trigger fallback (in case AI still emits it)
+      if (checkInvoiceTrigger(assistantText) && !showContactForm && !showInvoice) {
         setShowContactForm(true);
       }
     } catch (err) {
