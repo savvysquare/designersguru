@@ -361,8 +361,166 @@ function PaymentCard({ data }: { data: InvoiceData }) {
 
   const plan = TRANCHE_PLANS.find((p) => p.id === selectedPlan)!;
   const tranches = plan.getTranches(data.total);
-  const currentT = tranches[currentTranche];
-  const allPaid = paidTranches.length === tranches.length;
+  const account = BANK_ACCOUNTS[selectedRegion];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="w-full rounded-2xl overflow-hidden my-2"
+      style={{ background: "hsl(0 0% 9%)", border: "1px solid hsl(0 0% 18%)" }}
+    >
+      {/* Header */}
+      <div className="px-4 py-3 border-b border-border/40">
+        <p className="text-sm font-semibold text-foreground">How to Pay</p>
+        <p className="text-xs text-muted-foreground">{data.invoiceNumber} · ${data.total.toLocaleString()} USD total</p>
+      </div>
+
+      <div className="px-4 py-3 space-y-4">
+        {/* Payment Plan */}
+        <div>
+          <p className="text-[10px] uppercase tracking-wide text-muted-foreground mb-2">Payment Plan</p>
+          <div className="space-y-2">
+            {TRANCHE_PLANS.map((p) => (
+              <button
+                key={p.id}
+                onClick={() => setSelectedPlan(p.id)}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border text-left transition-all"
+                style={{
+                  borderColor: selectedPlan === p.id ? "hsl(25 85% 55% / 0.6)" : "hsl(0 0% 16%)",
+                  background: selectedPlan === p.id ? "hsl(25 85% 55% / 0.07)" : "transparent",
+                }}
+              >
+                <div
+                  className="w-3.5 h-3.5 rounded-full border-2 flex-shrink-0 transition-all"
+                  style={{
+                    borderColor: selectedPlan === p.id ? "hsl(25 85% 55%)" : "hsl(0 0% 35%)",
+                    background: selectedPlan === p.id ? "hsl(25 85% 55%)" : "transparent",
+                  }}
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-semibold text-foreground">{p.label}</span>
+                    <span className="text-[9px] px-1.5 py-0.5 rounded-full font-bold"
+                      style={{ background: `${p.badgeColor}22`, color: p.badgeColor }}>
+                      {p.badge}
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-muted-foreground">{p.description}</p>
+                </div>
+                <span className="text-xs font-bold text-foreground whitespace-nowrap">
+                  ${p.getTranches(data.total)[0].amount.toLocaleString()} now
+                </span>
+              </button>
+            ))}
+          </div>
+
+          {/* Schedule breakdown */}
+          {tranches.length > 1 && (
+            <div className="mt-2 rounded-xl p-2.5 space-y-1.5" style={{ background: "hsl(0 0% 7%)", border: "1px solid hsl(0 0% 13%)" }}>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">Payment Schedule</p>
+              {tranches.map((t, i) => (
+                <div key={i} className="flex justify-between items-center text-xs">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-1.5 h-1.5 rounded-full" style={{ background: i === 0 ? "hsl(25 85% 55%)" : "hsl(0 0% 30%)" }} />
+                    <span className={i === 0 ? "text-foreground" : "text-muted-foreground"}>{t.label}</span>
+                  </div>
+                  <span className={i === 0 ? "font-semibold text-foreground" : "text-muted-foreground"}>${t.amount.toLocaleString()}</span>
+                </div>
+              ))}
+              <p className="text-[10px] text-muted-foreground pt-1 border-t border-border/30">
+                ⚡ Work starts after 1st payment · delivered before final payment is due
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Region selector */}
+        <div>
+          <p className="text-[10px] uppercase tracking-wide text-muted-foreground mb-2">Your Location</p>
+          <div className="grid grid-cols-2 gap-2">
+            {(Object.keys(BANK_ACCOUNTS) as Array<keyof typeof BANK_ACCOUNTS>).map((key) => {
+              const acc = BANK_ACCOUNTS[key];
+              return (
+                <button
+                  key={key}
+                  onClick={() => setSelectedRegion(key)}
+                  className="px-3 py-2.5 rounded-xl border text-left transition-all"
+                  style={{
+                    borderColor: selectedRegion === key ? "hsl(25 85% 55% / 0.6)" : "hsl(0 0% 16%)",
+                    background: selectedRegion === key ? "hsl(25 85% 55% / 0.07)" : "transparent",
+                  }}
+                >
+                  <p className="text-sm">{acc.flag}</p>
+                  <p className="text-xs font-semibold text-foreground mt-0.5">{acc.label}</p>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Account details */}
+        <div>
+          <div className="flex items-center gap-1.5 mb-2">
+            {selectedRegion === "international"
+              ? <Globe className="w-3 h-3 text-muted-foreground" />
+              : <Building2 className="w-3 h-3 text-muted-foreground" />
+            }
+            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
+              {account.label} Bank Account — tap any field to copy
+            </p>
+          </div>
+          <div className="space-y-1.5">
+            {account.fields.map((field) => (
+              <CopyField key={field.label} label={field.label} value={field.value} />
+            ))}
+          </div>
+        </div>
+
+        {/* Amount to transfer */}
+        <div className="rounded-xl p-3" style={{ background: "hsl(25 85% 55% / 0.08)", border: "1px solid hsl(25 85% 55% / 0.2)" }}>
+          <p className="text-[10px] uppercase tracking-wide text-muted-foreground mb-1">Amount to Transfer Now</p>
+          <p className="text-lg font-bold" style={{ color: "hsl(25 85% 65%)" }}>
+            ${tranches[0].amount.toLocaleString()} USD
+          </p>
+          <p className="text-[10px] text-muted-foreground mt-0.5">{tranches[0].label}</p>
+        </div>
+
+        {/* After transfer note */}
+        <div className="rounded-xl p-3 space-y-1" style={{ background: "hsl(0 0% 7%)", border: "1px solid hsl(0 0% 14%)" }}>
+          <p className="text-xs font-semibold text-foreground">After you transfer:</p>
+          <p className="text-[10px] text-muted-foreground leading-relaxed">
+            Send proof of payment to <strong className="text-foreground">hello@designers.guru</strong> or via WhatsApp. We'll confirm receipt and kick off your project within <strong className="text-foreground">24 hours</strong>.
+          </p>
+        </div>
+
+        <p className="text-[10px] text-center text-muted-foreground">
+          <Shield className="w-3 h-3 inline mr-1" />
+          Bank transfer · Your details are used solely for project delivery
+        </p>
+      </div>
+    </motion.div>
+  );
+}
+
+// ─── Main GuruChat Component ──────────────────────────────────────────────────
+export default function GuruChat() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [cart, setCart] = useState<CartState>({ items: [], discountPct: 0, total: 0 });
+  const [showCart, setShowCart] = useState(false);
+
+  // In-chat UI states
+  const [showContactForm, setShowContactForm] = useState(false);
+  const [invoiceGenerating, setInvoiceGenerating] = useState(false);
+  const [invoiceError, setInvoiceError] = useState("");
+  const [invoiceData, setInvoiceData] = useState<InvoiceData | null>(null);
+  const [showInvoice, setShowInvoice] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
+
+  const [sessionToken] = useState(() => getSessionToken());
 
   const handlePay = async () => {
     setProcessing(true);
