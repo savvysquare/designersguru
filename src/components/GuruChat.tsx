@@ -744,7 +744,8 @@ export default function GuruChat() {
       const subtotal = cartData.items.reduce((s, i) => s + i.price, 0);
       const discountAmount = subtotal * (cartData.discountPct / 100);
       const total = subtotal - discountAmount;
-      const chatSummary = messages.filter((m) => m.role === "user").map((m) => m.content).join(" | ").slice(0, 500);
+      // Build full conversation transcript for order record
+      const chatSummary = messages.map((m) => `[${m.role.toUpperCase()}]: ${m.content}`).join("\n\n").slice(0, 5000);
 
       const resp = await fetch(`${SUPABASE_URL}/functions/v1/create-order`, {
         method: "POST",
