@@ -741,7 +741,9 @@ export default function GuruChat() {
 
   const handleContactFormSubmit = async (name: string, email: string, phone: string) => {
     setShowContactForm(false);
-    await generateInvoice(name, email, phone, cart);
+    // Always generate invoice after contact form is filled
+    const latestCart = cart.items.length > 0 ? cart : { items: [], discountPct: 0, total: 0 };
+    await generateInvoice(name, email, phone, latestCart);
   };
 
   const generateInvoice = async (name: string, email: string, phone: string, cartData: CartState) => {
