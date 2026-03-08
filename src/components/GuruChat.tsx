@@ -203,7 +203,7 @@ function ContactFormCard({ onSubmit }: { onSubmit: (name: string, email: string,
           }}
         >
           {submitting
-            ? <><Loader2 className="w-4 h-4 animate-spin" /> Generating Invoice...</>
+            ? <><Loader2 className="w-4 h-4 animate-spin" /> Submitting...</>
             : <><CreditCard className="w-4 h-4" /> Generate My Invoice</>
           }
         </motion.button>
@@ -630,6 +630,8 @@ export default function GuruChat() {
 
   // In-chat UI states
   const [showContactForm, setShowContactForm] = useState(false);
+  const [invoiceGenerating, setInvoiceGenerating] = useState(false);
+  const [invoiceError, setInvoiceError] = useState("");
   const [invoiceData, setInvoiceData] = useState<InvoiceData | null>(null);
   const [showInvoice, setShowInvoice] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
@@ -638,6 +640,11 @@ export default function GuruChat() {
   const [sessionToken] = useState(() => getSessionToken());
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  // Always-current refs to avoid stale closures
+  const messagesRef = useRef<Message[]>([]);
+  const cartRef = useRef<CartState>({ items: [], discountPct: 0, total: 0 });
+  useEffect(() => { messagesRef.current = messages; }, [messages]);
+  useEffect(() => { cartRef.current = cart; }, [cart]);
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
@@ -647,7 +654,7 @@ export default function GuruChat() {
     }
   }, [isOpen, messages.length]);
 
-  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, isLoading, showInvoice, showPayment, showContactForm, receipts]);
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, isLoading, showInvoice, showPayment, showContactForm, invoiceGenerating, invoiceError, receipts]);
   useEffect(() => { if (isOpen) inputRef.current?.focus(); }, [isOpen]);
 
   const streamChat = useCallback(async (userMessage: string) => {
@@ -725,44 +732,79 @@ export default function GuruChat() {
   }, [messages, sessionToken, cart, showContactForm, showInvoice]);
 
   const handleContactFormSubmit = async (name: string, email: string, phone: string) => {
-    setShowContactForm(false);
-    // Always generate invoice after contact form is filled
-    const latestCart = cart.items.length > 0 ? cart : { items: [], discountPct: 0, total: 0 };
+    // Use refs to get the freshest cart & messages at the time of submission
+    const latestCart = cartRef.current.items.length > 0 ? cartRef.current : { items: [], discountPct: 0, total: 0 };
     await generateInvoice(name, email, phone, latestCart);
   };
 
   const generateInvoice = async (name: string, email: string, phone: string, cartData: CartState) => {
+    setInvoiceGenerating(true);
+    setInvoiceError("");
     try {
-      const subtotal = cartData.items.reduce((s, i) => s + i.price, 0);
-      const discountAmount = subtotal * (cartData.discountPct / 100);
-      const total = subtotal - discountAmount;
-      // Build full conversation transcript for order record
-      const chatSummary = messages.map((m) => `[${m.role.toUpperCase()}]: ${m.content}`).join("\n\n").slice(0, 5000);
+      // Use messagesRef so we always have the full up-to-date conversation
+      const chatSummary = messagesRef.current
+        .map((m) => `[${m.role.toUpperCase()}]: ${m.content}`)
+        .join("\n\n")
+        .slice(0, 5000);
+
+      // If cart is empty, try to re-parse from the last few assistant messages
+      let lineItems = cartData.items;
+      if (lineItems.length === 0) {
+        for (let i = messagesRef.current.length - 1; i >= 0; i--) {
+          const msg = messagesRef.current[i];
+          if (msg.role === "assistant") {
+            const parsed = parseCartFromMessage(msg.content);
+            if (parsed?.items && parsed.items.length > 0) {
+              lineItems = parsed.items;
+              break;
+            }
+          }
+        }
+      }
+
+      // Still no items — create a placeholder so the order doesn't fail validation
+      if (lineItems.length === 0) {
+        lineItems = [{ name: "Custom Project (details TBD)", description: "Scope to be confirmed", price: 0 }];
+      }
 
       const resp = await fetch(`${SUPABASE_URL}/functions/v1/create-order`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${SUPABASE_ANON_KEY}` },
-        body: JSON.stringify({ clientName: name, clientEmail: email, lineItems: cartData.items, discountPct: cartData.discountPct, sessionToken, chatSummary }),
+        body: JSON.stringify({
+          clientName: name,
+          clientEmail: email,
+          lineItems,
+          discountPct: cartData.discountPct,
+          sessionToken,
+          chatSummary,
+        }),
       });
       const data = await resp.json();
-      if (data.success) {
-        setInvoiceData({
-          clientName: data.order.clientName,
-          clientEmail: data.order.clientEmail,
-          clientPhone: phone,
-          lineItems: data.order.lineItems,
-          subtotal: data.order.subtotal,
-          discountPct: data.order.discountPct,
-          discountAmount: data.order.discountAmount || 0,
-          total: data.order.total,
-          invoiceNumber: data.order.invoiceNumber,
-          orderId: data.order.id,
-        });
-        setShowInvoice(true);
-        setShowPayment(true); // auto-show payment immediately
-        setReceipts([]);
+      if (!resp.ok || !data.success) {
+        throw new Error(data.error || "Failed to generate invoice. Please try again.");
       }
-    } catch (err) { console.error("Invoice generation failed:", err); }
+      setShowContactForm(false);
+      setInvoiceData({
+        clientName: data.order.clientName,
+        clientEmail: data.order.clientEmail,
+        clientPhone: phone,
+        lineItems: data.order.lineItems,
+        subtotal: data.order.subtotal,
+        discountPct: data.order.discountPct,
+        discountAmount: data.order.discountAmount || 0,
+        total: data.order.total,
+        invoiceNumber: data.order.invoiceNumber,
+        orderId: data.order.id,
+      });
+      setShowInvoice(true);
+      setShowPayment(true);
+      setReceipts([]);
+    } catch (err) {
+      console.error("Invoice generation failed:", err);
+      setInvoiceError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+    } finally {
+      setInvoiceGenerating(false);
+    }
   };
 
   const handlePaid = (receipt: ReceiptData, nextTranche: { label: string; amount: number } | null) => {
@@ -952,13 +994,44 @@ export default function GuruChat() {
                   </motion.div>
                 )}
 
-                {/* In-chat Contact Form */}
-                {showContactForm && (
+                {/* In-chat Contact Form — stays visible while generating, replaced by invoice once done */}
+                {(showContactForm || invoiceGenerating) && !showInvoice && (
                   <div className="flex justify-start">
                     <div className="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold text-primary-foreground mr-2 flex-shrink-0 mt-0.5"
                       style={{ background: "linear-gradient(135deg, hsl(25 85% 55%), hsl(35 100% 70%))" }}>G</div>
                     <div className="flex-1 min-w-0">
-                      <ContactFormCard onSubmit={handleContactFormSubmit} />
+                      {showContactForm && !invoiceGenerating && (
+                        <ContactFormCard onSubmit={handleContactFormSubmit} />
+                      )}
+                      {invoiceGenerating && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="w-full rounded-2xl px-4 py-4 flex items-center gap-3"
+                          style={{ background: "hsl(0 0% 9%)", border: "1px solid hsl(25 85% 55% / 0.3)" }}
+                        >
+                          <Loader2 className="w-5 h-5 animate-spin flex-shrink-0" style={{ color: "hsl(25 85% 55%)" }} />
+                          <div>
+                            <p className="text-sm font-semibold text-foreground">Generating your invoice…</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">Just a moment</p>
+                          </div>
+                        </motion.div>
+                      )}
+                      {invoiceError && !invoiceGenerating && (
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className="w-full rounded-2xl px-4 py-3 space-y-2"
+                          style={{ background: "hsl(0 0% 9%)", border: "1px solid hsl(0 84% 60% / 0.4)" }}
+                        >
+                          <p className="text-xs text-red-400">{invoiceError}</p>
+                          <button
+                            onClick={() => { setInvoiceError(""); setShowContactForm(true); }}
+                            className="text-xs font-semibold px-3 py-1.5 rounded-xl"
+                            style={{ background: "hsl(25 85% 55% / 0.15)", color: "hsl(25 85% 65%)" }}
+                          >Try again</button>
+                        </motion.div>
+                      )}
                     </div>
                   </div>
                 )}
