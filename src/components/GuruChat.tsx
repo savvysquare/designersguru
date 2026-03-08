@@ -44,7 +44,7 @@ interface ReceiptData {
   paidAt: string;
 }
 
-// Tranche plans — only Full Payment and 50/50 Split
+// Tranche plans — only Full Payment and 60/40 Split
 const TRANCHE_PLANS = [
   {
     id: "full",
@@ -55,14 +55,14 @@ const TRANCHE_PLANS = [
     getTranches: (total: number) => [{ label: "Full Payment", amount: total, pct: 100 }],
   },
   {
-    id: "50-50",
-    label: "50 / 50 Split",
-    description: "50% now to start, 50% on delivery",
+    id: "60-40",
+    label: "60 / 40 Split",
+    description: "60% now to start, 40% on delivery",
     badge: "Popular",
     badgeColor: "hsl(25 85% 55%)",
     getTranches: (total: number) => [
-      { label: "Deposit (50%)", amount: Math.round(total * 0.5), pct: 50 },
-      { label: "Final Payment (50%)", amount: Math.round(total * 0.5), pct: 50 },
+      { label: "Deposit (60%)", amount: Math.round(total * 0.6), pct: 60 },
+      { label: "Final Payment (40%)", amount: Math.round(total * 0.4), pct: 40 },
     ],
   },
 ];
