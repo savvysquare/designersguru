@@ -42,7 +42,10 @@ interface Order {
 const STATUS_STYLES: Record<string, { label: string; class: string }> = {
   pending: { label: "Pending", class: "bg-yellow-500/15 text-yellow-400 border-yellow-500/20" },
   invoiced: { label: "Invoiced", class: "bg-blue-500/15 text-blue-400 border-blue-500/20" },
-  paid: { label: "Paid", class: "bg-green-500/15 text-green-400 border-green-500/20" },
+  awaiting_payment: { label: "Awaiting Payment", class: "bg-orange-500/15 text-orange-400 border-orange-500/20" },
+  deposit_paid: { label: "60% Deposit Paid", class: "bg-amber-500/15 text-amber-400 border-amber-500/20" },
+  balance_due: { label: "40% Balance Due", class: "bg-cyan-500/15 text-cyan-400 border-cyan-500/20" },
+  paid: { label: "Fully Paid", class: "bg-green-500/15 text-green-400 border-green-500/20" },
   in_progress: { label: "In Progress", class: "bg-purple-500/15 text-purple-400 border-purple-500/20" },
   completed: { label: "Completed", class: "bg-emerald-500/15 text-emerald-400 border-emerald-500/20" },
   cancelled: { label: "Cancelled", class: "bg-red-500/15 text-red-400 border-red-500/20" },
@@ -104,11 +107,11 @@ export default function OrdersDashboard() {
 
       // Compute stats
       const total = data?.length || 0;
-      const paid = data?.filter((o) => o.status === "paid" || o.status === "completed").length || 0;
+      const paid = data?.filter((o) => ["paid", "completed"].includes(o.status)).length || 0;
       const revenue = data
-        ?.filter((o) => o.status === "paid" || o.status === "completed")
+        ?.filter((o) => ["paid", "completed"].includes(o.status))
         .reduce((s, o) => s + (o.total_usd || 0), 0) || 0;
-      const pending = data?.filter((o) => o.status === "pending" || o.status === "invoiced").length || 0;
+      const pending = data?.filter((o) => ["pending", "invoiced", "awaiting_payment"].includes(o.status)).length || 0;
       setStats({ total, paid, revenue, pending });
     } catch (err) {
       console.error(err);
@@ -261,10 +264,10 @@ export default function OrdersDashboard() {
           </button>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
+            title="Sign Out"
+            className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
           >
             <LogOut className="w-4 h-4" />
-            Sign Out
           </button>
         </div>
       </div>
@@ -487,19 +490,22 @@ export default function OrdersDashboard() {
                     <p className="text-xs text-muted-foreground mb-3 font-semibold uppercase tracking-wide">
                       Update Status
                     </p>
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-2 gap-2">
                       {Object.entries(STATUS_STYLES).map(([status, style]) => (
                         <button
                           key={status}
                           disabled={updatingStatus === selectedOrder.id}
                           onClick={() => updateOrderStatus(selectedOrder.id, status)}
-                          className={`py-2 px-3 rounded-xl text-xs font-medium border transition-all ${
+                          className={`py-2 px-3 rounded-xl text-xs font-medium border transition-all text-left ${
                             selectedOrder.status === status
                               ? style.class
                               : "border-border text-muted-foreground hover:border-border/80"
                           }`}
                         >
                           {style.label}
+                          {updatingStatus === selectedOrder.id && selectedOrder.status === status && (
+                            <span className="ml-1">…</span>
+                          )}
                         </button>
                       ))}
                     </div>
