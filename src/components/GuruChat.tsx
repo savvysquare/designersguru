@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   X, Send, MessageCircle, Loader2, ShoppingCart, ChevronDown,
-  CreditCard, CheckCircle, Shield, Copy, Check, Banknote, User, Mail, Phone
+  CheckCircle, Shield, Copy, Check, User, Mail, Phone, Building2, Globe
 } from "lucide-react";
 import { getSessionToken, parseCartFromMessage, checkInvoiceTrigger, checkContactTrigger, LineItem } from "@/lib/chat-utils";
 
@@ -30,21 +30,7 @@ interface InvoiceData {
   orderId: string;
 }
 
-interface ReceiptData {
-  invoiceNumber: string;
-  amountPaid: number;
-  totalPaid: number;
-  remaining: number;
-  isFullyPaid: boolean;
-  trancheLabel: string;
-  trancheIndex: number;
-  totalTranches: number;
-  method: string;
-  reference: string;
-  paidAt: string;
-}
-
-// Tranche plans — only Full Payment and 60/40 Split
+// Tranche plans — Full Payment and 60/40 Split
 const TRANCHE_PLANS = [
   {
     id: "full",
@@ -67,10 +53,31 @@ const TRANCHE_PLANS = [
   },
 ];
 
-const PAYMENT_METHODS = [
-  { id: "paystack", label: "Card / Bank Transfer", sub: "Paystack · TEST MODE" },
-  { id: "paypal", label: "PayPal", sub: "Sandbox · TEST MODE" },
-];
+// Bank account details
+const BANK_ACCOUNTS = {
+  international: {
+    label: "International",
+    flag: "🌍",
+    fields: [
+      { label: "Bank", value: "Lead Bank" },
+      { label: "Account Name", value: "Olayemi Awoyemi" },
+      { label: "Account Number", value: "219684676460" },
+      { label: "Wire Routing", value: "101019644" },
+      { label: "ACH Routing", value: "101019644" },
+      { label: "Account Type", value: "Checking" },
+      { label: "Bank Address", value: "1801 Main St., Kansas City, MO 64108" },
+    ],
+  },
+  nigerian: {
+    label: "Nigerian",
+    flag: "🇳🇬",
+    fields: [
+      { label: "Bank", value: "Moniepoint MFB" },
+      { label: "Account Name", value: "Olayemi Awoyemi" },
+      { label: "Account Number", value: "9061989669" },
+    ],
+  },
+};
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -204,7 +211,7 @@ function ContactFormCard({ onSubmit }: { onSubmit: (name: string, email: string,
         >
           {submitting
             ? <><Loader2 className="w-4 h-4 animate-spin" /> Submitting...</>
-            : <><CreditCard className="w-4 h-4" /> Generate My Invoice</>
+            : <>Generate My Invoice</>
           }
         </motion.button>
         <p className="text-[10px] text-center text-muted-foreground">
@@ -304,81 +311,58 @@ function InvoiceCard({
           <div className="rounded-xl px-3 py-2 text-[10px] text-green-400 flex items-center gap-1.5"
             style={{ background: "hsl(142 70% 45% / 0.08)", border: "1px solid hsl(142 70% 45% / 0.2)" }}>
             <CheckCircle className="w-3 h-3 flex-shrink-0" />
-            Payment options ready below ↓
+            Payment details ready below ↓
           </div>
         )}
 
         <p className="text-[10px] text-center text-muted-foreground">
           <Shield className="w-3 h-3 inline mr-1" />
-          Secure payment · 7-day validity
+          Secure invoice · 7-day validity
         </p>
       </div>
     </motion.div>
   );
 }
 
-// ─── In-chat Payment Card ─────────────────────────────────────────────────────
-function PaymentCard({
-  data,
-  onPaid,
-}: {
-  data: InvoiceData;
-  onPaid: (receipt: ReceiptData, nextTranche?: { label: string; amount: number } | null) => void;
-}) {
-  const [selectedPlan, setSelectedPlan] = useState("full");
-  const [selectedMethod, setSelectedMethod] = useState("paystack");
-  const [currentTranche, setCurrentTranche] = useState(0);
-  const [processing, setProcessing] = useState(false);
-  const [paidTranches, setPaidTranches] = useState<number[]>([]);
+// ─── Copyable Field ───────────────────────────────────────────────────────────
+function CopyField({ label, value }: { label: string; value: string }) {
   const [copied, setCopied] = useState(false);
-  const [error, setError] = useState("");
-
-  const plan = TRANCHE_PLANS.find((p) => p.id === selectedPlan)!;
-  const tranches = plan.getTranches(data.total);
-  const currentT = tranches[currentTranche];
-  const allPaid = paidTranches.length === tranches.length;
-
-  const handlePay = async () => {
-    setProcessing(true);
-    setError("");
-    await new Promise((r) => setTimeout(r, 2000));
-    const ref = `TEST_${Date.now()}_${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
-    try {
-      const resp = await fetch(`${SUPABASE_URL}/functions/v1/verify-payment`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${SUPABASE_ANON_KEY}` },
-        body: JSON.stringify({
-          reference: ref,
-          orderId: data.orderId,
-          method: selectedMethod,
-          amountPaid: currentT.amount,
-          trancheIndex: currentTranche,
-          totalTranches: tranches.length,
-          trancheLabel: currentT.label,
-        }),
-      });
-      const result = await resp.json();
-      if (!result.success) throw new Error(result.error || "Payment failed");
-      const newPaid = [...paidTranches, currentTranche];
-      setPaidTranches(newPaid);
-      const nextIdx = currentTranche + 1;
-      const nextTranche = nextIdx < tranches.length ? tranches[nextIdx] : null;
-      onPaid(result.receiptData, nextTranche);
-      if (nextTranche) setCurrentTranche(nextIdx);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Payment failed. Please try again.");
-    } finally {
-      setProcessing(false);
-    }
-  };
-
-  const copyTestCard = () => {
-    navigator.clipboard.writeText("4084084084084081");
+  const handleCopy = () => {
+    navigator.clipboard.writeText(value);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+  return (
+    <div
+      className="flex items-center justify-between gap-2 px-3 py-2 rounded-xl group cursor-pointer"
+      style={{ background: "hsl(0 0% 7%)", border: "1px solid hsl(0 0% 14%)" }}
+      onClick={handleCopy}
+    >
+      <div className="min-w-0">
+        <p className="text-[9px] uppercase tracking-wider text-muted-foreground mb-0.5">{label}</p>
+        <p className="text-xs font-medium text-foreground">{value}</p>
+      </div>
+      <div
+        className="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center transition-all"
+        style={{ background: copied ? "hsl(142 70% 45% / 0.15)" : "hsl(0 0% 12%)" }}
+      >
+        {copied
+          ? <Check className="w-3 h-3 text-green-400" />
+          : <Copy className="w-3 h-3 text-muted-foreground" />
+        }
+      </div>
+    </div>
+  );
+}
 
-  if (allPaid) return null;
+// ─── In-chat Payment Card ─────────────────────────────────────────────────────
+function PaymentCard({ data }: { data: InvoiceData }) {
+  const [selectedPlan, setSelectedPlan] = useState("full");
+  const [selectedRegion, setSelectedRegion] = useState<"international" | "nigerian">("international");
+
+  const plan = TRANCHE_PLANS.find((p) => p.id === selectedPlan)!;
+  const tranches = plan.getTranches(data.total);
+  const account = BANK_ACCOUNTS[selectedRegion];
 
   return (
     <motion.div
@@ -387,233 +371,136 @@ function PaymentCard({
       className="w-full rounded-2xl overflow-hidden my-2"
       style={{ background: "hsl(0 0% 9%)", border: "1px solid hsl(0 0% 18%)" }}
     >
+      {/* Header */}
       <div className="px-4 py-3 border-b border-border/40">
-        <p className="text-sm font-semibold text-foreground">Complete Payment</p>
+        <p className="text-sm font-semibold text-foreground">How to Pay</p>
         <p className="text-xs text-muted-foreground">{data.invoiceNumber} · ${data.total.toLocaleString()} USD total</p>
       </div>
 
       <div className="px-4 py-3 space-y-4">
-        {/* Tranche plan selector */}
-        {paidTranches.length === 0 && (
-          <div>
-            <p className="text-[10px] uppercase tracking-wide text-muted-foreground mb-2">Payment Plan</p>
-            <div className="space-y-2">
-              {TRANCHE_PLANS.map((p) => (
-                <button
-                  key={p.id}
-                  onClick={() => { setSelectedPlan(p.id); setCurrentTranche(0); }}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border text-left transition-all"
-                  style={{
-                    borderColor: selectedPlan === p.id ? "hsl(25 85% 55% / 0.6)" : "hsl(0 0% 16%)",
-                    background: selectedPlan === p.id ? "hsl(25 85% 55% / 0.07)" : "transparent",
-                  }}
-                >
-                  <div
-                    className="w-3.5 h-3.5 rounded-full border-2 flex-shrink-0 transition-all"
-                    style={{
-                      borderColor: selectedPlan === p.id ? "hsl(25 85% 55%)" : "hsl(0 0% 35%)",
-                      background: selectedPlan === p.id ? "hsl(25 85% 55%)" : "transparent",
-                    }}
-                  />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-semibold text-foreground">{p.label}</span>
-                      <span
-                        className="text-[9px] px-1.5 py-0.5 rounded-full font-bold"
-                        style={{ background: `${p.badgeColor}22`, color: p.badgeColor }}
-                      >
-                        {p.badge}
-                      </span>
-                    </div>
-                    <p className="text-[10px] text-muted-foreground truncate">{p.description}</p>
-                  </div>
-                  <span className="text-xs font-bold text-foreground whitespace-nowrap">
-                    ${plan.id === p.id ? currentT?.amount.toLocaleString() : p.getTranches(data.total)[0].amount.toLocaleString()} now
-                  </span>
-                </button>
-              ))}
-            </div>
-
-            {/* Tranche breakdown preview */}
-            {tranches.length > 1 && (
-              <div className="mt-2 rounded-xl p-2.5 space-y-1" style={{ background: "hsl(0 0% 7%)", border: "1px solid hsl(0 0% 13%)" }}>
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1.5">Payment Schedule</p>
-                {tranches.map((t, i) => (
-                  <div key={i} className="flex justify-between items-center text-xs">
-                    <div className="flex items-center gap-1.5">
-                      <div className="w-1.5 h-1.5 rounded-full" style={{ background: i === 0 ? "hsl(25 85% 55%)" : "hsl(0 0% 30%)" }} />
-                      <span className={i === 0 ? "text-foreground" : "text-muted-foreground"}>{t.label}</span>
-                    </div>
-                    <span className={i === 0 ? "font-semibold text-foreground" : "text-muted-foreground"}>${t.amount.toLocaleString()}</span>
-                  </div>
-                ))}
-                <div className="pt-1.5 mt-1 border-t border-border/30 text-[10px] text-muted-foreground">
-                  ⚡ Work starts after 1st payment · delivered before final payment is due
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Currently paying tranche */}
-        {paidTranches.length > 0 && (
-          <div className="rounded-xl p-2.5" style={{ background: "hsl(142 70% 45% / 0.08)", border: "1px solid hsl(142 70% 45% / 0.2)" }}>
-            <p className="text-xs text-green-400 font-semibold">
-              ✓ {paidTranches.length} of {tranches.length} payments completed
-            </p>
-            <p className="text-[10px] text-muted-foreground mt-0.5">Now paying: {currentT?.label}</p>
-          </div>
-        )}
-
-        {/* Payment method */}
+        {/* Payment Plan */}
         <div>
-          <p className="text-[10px] uppercase tracking-wide text-muted-foreground mb-2">Payment Method</p>
-          <div className="grid grid-cols-2 gap-2">
-            {PAYMENT_METHODS.map((m) => (
+          <p className="text-[10px] uppercase tracking-wide text-muted-foreground mb-2">Payment Plan</p>
+          <div className="space-y-2">
+            {TRANCHE_PLANS.map((p) => (
               <button
-                key={m.id}
-                onClick={() => setSelectedMethod(m.id)}
-                className="px-3 py-2 rounded-xl border text-left transition-all"
+                key={p.id}
+                onClick={() => setSelectedPlan(p.id)}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border text-left transition-all"
                 style={{
-                  borderColor: selectedMethod === m.id ? "hsl(25 85% 55% / 0.6)" : "hsl(0 0% 16%)",
-                  background: selectedMethod === m.id ? "hsl(25 85% 55% / 0.07)" : "transparent",
+                  borderColor: selectedPlan === p.id ? "hsl(25 85% 55% / 0.6)" : "hsl(0 0% 16%)",
+                  background: selectedPlan === p.id ? "hsl(25 85% 55% / 0.07)" : "transparent",
                 }}
               >
-                <p className="text-xs font-medium text-foreground">{m.label}</p>
-                <p className="text-[10px] text-muted-foreground">{m.sub}</p>
+                <div
+                  className="w-3.5 h-3.5 rounded-full border-2 flex-shrink-0 transition-all"
+                  style={{
+                    borderColor: selectedPlan === p.id ? "hsl(25 85% 55%)" : "hsl(0 0% 35%)",
+                    background: selectedPlan === p.id ? "hsl(25 85% 55%)" : "transparent",
+                  }}
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-semibold text-foreground">{p.label}</span>
+                    <span
+                      className="text-[9px] px-1.5 py-0.5 rounded-full font-bold"
+                      style={{ background: `${p.badgeColor}22`, color: p.badgeColor }}
+                    >
+                      {p.badge}
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-muted-foreground">{p.description}</p>
+                </div>
+                <span className="text-xs font-bold text-foreground whitespace-nowrap">
+                  ${p.getTranches(data.total)[0].amount.toLocaleString()} now
+                </span>
               </button>
+            ))}
+          </div>
+
+          {/* Schedule breakdown */}
+          {tranches.length > 1 && (
+            <div className="mt-2 rounded-xl p-2.5 space-y-1.5" style={{ background: "hsl(0 0% 7%)", border: "1px solid hsl(0 0% 13%)" }}>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">Payment Schedule</p>
+              {tranches.map((t, i) => (
+                <div key={i} className="flex justify-between items-center text-xs">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-1.5 h-1.5 rounded-full" style={{ background: i === 0 ? "hsl(25 85% 55%)" : "hsl(0 0% 30%)" }} />
+                    <span className={i === 0 ? "text-foreground" : "text-muted-foreground"}>{t.label}</span>
+                  </div>
+                  <span className={i === 0 ? "font-semibold text-foreground" : "text-muted-foreground"}>${t.amount.toLocaleString()}</span>
+                </div>
+              ))}
+              <p className="text-[10px] text-muted-foreground pt-1 border-t border-border/30">
+                ⚡ Work starts after 1st payment · delivered before final payment is due
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Region selector */}
+        <div>
+          <p className="text-[10px] uppercase tracking-wide text-muted-foreground mb-2">Your Location</p>
+          <div className="grid grid-cols-2 gap-2">
+            {(Object.keys(BANK_ACCOUNTS) as Array<keyof typeof BANK_ACCOUNTS>).map((key) => {
+              const acc = BANK_ACCOUNTS[key];
+              return (
+                <button
+                  key={key}
+                  onClick={() => setSelectedRegion(key)}
+                  className="px-3 py-2.5 rounded-xl border text-left transition-all"
+                  style={{
+                    borderColor: selectedRegion === key ? "hsl(25 85% 55% / 0.6)" : "hsl(0 0% 16%)",
+                    background: selectedRegion === key ? "hsl(25 85% 55% / 0.07)" : "transparent",
+                  }}
+                >
+                  <p className="text-sm">{acc.flag}</p>
+                  <p className="text-xs font-semibold text-foreground mt-0.5">{acc.label}</p>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Account details */}
+        <div>
+          <div className="flex items-center gap-1.5 mb-2">
+            {selectedRegion === "international"
+              ? <Globe className="w-3 h-3 text-muted-foreground" />
+              : <Building2 className="w-3 h-3 text-muted-foreground" />
+            }
+            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
+              {account.label} Bank Account — tap any field to copy
+            </p>
+          </div>
+          <div className="space-y-1.5">
+            {account.fields.map((field) => (
+              <CopyField key={field.label} label={field.label} value={field.value} />
             ))}
           </div>
         </div>
 
-        {/* Test card hint */}
-        {selectedMethod === "paystack" && (
-          <button
-            onClick={copyTestCard}
-            className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-all"
-            style={{ background: "hsl(217 91% 60% / 0.07)", border: "1px solid hsl(217 91% 60% / 0.2)" }}
-          >
-            <span className="text-blue-400">🧪 Test card: 4084 0840 8408 4081</span>
-            {copied ? <Check className="w-3 h-3 text-green-400" /> : <Copy className="w-3 h-3 text-muted-foreground" />}
-          </button>
-        )}
+        {/* Amount to transfer */}
+        <div className="rounded-xl p-3" style={{ background: "hsl(25 85% 55% / 0.08)", border: "1px solid hsl(25 85% 55% / 0.2)" }}>
+          <p className="text-[10px] uppercase tracking-wide text-muted-foreground mb-1">Amount to Transfer Now</p>
+          <p className="text-lg font-bold" style={{ color: "hsl(25 85% 65%)" }}>
+            ${tranches[0].amount.toLocaleString()} USD
+          </p>
+          <p className="text-[10px] text-muted-foreground mt-0.5">{tranches[0].label}</p>
+        </div>
 
-        {error && (
-          <p className="text-xs text-red-400 px-2">{error}</p>
-        )}
-
-        {/* Pay button */}
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={handlePay}
-          disabled={processing}
-          className="w-full py-3 rounded-xl flex items-center justify-center gap-2 text-primary-foreground font-semibold text-sm disabled:opacity-60"
-          style={{
-            background: "linear-gradient(135deg, hsl(25 85% 55%), hsl(35 100% 70%))",
-            boxShadow: "0 4px 16px hsl(25 85% 55% / 0.35)",
-          }}
-        >
-          {processing ? (
-            <><Loader2 className="w-4 h-4 animate-spin" /> Processing...</>
-          ) : (
-            <><Banknote className="w-4 h-4" /> Pay ${currentT?.amount.toLocaleString()} USD — {currentT?.label}</>
-          )}
-        </motion.button>
+        {/* After transfer note */}
+        <div className="rounded-xl p-3 space-y-1" style={{ background: "hsl(0 0% 7%)", border: "1px solid hsl(0 0% 14%)" }}>
+          <p className="text-xs font-semibold text-foreground">After you transfer:</p>
+          <p className="text-[10px] text-muted-foreground leading-relaxed">
+            Send proof of payment to <strong className="text-foreground">hello@designers.guru</strong> or via WhatsApp. We'll confirm receipt and kick off your project within <strong className="text-foreground">24 hours</strong>.
+          </p>
+        </div>
 
         <p className="text-[10px] text-center text-muted-foreground">
           <Shield className="w-3 h-3 inline mr-1" />
-          TEST MODE — no real charge · Paystack &amp; PayPal sandbox
+          Bank transfer · Your details are used solely for project delivery
         </p>
-      </div>
-    </motion.div>
-  );
-}
-
-// ─── In-chat Receipt Card ─────────────────────────────────────────────────────
-function ReceiptCard({
-  receipt,
-  clientName,
-  nextTranche,
-}: {
-  receipt: ReceiptData;
-  clientName: string;
-  nextTranche?: { label: string; amount: number } | null;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95, y: 10 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      transition={{ type: "spring", stiffness: 280, damping: 22 }}
-      className="w-full rounded-2xl overflow-hidden my-2"
-      style={{ background: "hsl(0 0% 9%)", border: "1px solid hsl(142 70% 45% / 0.3)" }}
-    >
-      <div
-        className="px-4 py-3 flex items-center gap-3"
-        style={{ background: "hsl(142 70% 45% / 0.08)", borderBottom: "1px solid hsl(142 70% 45% / 0.2)" }}
-      >
-        <div
-          className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-          style={{ background: "hsl(142 70% 45% / 0.2)" }}
-        >
-          <CheckCircle className="w-4 h-4 text-green-400" />
-        </div>
-        <div>
-          <p className="text-sm font-semibold text-green-400">
-            {receipt.isFullyPaid ? "Payment Complete! 🎉" : `${receipt.trancheLabel} Received ✓`}
-          </p>
-          <p className="text-[10px] text-muted-foreground">{receipt.invoiceNumber}</p>
-        </div>
-      </div>
-
-      <div className="px-4 py-3 space-y-2">
-        <div className="space-y-1.5">
-          <div className="flex justify-between text-xs">
-            <span className="text-muted-foreground">Paid now</span>
-            <span className="font-semibold text-foreground">${receipt.amountPaid.toLocaleString()} USD</span>
-          </div>
-          {!receipt.isFullyPaid && (
-            <>
-              <div className="flex justify-between text-xs">
-                <span className="text-muted-foreground">Total paid so far</span>
-                <span className="font-semibold text-foreground">${receipt.totalPaid.toLocaleString()} USD</span>
-              </div>
-              <div className="flex justify-between text-xs">
-                <span className="text-muted-foreground">Remaining balance</span>
-                <span className="font-semibold" style={{ color: "hsl(25 85% 65%)" }}>${receipt.remaining.toLocaleString()} USD</span>
-              </div>
-            </>
-          )}
-          <div className="flex justify-between text-xs">
-            <span className="text-muted-foreground">Method</span>
-            <span className="text-foreground capitalize">{receipt.method}</span>
-          </div>
-          <div className="flex justify-between text-xs">
-            <span className="text-muted-foreground">Reference</span>
-            <span className="text-foreground font-mono text-[10px]">{receipt.reference.slice(0, 20)}...</span>
-          </div>
-        </div>
-
-        {receipt.isFullyPaid ? (
-          <div
-            className="rounded-xl p-3 mt-1 text-xs space-y-1"
-            style={{ background: "hsl(142 70% 45% / 0.06)", border: "1px solid hsl(142 70% 45% / 0.2)" }}
-          >
-            <p className="text-green-400 font-semibold">🚀 You're all set, {clientName}!</p>
-            <p className="text-muted-foreground"><strong className="text-foreground">We will contact you immediately we see your payment</strong> — usually within minutes.</p>
-            <p className="text-muted-foreground text-[10px]">Check your inbox for a confirmation email.</p>
-          </div>
-        ) : nextTranche ? (
-          <div
-            className="rounded-xl p-2.5 text-xs"
-            style={{ background: "hsl(25 85% 55% / 0.07)", border: "1px solid hsl(25 85% 55% / 0.2)" }}
-          >
-            <p className="text-muted-foreground">
-              Next: <strong className="text-foreground">{nextTranche.label}</strong> — ${nextTranche.amount.toLocaleString()} USD
-            </p>
-            <p className="text-[10px] text-muted-foreground mt-0.5"><strong className="text-foreground">We will contact you immediately</strong> we see your first payment and keep you updated before each milestone.</p>
-          </div>
-        ) : null}
       </div>
     </motion.div>
   );
@@ -635,12 +522,10 @@ export default function GuruChat() {
   const [invoiceData, setInvoiceData] = useState<InvoiceData | null>(null);
   const [showInvoice, setShowInvoice] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
-  const [receipts, setReceipts] = useState<{ receipt: ReceiptData; nextTranche: { label: string; amount: number } | null }[]>([]);
 
   const [sessionToken] = useState(() => getSessionToken());
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  // Always-current refs to avoid stale closures
   const messagesRef = useRef<Message[]>([]);
   const cartRef = useRef<CartState>({ items: [], discountPct: 0, total: 0 });
   useEffect(() => { messagesRef.current = messages; }, [messages]);
@@ -654,7 +539,7 @@ export default function GuruChat() {
     }
   }, [isOpen, messages.length]);
 
-  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, isLoading, showInvoice, showPayment, showContactForm, invoiceGenerating, invoiceError, receipts]);
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, isLoading, showInvoice, showPayment, showContactForm, invoiceGenerating, invoiceError]);
   useEffect(() => { if (isOpen) inputRef.current?.focus(); }, [isOpen]);
 
   const streamChat = useCallback(async (userMessage: string) => {
@@ -719,7 +604,7 @@ export default function GuruChat() {
         setShowContactForm(true);
       }
 
-      // Legacy invoice trigger fallback (in case AI still emits it)
+      // Legacy invoice trigger fallback
       if (checkInvoiceTrigger(assistantText) && !showContactForm && !showInvoice) {
         setShowContactForm(true);
       }
@@ -732,7 +617,6 @@ export default function GuruChat() {
   }, [messages, sessionToken, cart, showContactForm, showInvoice]);
 
   const handleContactFormSubmit = async (name: string, email: string, phone: string) => {
-    // Use refs to get the freshest cart & messages at the time of submission
     const latestCart = cartRef.current.items.length > 0 ? cartRef.current : { items: [], discountPct: 0, total: 0 };
     await generateInvoice(name, email, phone, latestCart);
   };
@@ -741,13 +625,11 @@ export default function GuruChat() {
     setInvoiceGenerating(true);
     setInvoiceError("");
     try {
-      // Use messagesRef so we always have the full up-to-date conversation
       const chatSummary = messagesRef.current
         .map((m) => `[${m.role.toUpperCase()}]: ${m.content}`)
         .join("\n\n")
         .slice(0, 5000);
 
-      // If cart is empty, try to re-parse from the last few assistant messages
       let lineItems = cartData.items;
       if (lineItems.length === 0) {
         for (let i = messagesRef.current.length - 1; i >= 0; i--) {
@@ -762,7 +644,6 @@ export default function GuruChat() {
         }
       }
 
-      // Still no items — create a placeholder so the order doesn't fail validation
       if (lineItems.length === 0) {
         lineItems = [{ name: "Custom Project (details TBD)", description: "Scope to be confirmed", price: 0 }];
       }
@@ -798,7 +679,6 @@ export default function GuruChat() {
       });
       setShowInvoice(true);
       setShowPayment(true);
-      setReceipts([]);
     } catch (err) {
       console.error("Invoice generation failed:", err);
       setInvoiceError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
@@ -807,41 +687,20 @@ export default function GuruChat() {
     }
   };
 
-  const handlePaid = (receipt: ReceiptData, nextTranche: { label: string; amount: number } | null) => {
-    setReceipts((prev) => [...prev, { receipt, nextTranche }]);
-    if (receipt.isFullyPaid) {
-      setShowPayment(false);
-      setTimeout(() => {
-        setMessages((prev) => [...prev, {
-          role: "assistant",
-          content: `🎉 **Payment confirmed, ${invoiceData?.clientName}!**\n\nYour project is now locked in. Our team is already excited to get started.\n\n**We will contact you immediately — watch your inbox and phone for our message within minutes!**`,
-        }]);
-      }, 500);
-    }
-  };
-
-  // Format message — bold last paragraph, handle markdown
   const formatMessage = (text: string) => {
     text = text.replace(/<<<GENERATE_INVOICE>>>/g, "").replace(/<<<COLLECT_CONTACT>>>/g, "").trim();
-
-    // Split into paragraphs
     const paragraphs = text.split(/\n\n+/);
     const formattedParagraphs = paragraphs.map((para, idx) => {
       let p = para;
-      // Bold inline **text**
       p = p.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
-      // Lists
       p = p.replace(/^[-•]\s+(.+)$/gm, "<li>$1</li>");
       p = p.replace(/(<li>.*<\/li>\n?)+/g, (m) => `<ul class="list-disc list-inside space-y-1 my-1">${m}</ul>`);
-      // Inline newlines
       p = p.replace(/\n/g, "<br/>");
-      // Bold the last paragraph
       if (idx === paragraphs.length - 1 && paragraphs.length > 1) {
         p = `<strong>${p}</strong>`;
       }
       return p;
     });
-
     return formattedParagraphs.join("<br/><br/>");
   };
 
@@ -994,7 +853,7 @@ export default function GuruChat() {
                   </motion.div>
                 )}
 
-                {/* In-chat Contact Form — stays visible while generating, replaced by invoice once done */}
+                {/* Contact Form */}
                 {(showContactForm || invoiceGenerating) && !showInvoice && (
                   <div className="flex justify-start">
                     <div className="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold text-primary-foreground mr-2 flex-shrink-0 mt-0.5"
@@ -1036,7 +895,7 @@ export default function GuruChat() {
                   </div>
                 )}
 
-                {/* In-chat Invoice */}
+                {/* Invoice */}
                 {showInvoice && invoiceData && (
                   <div className="flex justify-start">
                     <div className="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold text-primary-foreground mr-2 flex-shrink-0 mt-0.5"
@@ -1047,27 +906,16 @@ export default function GuruChat() {
                   </div>
                 )}
 
-                {/* In-chat Payment */}
+                {/* Payment / Bank Details */}
                 {showPayment && invoiceData && (
                   <div className="flex justify-start">
                     <div className="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold text-primary-foreground mr-2 flex-shrink-0 mt-0.5"
                       style={{ background: "linear-gradient(135deg, hsl(25 85% 55%), hsl(35 100% 70%))" }}>G</div>
                     <div className="flex-1 min-w-0">
-                      <PaymentCard data={invoiceData} onPaid={handlePaid} />
+                      <PaymentCard data={invoiceData} />
                     </div>
                   </div>
                 )}
-
-                {/* Receipts */}
-                {receipts.map((r, i) => (
-                  <div key={i} className="flex justify-start">
-                    <div className="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold text-primary-foreground mr-2 flex-shrink-0 mt-0.5"
-                      style={{ background: "linear-gradient(135deg, hsl(25 85% 55%), hsl(35 100% 70%))" }}>G</div>
-                    <div className="flex-1 min-w-0">
-                      <ReceiptCard receipt={r.receipt} clientName={invoiceData?.clientName || ""} nextTranche={r.nextTranche} />
-                    </div>
-                  </div>
-                ))}
 
                 <div ref={bottomRef} />
               </div>

@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle, CreditCard, ArrowLeft, Loader2, Shield, Clock } from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowLeft, Shield, Clock, Copy, Check, Globe, Building2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { LineItem } from "@/lib/chat-utils";
 
 interface OrderData {
@@ -16,18 +17,68 @@ interface OrderData {
   orderId: string;
 }
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+const BANK_ACCOUNTS = {
+  international: {
+    label: "International",
+    flag: "🌍",
+    subtitle: "Wire / ACH Transfer (USD)",
+    fields: [
+      { label: "Bank", value: "Lead Bank" },
+      { label: "Account Name", value: "Olayemi Awoyemi" },
+      { label: "Account Number", value: "219684676460" },
+      { label: "Wire Routing", value: "101019644" },
+      { label: "ACH Routing", value: "101019644" },
+      { label: "Account Type", value: "Checking" },
+      { label: "Bank Address", value: "1801 Main St., Kansas City, MO 64108" },
+    ],
+  },
+  nigerian: {
+    label: "Nigerian",
+    flag: "🇳🇬",
+    subtitle: "Bank Transfer (NGN)",
+    fields: [
+      { label: "Bank", value: "Moniepoint MFB" },
+      { label: "Account Name", value: "Olayemi Awoyemi" },
+      { label: "Account Number", value: "9061989669" },
+    ],
+  },
+};
 
-type PaymentState = "idle" | "processing" | "success" | "error";
+function CopyField({ label, value }: { label: string; value: string }) {
+  const [copied, setCopied] = useState(false);
+  const handleCopy = () => {
+    navigator.clipboard.writeText(value);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+  return (
+    <div
+      className="flex items-center justify-between gap-3 px-4 py-3 rounded-2xl cursor-pointer group transition-all"
+      style={{ background: "hsl(0 0% 9%)", border: "1px solid hsl(0 0% 16%)" }}
+      onClick={handleCopy}
+    >
+      <div className="min-w-0">
+        <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">{label}</p>
+        <p className="text-sm font-medium text-foreground">{value}</p>
+      </div>
+      <div
+        className="flex-shrink-0 w-8 h-8 rounded-xl flex items-center justify-center transition-all"
+        style={{ background: copied ? "hsl(142 70% 45% / 0.15)" : "hsl(0 0% 13%)" }}
+      >
+        {copied
+          ? <Check className="w-4 h-4 text-green-400" />
+          : <Copy className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+        }
+      </div>
+    </div>
+  );
+}
 
 export default function CheckoutPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [order, setOrder] = useState<OrderData | null>(null);
-  const [paymentState, setPaymentState] = useState<PaymentState>("idle");
-  const [selectedMethod, setSelectedMethod] = useState<"paystack" | "paypal">("paystack");
-  const [errorMsg, setErrorMsg] = useState("");
+  const [selectedRegion, setSelectedRegion] = useState<"international" | "nigerian">("international");
   const orderId = searchParams.get("order");
 
   useEffect(() => {
@@ -39,44 +90,6 @@ export default function CheckoutPage() {
     }
   }, [orderId, navigate]);
 
-  const simulatePayment = async () => {
-    if (!order) return;
-    setPaymentState("processing");
-    setErrorMsg("");
-
-    try {
-      // Simulate payment processing delay
-      await new Promise((r) => setTimeout(r, 2500));
-
-      // Generate a mock reference
-      const mockRef = `TEST_${Date.now()}_${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
-
-      const resp = await fetch(`${SUPABASE_URL}/functions/v1/verify-payment`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-        },
-        body: JSON.stringify({
-          reference: mockRef,
-          orderId: order.orderId,
-          method: selectedMethod,
-        }),
-      });
-
-      const data = await resp.json();
-      if (data.success) {
-        sessionStorage.removeItem("pending_order");
-        setPaymentState("success");
-      } else {
-        throw new Error(data.message || "Payment verification failed");
-      }
-    } catch (err) {
-      setPaymentState("error");
-      setErrorMsg(err instanceof Error ? err.message : "Payment failed. Please try again.");
-    }
-  };
-
   if (!order) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -85,74 +98,7 @@ export default function CheckoutPage() {
     );
   }
 
-  if (paymentState === "success") {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-6">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ type: "spring", stiffness: 300, damping: 25 }}
-          className="w-full max-w-md text-center"
-        >
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2, type: "spring", stiffness: 300 }}
-            className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6"
-            style={{ background: "linear-gradient(135deg, hsl(142 70% 45%), hsl(142 85% 55%))" }}
-          >
-            <CheckCircle className="w-10 h-10 text-white" />
-          </motion.div>
-
-          <h1 className="text-2xl font-bold text-foreground mb-3">Payment Successful! 🎉</h1>
-          <p className="text-muted-foreground mb-6 leading-relaxed">
-            Thank you, <strong>{order.clientName}</strong>! Your payment of{" "}
-            <strong>${order.total.toLocaleString()} USD</strong> has been received.
-            <br />
-            <br />
-            Our team will reach out to you at{" "}
-            <strong>{order.clientEmail}</strong> within <strong>24 hours</strong> to kick off your
-            project. We can't wait to build something amazing together! 🚀
-          </p>
-
-          {/* Receipt Summary */}
-          <div
-            className="rounded-2xl p-4 mb-6 text-left"
-            style={{ background: "hsl(0 0% 9%)", border: "1px solid hsl(0 0% 14%)" }}
-          >
-            <p className="text-xs text-muted-foreground mb-3 font-semibold uppercase tracking-wide">
-              Receipt Summary
-            </p>
-            {order.lineItems.map((item, i) => (
-              <div key={i} className="flex justify-between text-sm py-1">
-                <span className="text-muted-foreground">{item.name}</span>
-                <span className="text-foreground font-medium">${item.price.toLocaleString()}</span>
-              </div>
-            ))}
-            <div className="flex justify-between text-sm pt-3 mt-2 border-t border-border/50 font-bold">
-              <span>Total Paid</span>
-              <span className="text-gradient-copper">${order.total.toLocaleString()} USD</span>
-            </div>
-            <p className="text-xs text-muted-foreground mt-2">
-              Invoice: {order.invoiceNumber}
-            </p>
-          </div>
-
-          <div className="flex gap-3">
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => navigate("/")}
-              className="flex-1 py-3 rounded-2xl text-sm font-medium text-foreground"
-              style={{ background: "hsl(0 0% 10%)", border: "1px solid hsl(0 0% 18%)" }}
-            >
-              Back to Home
-            </motion.button>
-          </div>
-        </motion.div>
-      </div>
-    );
-  }
+  const account = BANK_ACCOUNTS[selectedRegion];
 
   return (
     <div className="min-h-screen bg-background">
@@ -178,127 +124,86 @@ export default function CheckoutPage() {
       </div>
 
       <div className="max-w-4xl mx-auto px-6 py-10 grid md:grid-cols-[1fr_380px] gap-8">
-        {/* Payment Form */}
+        {/* Payment Instructions */}
         <div>
-          <h1 className="text-2xl font-bold text-foreground mb-6">Complete Your Payment</h1>
+          <h1 className="text-2xl font-bold text-foreground mb-2">Bank Transfer Details</h1>
+          <p className="text-muted-foreground text-sm mb-6">
+            Select your location to see the right bank details, then transfer the amount shown. Tap any field to copy it.
+          </p>
 
-          {/* Payment Methods */}
+          {/* Region toggle */}
           <div className="grid grid-cols-2 gap-3 mb-6">
-            {(["paystack", "paypal"] as const).map((method) => (
-              <button
-                key={method}
-                onClick={() => setSelectedMethod(method)}
-                className={`p-4 rounded-2xl border text-left transition-all ${
-                  selectedMethod === method
-                    ? "border-primary/50 bg-primary/5"
-                    : "border-border hover:border-border/80"
-                }`}
-              >
-                <div className="flex items-center gap-3 mb-2">
-                  <div
-                    className={`w-4 h-4 rounded-full border-2 transition-all ${
-                      selectedMethod === method
-                        ? "border-primary bg-primary"
-                        : "border-muted-foreground"
-                    }`}
-                  />
-                  <span className="font-semibold text-sm text-foreground capitalize">{method}</span>
-                  {method === "paystack" && (
-                    <span
-                      className="ml-auto text-[10px] px-1.5 py-0.5 rounded font-bold"
-                      style={{ background: "hsl(142 70% 45% / 0.2)", color: "hsl(142 70% 55%)" }}
-                    >
-                      TEST
-                    </span>
-                  )}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  {method === "paystack"
-                    ? "Pay with card, bank transfer or USSD"
-                    : "Pay via PayPal sandbox (test mode)"}
-                </p>
-              </button>
-            ))}
+            {(Object.keys(BANK_ACCOUNTS) as Array<keyof typeof BANK_ACCOUNTS>).map((key) => {
+              const acc = BANK_ACCOUNTS[key];
+              return (
+                <button
+                  key={key}
+                  onClick={() => setSelectedRegion(key)}
+                  className="p-4 rounded-2xl border text-left transition-all"
+                  style={{
+                    borderColor: selectedRegion === key ? "hsl(25 85% 55% / 0.6)" : "hsl(0 0% 18%)",
+                    background: selectedRegion === key ? "hsl(25 85% 55% / 0.07)" : "transparent",
+                  }}
+                >
+                  <div className="flex items-center gap-3 mb-1.5">
+                    <div
+                      className="w-4 h-4 rounded-full border-2 transition-all"
+                      style={{
+                        borderColor: selectedRegion === key ? "hsl(25 85% 55%)" : "hsl(0 0% 35%)",
+                        background: selectedRegion === key ? "hsl(25 85% 55%)" : "transparent",
+                      }}
+                    />
+                    <span className="text-lg">{acc.flag}</span>
+                    <span className="font-semibold text-sm text-foreground">{acc.label}</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground pl-7">{acc.subtitle}</p>
+                </button>
+              );
+            })}
           </div>
 
-          {/* TEST MODE Banner */}
+          {/* Account fields */}
+          <div className="mb-6">
+            <div className="flex items-center gap-2 mb-3">
+              {selectedRegion === "international"
+                ? <Globe className="w-4 h-4 text-muted-foreground" />
+                : <Building2 className="w-4 h-4 text-muted-foreground" />
+              }
+              <p className="text-xs uppercase tracking-wide text-muted-foreground font-semibold">
+                {account.label} Bank Account Details
+              </p>
+            </div>
+            <div className="space-y-2">
+              {account.fields.map((field) => (
+                <CopyField key={field.label} label={field.label} value={field.value} />
+              ))}
+            </div>
+          </div>
+
+          {/* Amount box */}
           <div
-            className="rounded-2xl p-4 mb-6 flex items-start gap-3"
-            style={{ background: "hsl(43 100% 50% / 0.08)", border: "1px solid hsl(43 100% 50% / 0.2)" }}
+            className="rounded-2xl p-5 mb-6"
+            style={{ background: "hsl(25 85% 55% / 0.08)", border: "1px solid hsl(25 85% 55% / 0.25)" }}
           >
-            <Clock className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
-            <div>
-              <p className="text-sm font-semibold text-yellow-400">Test Mode Active</p>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                This is a sandbox environment. No real money will be charged. Click "Complete Test Payment" to simulate a successful payment.
-              </p>
-            </div>
+            <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Amount to Transfer</p>
+            <p className="text-3xl font-bold" style={{ color: "hsl(25 85% 65%)" }}>
+              ${order.total.toLocaleString()} USD
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">Invoice {order.invoiceNumber}</p>
           </div>
 
-          {/* Test card info */}
-          {selectedMethod === "paystack" && (
-            <div
-              className="rounded-2xl p-4 mb-6"
-              style={{ background: "hsl(0 0% 9%)", border: "1px solid hsl(0 0% 14%)" }}
-            >
-              <p className="text-xs font-semibold text-muted-foreground mb-3 uppercase tracking-wide">
-                Test Card Details
-              </p>
-              <div className="space-y-2 font-mono text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Card Number</span>
-                  <span className="text-foreground">4084 0840 8408 4081</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Expiry</span>
-                  <span className="text-foreground">Any future date</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">CVV</span>
-                  <span className="text-foreground">408</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">PIN</span>
-                  <span className="text-foreground">0000</span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {errorMsg && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="rounded-2xl p-4 mb-4"
-              style={{ background: "hsl(0 84% 60% / 0.1)", border: "1px solid hsl(0 84% 60% / 0.3)" }}
-            >
-              <p className="text-sm text-red-400">{errorMsg}</p>
-            </motion.div>
-          )}
-
-          <motion.button
-            whileHover={{ scale: 1.02, y: -1 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={simulatePayment}
-            disabled={paymentState === "processing"}
-            className="w-full py-4 rounded-2xl flex items-center justify-center gap-3 text-primary-foreground font-semibold disabled:opacity-70 transition-all"
-            style={{
-              background: "linear-gradient(135deg, hsl(25 85% 55%), hsl(35 100% 70%))",
-              boxShadow: "0 4px 20px hsl(25 85% 55% / 0.4)",
-            }}
+          {/* After transfer instructions */}
+          <div
+            className="rounded-2xl p-5 space-y-2"
+            style={{ background: "hsl(0 0% 9%)", border: "1px solid hsl(0 0% 16%)" }}
           >
-            {paymentState === "processing" ? (
-              <>
-                <Loader2 className="w-5 h-5 animate-spin" />
-                Processing Payment...
-              </>
-            ) : (
-              <>
-                <CreditCard className="w-5 h-5" />
-                Complete Test Payment — ${order.total.toLocaleString()} USD
-              </>
-            )}
-          </motion.button>
+            <p className="text-sm font-semibold text-foreground">After you transfer:</p>
+            <ol className="space-y-2 text-sm text-muted-foreground list-decimal list-inside">
+              <li>Send your proof of payment (screenshot or receipt) to <strong className="text-foreground">hello@designers.guru</strong></li>
+              <li>Or reach us via WhatsApp with the same proof</li>
+              <li>We'll confirm receipt and kick off your project within <strong className="text-foreground">24 hours</strong></li>
+            </ol>
+          </div>
         </div>
 
         {/* Order Summary */}
@@ -347,14 +252,14 @@ export default function CheckoutPage() {
                 )}
                 <div className="flex justify-between font-bold text-base pt-2 border-t border-border/50">
                   <span className="text-foreground">Total</span>
-                  <span className="text-gradient-copper">${order.total.toLocaleString()} USD</span>
+                  <span style={{ color: "hsl(25 85% 65%)" }}>${order.total.toLocaleString()} USD</span>
                 </div>
               </div>
 
               <div className="mt-4 pt-4 border-t border-border/50 space-y-2">
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Shield className="w-3.5 h-3.5 text-green-500" />
-                  SSL-secured 256-bit encryption
+                  Bank transfer · No card fees
                 </div>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Clock className="w-3.5 h-3.5 text-primary" />
@@ -363,6 +268,16 @@ export default function CheckoutPage() {
               </div>
             </div>
           </div>
+
+          <motion.button
+            whileHover={{ scale: 1.02, y: -1 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => navigate("/")}
+            className="w-full mt-4 py-3 rounded-2xl text-sm font-medium text-muted-foreground transition-all"
+            style={{ background: "hsl(0 0% 10%)", border: "1px solid hsl(0 0% 18%)" }}
+          >
+            Back to Home
+          </motion.button>
         </div>
       </div>
     </div>
