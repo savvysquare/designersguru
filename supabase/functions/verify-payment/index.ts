@@ -34,7 +34,7 @@ serve(async (req) => {
       .from("payments")
       .select("amount_usd, status")
       .eq("order_id", orderId)
-      .eq("status", "paid");
+      .eq("status", "success");
 
     const previouslyPaid = (existingPayments || []).reduce(
       (sum: number, p: { amount_usd: number }) => sum + Number(p.amount_usd), 0
@@ -46,7 +46,7 @@ serve(async (req) => {
         order_id: orderId,
         amount_usd: amountPaid,
         method,
-        status: "paid",
+        status: "success",
         transaction_reference: reference,
         paid_at: new Date().toISOString(),
         gateway_response: { test: true, reference, tranche_index: trancheIndex, total_tranches: totalTranches, tranche_label: trancheLabel },
