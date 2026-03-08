@@ -194,7 +194,8 @@ body::after {
 /* ── Electric Border Effect ─────────────────────────────────────────────── */
 .electric-card-wrapper {
   position: relative;
-  height: 100%;
+  height: auto;
+  min-height: 100%;
 }
 
 .electric-card-container {
