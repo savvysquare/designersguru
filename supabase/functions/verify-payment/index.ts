@@ -34,7 +34,7 @@ serve(async (req) => {
       .from("payments")
       .select("amount_usd, status")
       .eq("order_id", orderId)
-      .eq("status", "paid");
+      .eq("status", "success");
 
     const previouslyPaid = (existingPayments || []).reduce(
       (sum: number, p: { amount_usd: number }) => sum + Number(p.amount_usd), 0
