@@ -746,7 +746,18 @@ export default function GuruChat() {
       });
       const data = await resp.json();
       if (data.success) {
-        setInvoiceData({ ...data.order, clientPhone: phone, discountAmount: data.order.discountAmount || 0 });
+        setInvoiceData({
+          clientName: data.order.clientName,
+          clientEmail: data.order.clientEmail,
+          clientPhone: phone,
+          lineItems: data.order.lineItems,
+          subtotal: data.order.subtotal,
+          discountPct: data.order.discountPct,
+          discountAmount: data.order.discountAmount || 0,
+          total: data.order.total,
+          invoiceNumber: data.order.invoiceNumber,
+          orderId: data.order.id,
+        });
         setShowInvoice(true);
         setShowPayment(true); // auto-show payment immediately
         setReceipts([]);
