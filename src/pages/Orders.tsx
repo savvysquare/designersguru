@@ -107,11 +107,11 @@ export default function OrdersDashboard() {
 
       // Compute stats
       const total = data?.length || 0;
-      const paid = data?.filter((o) => o.status === "paid" || o.status === "completed").length || 0;
+      const paid = data?.filter((o) => ["paid", "completed"].includes(o.status)).length || 0;
       const revenue = data
-        ?.filter((o) => o.status === "paid" || o.status === "completed")
+        ?.filter((o) => ["paid", "completed"].includes(o.status))
         .reduce((s, o) => s + (o.total_usd || 0), 0) || 0;
-      const pending = data?.filter((o) => o.status === "pending" || o.status === "invoiced").length || 0;
+      const pending = data?.filter((o) => ["pending", "invoiced", "awaiting_payment"].includes(o.status)).length || 0;
       setStats({ total, paid, revenue, pending });
     } catch (err) {
       console.error(err);
