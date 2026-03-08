@@ -520,9 +520,23 @@ function PaymentCard({ data }: { data: InvoiceData }) {
         {/* Amount to transfer */}
         <div className="rounded-xl p-3" style={{ background: "hsl(25 85% 55% / 0.08)", border: "1px solid hsl(25 85% 55% / 0.2)" }}>
           <p className="text-[10px] uppercase tracking-wide text-muted-foreground mb-1">Amount to Transfer Now</p>
-          <p className="text-lg font-bold" style={{ color: "hsl(25 85% 65%)" }}>
-            ${tranches[0].amount.toLocaleString()} USD
-          </p>
+          {rateLoading && isNigerian ? (
+            <div className="flex items-center gap-2">
+              <Loader2 className="w-4 h-4 animate-spin" style={{ color: "hsl(25 85% 65%)" }} />
+              <span className="text-sm text-muted-foreground">Fetching live rate…</span>
+            </div>
+          ) : (
+            <>
+              <p className="text-lg font-bold" style={{ color: "hsl(25 85% 65%)" }}>
+                {formatAmt(tranches[0].amount)}
+              </p>
+              {isNigerian && ngnRate && (
+                <p className="text-[10px] text-muted-foreground mt-0.5">
+                  ≈ ${tranches[0].amount.toLocaleString()} USD · rate: ₦{Math.round(ngnRate).toLocaleString()}/$ (live)
+                </p>
+              )}
+            </>
+          )}
           <p className="text-[10px] text-muted-foreground mt-0.5">{tranches[0].label}</p>
         </div>
 
