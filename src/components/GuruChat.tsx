@@ -44,7 +44,7 @@ interface ReceiptData {
   paidAt: string;
 }
 
-// Tranche plans
+// Tranche plans — only Full Payment and 50/50 Split
 const TRANCHE_PLANS = [
   {
     id: "full",
@@ -64,21 +64,6 @@ const TRANCHE_PLANS = [
       { label: "Deposit (50%)", amount: Math.round(total * 0.5), pct: 50 },
       { label: "Final Payment (50%)", amount: Math.round(total * 0.5), pct: 50 },
     ],
-  },
-  {
-    id: "33-33-33",
-    label: "3-Part Plan",
-    description: "33% now, 33% midway, 33% on delivery",
-    badge: "Flexible",
-    badgeColor: "hsl(217 91% 60%)",
-    getTranches: (total: number) => {
-      const third = Math.floor(total / 3);
-      return [
-        { label: "1st Payment (33%)", amount: third, pct: 33 },
-        { label: "2nd Payment (33%)", amount: third, pct: 33 },
-        { label: "Final Payment (34%)", amount: total - third * 2, pct: 34 },
-      ];
-    },
   },
 ];
 
@@ -761,7 +746,18 @@ export default function GuruChat() {
       });
       const data = await resp.json();
       if (data.success) {
-        setInvoiceData({ ...data.order, clientPhone: phone, discountAmount: data.order.discountAmount || 0 });
+        setInvoiceData({
+          clientName: data.order.clientName,
+          clientEmail: data.order.clientEmail,
+          clientPhone: phone,
+          lineItems: data.order.lineItems,
+          subtotal: data.order.subtotal,
+          discountPct: data.order.discountPct,
+          discountAmount: data.order.discountAmount || 0,
+          total: data.order.total,
+          invoiceNumber: data.order.invoiceNumber,
+          orderId: data.order.id,
+        });
         setShowInvoice(true);
         setShowPayment(true); // auto-show payment immediately
         setReceipts([]);

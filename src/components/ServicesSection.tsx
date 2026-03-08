@@ -142,7 +142,9 @@ const ServicesSection = () => {
                 }`}
               >
                 {service.popular ? (
-                  <ElectricBorderCard>{cardContent}</ElectricBorderCard>
+                  <div className="relative">
+                    <ElectricBorderCard>{cardContent}</ElectricBorderCard>
+                  </div>
                 ) : (
                   cardContent
                 )}
