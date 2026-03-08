@@ -32,7 +32,7 @@ export function parseCartFromMessage(text: string): Partial<CartState> | null {
   const itemsText = packageMatch[1];
   const items: LineItem[] = [];
 
-  // Parse lines like "- **Service Name**: $1,200 – description"
+  // Try parsing lines with individual prices: "- **Service Name**: $1,200 – description"
   const itemLines = itemsText.match(/[-•]\s+\*?\*?([^:$\n]+)\*?\*?[:\s]+\$([0-9,]+)([^\n]*)/g) || [];
   for (const line of itemLines) {
     const m = line.match(/[-•]\s+\*?\*?([^:$\n]+?)\*?\*?\s*[:\-–]\s*\$([0-9,]+)(.*)?/);
@@ -45,7 +45,28 @@ export function parseCartFromMessage(text: string): Partial<CartState> | null {
     }
   }
 
-  return { items, total };
+  // If no individually-priced items found, parse item names without prices
+  if (items.length === 0) {
+    const plainLines = itemsText.match(/[-•]\s+\*?\*?(.+?)\*?\*?\s*$/gm) || [];
+    for (const line of plainLines) {
+      const m = line.match(/[-•]\s+\*?\*?(.+?)\*?\*?\s*$/);
+      if (m) {
+        const name = m[1].trim().replace(/\*\*/g, "");
+        if (name.length > 1) {
+          items.push({ name, description: "", price: 0 });
+        }
+      }
+    }
+    // Distribute total evenly across items, or assign all to first
+    if (items.length > 0 && total > 0) {
+      const perItem = Math.round(total / items.length);
+      items.forEach((item, i) => {
+        item.price = i === items.length - 1 ? total - perItem * (items.length - 1) : perItem;
+      });
+    }
+  }
+
+  return { items, total: total || items.reduce((s, i) => s + i.price, 0) };
 }
 
 export function checkInvoiceTrigger(text: string): boolean {
