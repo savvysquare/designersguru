@@ -52,6 +52,10 @@ export function checkInvoiceTrigger(text: string): boolean {
   return text.includes("<<<GENERATE_INVOICE>>>");
 }
 
+export function checkContactTrigger(text: string): boolean {
+  return text.includes("<<<COLLECT_CONTACT>>>");
+}
+
 export function extractClientInfo(messages: Array<{ role: string; content: string }>): {
   name: string | null;
   email: string | null;

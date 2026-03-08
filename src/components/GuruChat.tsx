@@ -4,7 +4,7 @@ import {
   X, Send, MessageCircle, Loader2, ShoppingCart, ChevronDown,
   CreditCard, CheckCircle, Shield, Copy, Check, Banknote, User, Mail, Phone
 } from "lucide-react";
-import { getSessionToken, parseCartFromMessage, checkInvoiceTrigger, LineItem } from "@/lib/chat-utils";
+import { getSessionToken, parseCartFromMessage, checkInvoiceTrigger, checkContactTrigger, LineItem } from "@/lib/chat-utils";
 
 interface Message {
   role: "user" | "assistant";
@@ -722,8 +722,13 @@ export default function GuruChat() {
         setShowCart(true);
       }
 
-      // Invoice trigger → show contact form instead of extracting from text
-      if (checkInvoiceTrigger(assistantText) && cart.items.length > 0 && !showContactForm && !showInvoice) {
+      // Contact collection trigger → show contact form
+      if (checkContactTrigger(assistantText) && !showContactForm && !showInvoice) {
+        setShowContactForm(true);
+      }
+
+      // Legacy invoice trigger fallback (in case AI still emits it)
+      if (checkInvoiceTrigger(assistantText) && !showContactForm && !showInvoice) {
         setShowContactForm(true);
       }
     } catch (err) {
@@ -736,7 +741,9 @@ export default function GuruChat() {
 
   const handleContactFormSubmit = async (name: string, email: string, phone: string) => {
     setShowContactForm(false);
-    await generateInvoice(name, email, phone, cart);
+    // Always generate invoice after contact form is filled
+    const latestCart = cart.items.length > 0 ? cart : { items: [], discountPct: 0, total: 0 };
+    await generateInvoice(name, email, phone, latestCart);
   };
 
   const generateInvoice = async (name: string, email: string, phone: string, cartData: CartState) => {
@@ -777,7 +784,7 @@ export default function GuruChat() {
 
   // Format message — bold last paragraph, handle markdown
   const formatMessage = (text: string) => {
-    text = text.replace(/<<<GENERATE_INVOICE>>>/g, "").trim();
+    text = text.replace(/<<<GENERATE_INVOICE>>>/g, "").replace(/<<<COLLECT_CONTACT>>>/g, "").trim();
 
     // Split into paragraphs
     const paragraphs = text.split(/\n\n+/);
