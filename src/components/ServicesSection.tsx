@@ -76,28 +76,15 @@ const ServicesSection = () => {
         </motion.div>
 
         <div className="grid md:grid-cols-3 gap-5">
-          {services.map((service, i) => (
-            <motion.div
-              key={service.title}
-              custom={i}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={cardVariants}
-              whileHover={{ y: -6, transition: { type: "spring", stiffness: 300, damping: 20 } }}
-              className={`group relative p-7 rounded-3xl border transition-all duration-300 cursor-pointer ${
-                service.popular
-                  ? "bg-primary/5 border-primary/30 shadow-[0_0_40px_-10px_hsl(var(--primary)/0.2)]"
-                  : "bg-card border-border hover:border-primary/20"
-              }`}
-            >
-              {service.popular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-widest">
-                  Most Popular
-                </div>
-              )}
+          {services.map((service, i) => {
+            const cardContent = (
+              <div className="relative p-7">
+                {service.popular && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-widest z-10">
+                    Most Popular
+                  </div>
+                )}
 
-              <div className="relative">
                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-5 transition-colors duration-300 ${
                   service.popular ? "bg-primary/15" : "bg-secondary group-hover:bg-primary/10"
                 }`}>
@@ -137,8 +124,31 @@ const ServicesSection = () => {
                   <ArrowRight className="w-3.5 h-3.5" />
                 </motion.a>
               </div>
-            </motion.div>
-          ))}
+            );
+
+            return (
+              <motion.div
+                key={service.title}
+                custom={i}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={cardVariants}
+                whileHover={{ y: -6, transition: { type: "spring", stiffness: 300, damping: 20 } }}
+                className={`group relative rounded-3xl transition-all duration-300 cursor-pointer ${
+                  service.popular
+                    ? ""
+                    : "p-0 bg-card border border-border hover:border-primary/20"
+                }`}
+              >
+                {service.popular ? (
+                  <ElectricBorderCard>{cardContent}</ElectricBorderCard>
+                ) : (
+                  cardContent
+                )}
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>
