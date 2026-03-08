@@ -324,21 +324,40 @@ function InvoiceCard({
   );
 }
 
-// ─── In-chat Payment Card ─────────────────────────────────────────────────────
-function PaymentCard({
-  data,
-  onPaid,
-}: {
-  data: InvoiceData;
-  onPaid: (receipt: ReceiptData, nextTranche?: { label: string; amount: number } | null) => void;
-}) {
-  const [selectedPlan, setSelectedPlan] = useState("full");
-  const [selectedMethod, setSelectedMethod] = useState("paystack");
-  const [currentTranche, setCurrentTranche] = useState(0);
-  const [processing, setProcessing] = useState(false);
-  const [paidTranches, setPaidTranches] = useState<number[]>([]);
+// ─── Copyable Field ───────────────────────────────────────────────────────────
+function CopyField({ label, value }: { label: string; value: string }) {
   const [copied, setCopied] = useState(false);
-  const [error, setError] = useState("");
+  const handleCopy = () => {
+    navigator.clipboard.writeText(value);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+  return (
+    <div className="flex items-center justify-between gap-2 px-3 py-2 rounded-xl group"
+      style={{ background: "hsl(0 0% 7%)", border: "1px solid hsl(0 0% 14%)" }}>
+      <div className="min-w-0">
+        <p className="text-[9px] uppercase tracking-wider text-muted-foreground mb-0.5">{label}</p>
+        <p className="text-xs font-medium text-foreground truncate">{value}</p>
+      </div>
+      <button
+        onClick={handleCopy}
+        className="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center transition-all"
+        style={{ background: copied ? "hsl(142 70% 45% / 0.15)" : "hsl(0 0% 12%)" }}
+        title={`Copy ${label}`}
+      >
+        {copied
+          ? <Check className="w-3 h-3 text-green-400" />
+          : <Copy className="w-3 h-3 text-muted-foreground group-hover:text-foreground transition-colors" />
+        }
+      </button>
+    </div>
+  );
+}
+
+// ─── In-chat Payment Card ─────────────────────────────────────────────────────
+function PaymentCard({ data }: { data: InvoiceData }) {
+  const [selectedPlan, setSelectedPlan] = useState("full");
+  const [selectedRegion, setSelectedRegion] = useState<"international" | "nigerian">("international");
 
   const plan = TRANCHE_PLANS.find((p) => p.id === selectedPlan)!;
   const tranches = plan.getTranches(data.total);
