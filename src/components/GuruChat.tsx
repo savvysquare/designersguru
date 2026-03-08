@@ -203,7 +203,7 @@ function ContactFormCard({ onSubmit }: { onSubmit: (name: string, email: string,
           }}
         >
           {submitting
-            ? <><Loader2 className="w-4 h-4 animate-spin" /> Generating Invoice...</>
+            ? <><Loader2 className="w-4 h-4 animate-spin" /> Submitting...</>
             : <><CreditCard className="w-4 h-4" /> Generate My Invoice</>
           }
         </motion.button>
