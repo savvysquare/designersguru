@@ -490,19 +490,22 @@ export default function OrdersDashboard() {
                     <p className="text-xs text-muted-foreground mb-3 font-semibold uppercase tracking-wide">
                       Update Status
                     </p>
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-2 gap-2">
                       {Object.entries(STATUS_STYLES).map(([status, style]) => (
                         <button
                           key={status}
                           disabled={updatingStatus === selectedOrder.id}
                           onClick={() => updateOrderStatus(selectedOrder.id, status)}
-                          className={`py-2 px-3 rounded-xl text-xs font-medium border transition-all ${
+                          className={`py-2 px-3 rounded-xl text-xs font-medium border transition-all text-left ${
                             selectedOrder.status === status
                               ? style.class
                               : "border-border text-muted-foreground hover:border-border/80"
                           }`}
                         >
                           {style.label}
+                          {updatingStatus === selectedOrder.id && selectedOrder.status === status && (
+                            <span className="ml-1">…</span>
+                          )}
                         </button>
                       ))}
                     </div>
