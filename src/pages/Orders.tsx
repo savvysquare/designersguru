@@ -264,10 +264,10 @@ export default function OrdersDashboard() {
           </button>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
+            title="Sign Out"
+            className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
           >
             <LogOut className="w-4 h-4" />
-            Sign Out
           </button>
         </div>
       </div>
