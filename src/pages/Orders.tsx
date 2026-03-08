@@ -529,18 +529,42 @@ export default function OrdersDashboard() {
                     </button>
                   </div>
 
-                  {/* Chat Summary */}
+                  {/* Full Conversation Transcript */}
                   {selectedOrder.chat_summary && (
                     <div
                       className="rounded-2xl p-4"
                       style={{ background: "hsl(0 0% 11%)", border: "1px solid hsl(0 0% 16%)" }}
                     >
-                      <p className="text-xs text-muted-foreground mb-2 font-semibold uppercase tracking-wide">
-                        Discovery Summary
+                      <p className="text-xs text-muted-foreground mb-3 font-semibold uppercase tracking-wide">
+                        💬 Full Conversation
                       </p>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        {selectedOrder.chat_summary}
-                      </p>
+                      <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
+                        {selectedOrder.chat_summary.split("\n\n").filter(Boolean).map((line, i) => {
+                          const isUser = line.startsWith("[USER]:");
+                          const isAssistant = line.startsWith("[ASSISTANT]:");
+                          const text = line.replace(/^\[(USER|ASSISTANT)\]:\s*/, "");
+                          return (
+                            <div key={i} className={`flex gap-2 ${isUser ? "justify-end" : "justify-start"}`}>
+                              {isAssistant && (
+                                <div className="w-5 h-5 rounded-lg flex items-center justify-center text-[9px] font-bold text-primary-foreground flex-shrink-0 mt-0.5"
+                                  style={{ background: "linear-gradient(135deg, hsl(25 85% 55%), hsl(35 100% 70%))" }}>G</div>
+                              )}
+                              <div
+                                className="text-xs leading-relaxed rounded-xl px-3 py-2 max-w-[85%]"
+                                style={isUser
+                                  ? { background: "hsl(25 85% 55% / 0.15)", border: "1px solid hsl(25 85% 55% / 0.25)", color: "hsl(25 85% 75%)" }
+                                  : { background: "hsl(0 0% 8%)", border: "1px solid hsl(0 0% 14%)", color: "hsl(0 0% 70%)" }
+                                }
+                              >
+                                {text}
+                              </div>
+                              {isUser && (
+                                <div className="w-5 h-5 rounded-lg bg-muted flex items-center justify-center text-[9px] font-bold text-muted-foreground flex-shrink-0 mt-0.5">C</div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   )}
                 </div>
