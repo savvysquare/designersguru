@@ -654,7 +654,7 @@ export default function GuruChat() {
     }
   }, [isOpen, messages.length]);
 
-  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, isLoading, showInvoice, showPayment, showContactForm, receipts]);
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, isLoading, showInvoice, showPayment, showContactForm, invoiceGenerating, invoiceError, receipts]);
   useEffect(() => { if (isOpen) inputRef.current?.focus(); }, [isOpen]);
 
   const streamChat = useCallback(async (userMessage: string) => {
