@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Globe, Bot, Palette, Check } from "lucide-react";
+import ElectricBorderCard from "./ElectricBorderCard";
 
 const services = [
   {
