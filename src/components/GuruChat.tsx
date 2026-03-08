@@ -784,7 +784,7 @@ export default function GuruChat() {
 
   // Format message — bold last paragraph, handle markdown
   const formatMessage = (text: string) => {
-    text = text.replace(/<<<GENERATE_INVOICE>>>/g, "").trim();
+    text = text.replace(/<<<GENERATE_INVOICE>>>/g, "").replace(/<<<COLLECT_CONTACT>>>/g, "").trim();
 
     // Split into paragraphs
     const paragraphs = text.split(/\n\n+/);
