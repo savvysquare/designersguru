@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   X, Send, MessageCircle, Loader2, ShoppingCart, ChevronDown,
-  CreditCard, CheckCircle, Shield, Copy, Check, Banknote, User, Mail, Phone
+  CheckCircle, Shield, Copy, Check, User, Mail, Phone, Building2, Globe
 } from "lucide-react";
 import { getSessionToken, parseCartFromMessage, checkInvoiceTrigger, checkContactTrigger, LineItem } from "@/lib/chat-utils";
 
@@ -30,21 +30,7 @@ interface InvoiceData {
   orderId: string;
 }
 
-interface ReceiptData {
-  invoiceNumber: string;
-  amountPaid: number;
-  totalPaid: number;
-  remaining: number;
-  isFullyPaid: boolean;
-  trancheLabel: string;
-  trancheIndex: number;
-  totalTranches: number;
-  method: string;
-  reference: string;
-  paidAt: string;
-}
-
-// Tranche plans — only Full Payment and 60/40 Split
+// Tranche plans — Full Payment and 60/40 Split
 const TRANCHE_PLANS = [
   {
     id: "full",
@@ -67,10 +53,31 @@ const TRANCHE_PLANS = [
   },
 ];
 
-const PAYMENT_METHODS = [
-  { id: "paystack", label: "Card / Bank Transfer", sub: "Paystack · TEST MODE" },
-  { id: "paypal", label: "PayPal", sub: "Sandbox · TEST MODE" },
-];
+// Bank account details
+const BANK_ACCOUNTS = {
+  international: {
+    label: "International",
+    flag: "🌍",
+    fields: [
+      { label: "Bank", value: "Lead Bank" },
+      { label: "Account Name", value: "Olayemi Awoyemi" },
+      { label: "Account Number", value: "219684676460" },
+      { label: "Wire Routing", value: "101019644" },
+      { label: "ACH Routing", value: "101019644" },
+      { label: "Account Type", value: "Checking" },
+      { label: "Bank Address", value: "1801 Main St., Kansas City, MO 64108" },
+    ],
+  },
+  nigerian: {
+    label: "Nigerian",
+    flag: "🇳🇬",
+    fields: [
+      { label: "Bank", value: "Moniepoint MFB" },
+      { label: "Account Name", value: "Olayemi Awoyemi" },
+      { label: "Account Number", value: "9061989669" },
+    ],
+  },
+};
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
