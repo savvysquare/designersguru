@@ -490,11 +490,39 @@ function PaymentCard({ data }: { data: InvoiceData }) {
         </div>
 
         {/* After transfer note */}
-        <div className="rounded-xl p-3 space-y-1" style={{ background: "hsl(0 0% 7%)", border: "1px solid hsl(0 0% 14%)" }}>
+        <div className="rounded-xl p-3 space-y-2.5" style={{ background: "hsl(0 0% 7%)", border: "1px solid hsl(0 0% 14%)" }}>
           <p className="text-xs font-semibold text-foreground">After you transfer:</p>
           <p className="text-[10px] text-muted-foreground leading-relaxed">
-            Send proof of payment to <strong className="text-foreground">hello@designers.guru</strong> or via WhatsApp. We'll confirm receipt and kick off your project within <strong className="text-foreground">24 hours</strong>.
+            Send us your proof of payment — we'll confirm receipt and kick off your project within <strong className="text-foreground">24 hours</strong>.
           </p>
+          <div className="flex flex-col gap-2 pt-1">
+            <a
+              href="mailto:hello@designers.guru?subject=Proof%20of%20Payment&body=Hi%20Guru%20Designers%2C%0A%0AI%20have%20made%20a%20transfer%20and%20I%27m%20attaching%20my%20proof%20of%20payment%20below."
+              className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all"
+              style={{
+                background: "hsl(25 85% 55% / 0.12)",
+                border: "1px solid hsl(25 85% 55% / 0.35)",
+                color: "hsl(25 85% 65%)",
+              }}
+            >
+              <Mail className="w-3.5 h-3.5 flex-shrink-0" />
+              hello@designers.guru
+            </a>
+            <a
+              href="https://wa.me/2349061989669?text=Hi%20Guru%20Designers!%20I%27ve%20just%20made%20a%20transfer%20and%20I%27m%20sending%20my%20proof%20of%20payment."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all"
+              style={{
+                background: "hsl(142 70% 45% / 0.10)",
+                border: "1px solid hsl(142 70% 45% / 0.35)",
+                color: "hsl(142 70% 55%)",
+              }}
+            >
+              <MessageCircle className="w-3.5 h-3.5 flex-shrink-0" />
+              WhatsApp: +234 906 198 9669
+            </a>
+          </div>
         </div>
 
         <p className="text-[10px] text-center text-muted-foreground">
