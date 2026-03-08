@@ -4,7 +4,7 @@ import {
   X, Send, MessageCircle, Loader2, ShoppingCart, ChevronDown,
   CreditCard, CheckCircle, Shield, Copy, Check, Banknote, User, Mail, Phone
 } from "lucide-react";
-import { getSessionToken, parseCartFromMessage, checkInvoiceTrigger, LineItem } from "@/lib/chat-utils";
+import { getSessionToken, parseCartFromMessage, checkInvoiceTrigger, checkContactTrigger, LineItem } from "@/lib/chat-utils";
 
 interface Message {
   role: "user" | "assistant";
