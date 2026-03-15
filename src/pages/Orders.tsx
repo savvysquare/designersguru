@@ -456,6 +456,9 @@ export default function OrdersDashboard() {
                     <p className="text-xs text-muted-foreground mb-3 font-semibold uppercase tracking-wide">Client</p>
                     <p className="font-semibold text-foreground">{selectedOrder.clients?.name}</p>
                     <p className="text-sm text-muted-foreground">{selectedOrder.clients?.email}</p>
+                    {selectedOrder.clients?.phone && (
+                      <p className="text-sm text-muted-foreground mt-0.5">{selectedOrder.clients.phone}</p>
+                    )}
                   </div>
 
                   {/* Line Items */}
