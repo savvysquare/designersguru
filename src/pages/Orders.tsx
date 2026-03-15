@@ -36,6 +36,7 @@ interface Order {
   clients: {
     name: string;
     email: string;
+    phone: string | null;
   } | null;
 }
 
