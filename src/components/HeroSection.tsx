@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Mail, MessageCircle } from "lucide-react";
+import { Mail, MessageCircle, Bot } from "lucide-react";
 
 const EMAIL_SUBJECT = encodeURIComponent("I'd like to work with Guru Designers");
 const EMAIL_BODY = encodeURIComponent(
@@ -83,6 +83,16 @@ const HeroSection = () => {
             <Mail className="w-4 h-4" />
             Send Us an Email
           </motion.a>
+          <motion.button
+            whileHover={{ scale: 1.04, y: -2 }}
+            whileTap={{ scale: 0.96 }}
+            transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            onClick={() => window.dispatchEvent(new Event("open-guru-chat"))}
+            className="btn-ios-ghost inline-flex items-center justify-center gap-2.5 px-8 py-3.5 text-foreground rounded-2xl text-sm font-medium tracking-wide"
+          >
+            <Bot className="w-4 h-4" />
+            Talk to Guru
+          </motion.button>
           <motion.a
             whileHover={{ scale: 1.04, y: -2 }}
             whileTap={{ scale: 0.96 }}
