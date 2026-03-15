@@ -99,7 +99,7 @@ export default function OrdersDashboard() {
     try {
       const { data, error } = await supabase
         .from("orders")
-        .select("*, clients(name, email)")
+        .select("*, clients(name, email, phone)")
         .order("created_at", { ascending: false });
 
       if (error) throw error;
