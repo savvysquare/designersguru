@@ -78,7 +78,7 @@ const HeroSection = () => {
             whileTap={{ scale: 0.96 }}
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
             href={`mailto:hello@designers.guru?subject=${EMAIL_SUBJECT}&body=${EMAIL_BODY}`}
-            className="btn-ios inline-flex items-center justify-center gap-2.5 px-8 py-3.5 bg-primary text-primary-foreground rounded-2xl text-sm font-semibold tracking-wide"
+            className="btn-ios-ghost inline-flex items-center justify-center gap-2.5 px-8 py-3.5 text-foreground rounded-2xl text-sm font-medium tracking-wide"
           >
             <Mail className="w-4 h-4" />
             Send Us an Email
@@ -88,7 +88,7 @@ const HeroSection = () => {
             whileTap={{ scale: 0.96 }}
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
             onClick={() => window.dispatchEvent(new Event("open-guru-chat"))}
-            className="btn-ios-ghost inline-flex items-center justify-center gap-2.5 px-8 py-3.5 text-foreground rounded-2xl text-sm font-medium tracking-wide"
+            className="btn-ios inline-flex items-center justify-center gap-2.5 px-8 py-3.5 bg-primary text-primary-foreground rounded-2xl text-sm font-semibold tracking-wide"
           >
             <Bot className="w-4 h-4" />
             Talk to Guru
