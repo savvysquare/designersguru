@@ -610,6 +610,13 @@ export default function GuruChat() {
   useEffect(() => { messagesRef.current = messages; }, [messages]);
   useEffect(() => { cartRef.current = cart; }, [cart]);
 
+  // Listen for external "open-guru-chat" event (e.g. from hero/contact buttons)
+  useEffect(() => {
+    const handler = () => setIsOpen(true);
+    window.addEventListener("open-guru-chat", handler);
+    return () => window.removeEventListener("open-guru-chat", handler);
+  }, []);
+
   useEffect(() => {
     if (isOpen && messages.length === 0) {
       setTimeout(() => {

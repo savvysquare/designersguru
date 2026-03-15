@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Mail, MessageCircle } from "lucide-react";
+import { Mail, MessageCircle, Bot } from "lucide-react";
 
 const EMAIL_SUBJECT = encodeURIComponent("I'd like to work with Guru Designers");
 const EMAIL_BODY = encodeURIComponent(
