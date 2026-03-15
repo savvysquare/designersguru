@@ -36,6 +36,7 @@ interface Order {
   clients: {
     name: string;
     email: string;
+    phone: string | null;
   } | null;
 }
 
@@ -98,7 +99,7 @@ export default function OrdersDashboard() {
     try {
       const { data, error } = await supabase
         .from("orders")
-        .select("*, clients(name, email)")
+        .select("*, clients(name, email, phone)")
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -455,6 +456,9 @@ export default function OrdersDashboard() {
                     <p className="text-xs text-muted-foreground mb-3 font-semibold uppercase tracking-wide">Client</p>
                     <p className="font-semibold text-foreground">{selectedOrder.clients?.name}</p>
                     <p className="text-sm text-muted-foreground">{selectedOrder.clients?.email}</p>
+                    {selectedOrder.clients?.phone && (
+                      <p className="text-sm text-muted-foreground mt-0.5">{selectedOrder.clients.phone}</p>
+                    )}
                   </div>
 
                   {/* Line Items */}
