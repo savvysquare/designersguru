@@ -112,7 +112,12 @@ export default function OrdersDashboard() {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setOrders(data || []);
+      // Normalize clients join (Supabase can return array or object)
+      const normalized = (data || []).map((o: Order & { clients: unknown }) => ({
+        ...o,
+        clients: getClient(o.clients),
+      }));
+      setOrders(normalized);
 
       // Compute stats
       const total = data?.length || 0;
