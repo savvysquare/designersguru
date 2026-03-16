@@ -18,6 +18,12 @@ import {
 import { supabase } from "@/lib/supabase";
 import { toast } from "@/hooks/use-toast";
 
+interface ClientInfo {
+  name: string | null;
+  email: string | null;
+  phone: string | null;
+}
+
 interface Order {
   id: string;
   invoice_number: string;
@@ -33,11 +39,7 @@ interface Order {
   admin_notes: string | null;
   chat_summary: string | null;
   created_at: string;
-  clients: {
-    name: string;
-    email: string;
-    phone: string | null;
-  } | null;
+  clients: ClientInfo | ClientInfo[] | null;
 }
 
 const STATUS_STYLES: Record<string, { label: string; class: string }> = {
