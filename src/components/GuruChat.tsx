@@ -740,6 +740,7 @@ export default function GuruChat() {
         body: JSON.stringify({
           clientName: name,
           clientEmail: email,
+          clientPhone: phone,
           lineItems,
           discountPct: cartData.discountPct,
           sessionToken,

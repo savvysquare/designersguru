@@ -14,6 +14,7 @@ serve(async (req) => {
     const {
       clientName,
       clientEmail,
+      clientPhone,
       lineItems,
       discountPct = 0,
       sessionToken,
@@ -50,7 +51,7 @@ serve(async (req) => {
     const discountAmount = subtotal * (Math.min(discountPct, 15) / 100);
     const total = subtotal - discountAmount;
 
-    // Create or find client
+    // Create or find client, always save phone
     let clientId: string;
     const { data: existingClient } = await supabase
       .from("clients")
@@ -60,12 +61,20 @@ serve(async (req) => {
 
     if (existingClient) {
       clientId = existingClient.id;
+      // Update phone if provided
+      if (clientPhone) {
+        await supabase
+          .from("clients")
+          .update({ phone: clientPhone.trim(), name: clientName.trim() })
+          .eq("id", clientId);
+      }
     } else {
       const { data: newClient, error: clientError } = await supabase
         .from("clients")
         .insert({
           name: clientName.trim(),
           email: clientEmail.toLowerCase().trim(),
+          phone: clientPhone ? clientPhone.trim() : null,
           session_token: sessionToken,
         })
         .select("id")
