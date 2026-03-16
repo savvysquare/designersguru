@@ -39,7 +39,14 @@ interface Order {
   admin_notes: string | null;
   chat_summary: string | null;
   created_at: string;
-  clients: ClientInfo | ClientInfo[] | null;
+  clients: ClientInfo | null;
+}
+
+// Normalize Supabase join result (can be array or object)
+function getClient(raw: unknown): ClientInfo | null {
+  if (!raw) return null;
+  if (Array.isArray(raw)) return (raw[0] as ClientInfo) ?? null;
+  return raw as ClientInfo;
 }
 
 const STATUS_STYLES: Record<string, { label: string; class: string }> = {
