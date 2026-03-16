@@ -18,6 +18,12 @@ import {
 import { supabase } from "@/lib/supabase";
 import { toast } from "@/hooks/use-toast";
 
+interface ClientInfo {
+  name: string | null;
+  email: string | null;
+  phone: string | null;
+}
+
 interface Order {
   id: string;
   invoice_number: string;
@@ -33,11 +39,14 @@ interface Order {
   admin_notes: string | null;
   chat_summary: string | null;
   created_at: string;
-  clients: {
-    name: string;
-    email: string;
-    phone: string | null;
-  } | null;
+  clients: ClientInfo | null;
+}
+
+// Normalize Supabase join result (can be array or object)
+function getClient(raw: unknown): ClientInfo | null {
+  if (!raw) return null;
+  if (Array.isArray(raw)) return (raw[0] as ClientInfo) ?? null;
+  return raw as ClientInfo;
 }
 
 const STATUS_STYLES: Record<string, { label: string; class: string }> = {
@@ -103,7 +112,12 @@ export default function OrdersDashboard() {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setOrders(data || []);
+      // Normalize clients join (Supabase can return array or object)
+      const normalized = (data || []).map((o: Order & { clients: unknown }) => ({
+        ...o,
+        clients: getClient(o.clients),
+      }));
+      setOrders(normalized);
 
       // Compute stats
       const total = data?.length || 0;
