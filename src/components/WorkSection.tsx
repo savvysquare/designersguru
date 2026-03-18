@@ -45,12 +45,12 @@ const WorkSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mb-12"
+          className="mb-12 text-center"
         >
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
             Our <span className="text-gradient-copper">Work</span>
           </h2>
-          <p className="text-sm text-muted-foreground max-w-lg">
+          <p className="text-sm text-muted-foreground max-w-lg mx-auto">
             See what we've built. Every project is crafted to look great and perform even better.
           </p>
         </motion.div>
