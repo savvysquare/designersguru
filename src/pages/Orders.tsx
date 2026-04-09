@@ -50,14 +50,14 @@ function getClient(raw: unknown): ClientInfo | null {
 }
 
 const STATUS_STYLES: Record<string, { label: string; class: string }> = {
-  pending: { label: "Pending", class: "bg-yellow-500/15 text-yellow-400 border-yellow-500/20" },
-  invoiced: { label: "Invoiced", class: "bg-blue-500/15 text-blue-400 border-blue-500/20" },
-  awaiting_payment: { label: "Awaiting Payment", class: "bg-orange-500/15 text-orange-400 border-orange-500/20" },
-  deposit_paid: { label: "60% Paid · 40% Due", class: "bg-amber-500/15 text-amber-400 border-amber-500/20" },
-  paid: { label: "Fully Paid", class: "bg-green-500/15 text-green-400 border-green-500/20" },
-  in_progress: { label: "In Progress", class: "bg-purple-500/15 text-purple-400 border-purple-500/20" },
-  completed: { label: "Completed", class: "bg-emerald-500/15 text-emerald-400 border-emerald-500/20" },
-  cancelled: { label: "Cancelled", class: "bg-red-500/15 text-red-400 border-red-500/20" },
+  pending: { label: "Pending", class: "bg-yellow-100 text-yellow-700 border-yellow-200" },
+  invoiced: { label: "Invoiced", class: "bg-blue-100 text-blue-700 border-blue-200" },
+  awaiting_payment: { label: "Awaiting Payment", class: "bg-orange-100 text-orange-700 border-orange-200" },
+  deposit_paid: { label: "60% Paid · 40% Due", class: "bg-amber-100 text-amber-700 border-amber-200" },
+  paid: { label: "Fully Paid", class: "bg-green-100 text-green-700 border-green-200" },
+  in_progress: { label: "In Progress", class: "bg-purple-100 text-purple-700 border-purple-200" },
+  completed: { label: "Completed", class: "bg-emerald-100 text-emerald-700 border-emerald-200" },
+  cancelled: { label: "Cancelled", class: "bg-red-100 text-red-700 border-red-200" },
 };
 
 export default function OrdersDashboard() {
@@ -78,7 +78,7 @@ export default function OrdersDashboard() {
   const [stats, setStats] = useState({ total: 0, paid: 0, revenue: 0, pending: 0 });
 
   useEffect(() => {
-    supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsAuthenticated(!!session);
       setAuthLoading(false);
     });
@@ -86,101 +86,79 @@ export default function OrdersDashboard() {
       setIsAuthenticated(!!session);
       setAuthLoading(false);
     });
+    return () => { listener.subscription.unsubscribe(); };
   }, []);
+
+  const fetchOrders = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("orders")
+      .select("*, clients(name, email, phone)")
+      .order("created_at", { ascending: false });
+    if (error) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+      setLoading(false);
+      return;
+    }
+    const mapped = (data || []).map((o: any) => ({ ...o, clients: getClient(o.clients) })) as Order[];
+    setOrders(mapped);
+
+    const total = mapped.length;
+    const paid = mapped.filter((o) => o.status === "paid").length;
+    const revenue = mapped.filter((o) => o.status === "paid").reduce((s, o) => s + (o.total_usd || 0), 0);
+    const pending = mapped.filter((o) => ["pending", "invoiced", "awaiting_payment", "deposit_paid"].includes(o.status)).length;
+    setStats({ total, paid, revenue, pending });
+    setLoading(false);
+  };
 
   useEffect(() => {
     if (isAuthenticated) {
       fetchOrders();
-      // Real-time subscription
-      const channel = supabase
-        .channel("orders_changes")
-        .on("postgres_changes", { event: "*", schema: "public", table: "orders" }, () => {
-          fetchOrders();
-          toast({ title: "📦 Orders updated", description: "A new order or update just arrived!" });
-        })
-        .subscribe();
+      const channel = supabase.channel("orders-realtime").on("postgres_changes", { event: "*", schema: "public", table: "orders" }, () => fetchOrders()).subscribe();
       return () => { supabase.removeChannel(channel); };
     }
   }, [isAuthenticated]);
-
-  const fetchOrders = async () => {
-    setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from("orders")
-        .select("*, clients(name, email, phone)")
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      // Normalize clients join (Supabase can return array or object)
-      const normalized = (data || []).map((o: Order & { clients: unknown }) => ({
-        ...o,
-        clients: getClient(o.clients),
-      }));
-      setOrders(normalized);
-
-      // Compute stats
-      const total = data?.length || 0;
-      const paid = data?.filter((o) => ["paid", "completed"].includes(o.status)).length || 0;
-      const revenue = data
-        ?.filter((o) => ["paid", "completed"].includes(o.status))
-        .reduce((s, o) => s + (o.total_usd || 0), 0) || 0;
-      const pending = data?.filter((o) => ["pending", "invoiced", "awaiting_payment"].includes(o.status)).length || 0;
-      setStats({ total, paid, revenue, pending });
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginLoading(true);
     setLoginError("");
-    try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
-    } catch (err) {
-      setLoginError(err instanceof Error ? err.message : "Login failed");
-    } finally {
-      setLoginLoading(false);
-    }
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) setLoginError(error.message);
+    setLoginLoading(false);
   };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
+    setIsAuthenticated(false);
     navigate("/");
   };
 
   const updateOrderStatus = async (orderId: string, status: string) => {
     setUpdatingStatus(orderId);
     const { error } = await supabase.from("orders").update({ status }).eq("id", orderId);
-    if (!error) {
-      setOrders((prev) => prev.map((o) => (o.id === orderId ? { ...o, status } : o)));
-      if (selectedOrder?.id === orderId) setSelectedOrder((prev) => prev ? { ...prev, status } : prev);
-      toast({ title: "Status updated", description: `Order status set to ${status}` });
+    if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+    else {
+      toast({ title: "Updated", description: `Status → ${STATUS_STYLES[status]?.label || status}` });
+      fetchOrders();
+      if (selectedOrder?.id === orderId) setSelectedOrder({ ...selectedOrder, status });
     }
     setUpdatingStatus(null);
   };
 
   const saveAdminNotes = async () => {
     if (!selectedOrder) return;
-    const { error } = await supabase
-      .from("orders")
-      .update({ admin_notes: adminNotes })
-      .eq("id", selectedOrder.id);
-    if (!error) {
-      toast({ title: "Notes saved" });
-    }
+    const { error } = await supabase.from("orders").update({ admin_notes: adminNotes }).eq("id", selectedOrder.id);
+    if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+    else toast({ title: "Saved", description: "Notes updated" });
   };
 
   const filtered = orders.filter((o) => {
     const matchSearch =
       !search ||
+      o.invoice_number?.toLowerCase().includes(search.toLowerCase()) ||
       o.clients?.name?.toLowerCase().includes(search.toLowerCase()) ||
       o.clients?.email?.toLowerCase().includes(search.toLowerCase()) ||
-      o.invoice_number?.toLowerCase().includes(search.toLowerCase()) ||
       o.services_summary?.toLowerCase().includes(search.toLowerCase());
     const matchStatus = statusFilter === "all" || o.status === statusFilter;
     return matchSearch && matchStatus;
@@ -215,8 +193,7 @@ export default function OrdersDashboard() {
 
           <form
             onSubmit={handleLogin}
-            className="rounded-3xl p-6 space-y-4"
-            style={{ background: "hsl(0 0% 9%)", border: "1px solid hsl(0 0% 14%)" }}
+            className="rounded-3xl p-6 space-y-4 bg-card border border-border shadow-lg"
           >
             <div>
               <label className="text-xs text-muted-foreground font-medium block mb-1.5">Email</label>
@@ -241,7 +218,7 @@ export default function OrdersDashboard() {
               />
             </div>
             {loginError && (
-              <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-3 py-2">
+              <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-3 py-2">
                 {loginError}
               </p>
             )}
@@ -264,11 +241,8 @@ export default function OrdersDashboard() {
   return (
     <div className="min-h-screen bg-background">
       {/* Top Nav */}
-      <div
-        className="px-6 py-4 flex items-center justify-between border-b border-border/50 sticky top-0 z-30"
-        style={{ background: "hsl(0 0% 6% / 0.95)", backdropFilter: "blur(12px)" }}
-      >
-        <div className="font-display font-bold text-base">
+      <div className="px-6 py-4 flex items-center justify-between border-b border-border sticky top-0 z-30 bg-card/95 backdrop-blur-sm">
+        <div className="font-display font-bold text-base text-foreground">
           designers<span className="text-primary">.guru</span>
           <span className="ml-3 text-xs text-muted-foreground font-normal">Orders</span>
         </div>
@@ -300,8 +274,7 @@ export default function OrdersDashboard() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
-              className="rounded-2xl p-4"
-              style={{ background: "hsl(0 0% 9%)", border: "1px solid hsl(0 0% 14%)" }}
+              className="rounded-2xl p-4 bg-card border border-border shadow-sm"
             >
               <p className="text-xs text-muted-foreground mb-2">{stat.label}</p>
               <p className={`text-2xl font-bold ${stat.color === "copper" ? "text-gradient-copper" : "text-foreground"}`}>
@@ -313,10 +286,7 @@ export default function OrdersDashboard() {
 
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-3 mb-6">
-          <div
-            className="flex items-center gap-2 flex-1 rounded-xl px-4 py-2.5"
-            style={{ background: "hsl(0 0% 9%)", border: "1px solid hsl(0 0% 14%)" }}
-          >
+          <div className="flex items-center gap-2 flex-1 rounded-xl px-4 py-2.5 bg-card border border-border">
             <Search className="w-4 h-4 text-muted-foreground" />
             <input
               value={search}
@@ -328,8 +298,7 @@ export default function OrdersDashboard() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2.5 rounded-xl text-sm text-foreground outline-none"
-            style={{ background: "hsl(0 0% 9%)", border: "1px solid hsl(0 0% 14%)" }}
+            className="px-4 py-2.5 rounded-xl text-sm text-foreground outline-none bg-card border border-border"
           >
             <option value="all">All Statuses</option>
             {Object.entries(STATUS_STYLES).map(([k, v]) => (
@@ -339,10 +308,7 @@ export default function OrdersDashboard() {
         </div>
 
         {/* Table */}
-        <div
-          className="rounded-3xl overflow-hidden"
-          style={{ border: "1px solid hsl(0 0% 14%)" }}
-        >
+        <div className="rounded-3xl overflow-hidden border border-border bg-card shadow-sm">
           {loading ? (
             <div className="flex items-center justify-center py-20">
               <Loader2 className="w-6 h-6 animate-spin text-primary" />
@@ -358,7 +324,7 @@ export default function OrdersDashboard() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr style={{ background: "hsl(0 0% 7%)", borderBottom: "1px solid hsl(0 0% 12%)" }}>
+                  <tr className="bg-muted/50 border-b border-border">
                     {["Invoice", "Client", "Services", "Amount", "Status", "Payment", "Date", "Actions"].map((h) => (
                       <th key={h} className="px-4 py-3.5 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide whitespace-nowrap">
                         {h}
@@ -373,7 +339,7 @@ export default function OrdersDashboard() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: idx * 0.03 }}
-                      className="border-b border-border/30 hover:bg-muted/20 transition-colors cursor-pointer"
+                      className="border-b border-border/50 hover:bg-muted/30 transition-colors cursor-pointer"
                       onClick={() => {
                         setSelectedOrder(order);
                         setAdminNotes(order.admin_notes || "");
@@ -437,18 +403,14 @@ export default function OrdersDashboard() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedOrder(null)}
-              className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+              className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm"
             />
             <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="fixed right-0 top-0 h-full w-full max-w-lg z-50 overflow-y-auto"
-              style={{
-                background: "hsl(0 0% 8%)",
-                borderLeft: "1px solid hsl(0 0% 14%)",
-              }}
+              className="fixed right-0 top-0 h-full w-full max-w-lg z-50 overflow-y-auto bg-card border-l border-border shadow-2xl"
             >
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
@@ -463,10 +425,7 @@ export default function OrdersDashboard() {
 
                 <div className="space-y-5">
                   {/* Client Info */}
-                  <div
-                    className="rounded-2xl p-4"
-                    style={{ background: "hsl(0 0% 11%)", border: "1px solid hsl(0 0% 16%)" }}
-                  >
+                  <div className="rounded-2xl p-4 bg-muted/50 border border-border">
                     <p className="text-xs text-muted-foreground mb-3 font-semibold uppercase tracking-wide">Client</p>
                     <p className="font-semibold text-foreground">{selectedOrder.clients?.name}</p>
                     <p className="text-sm text-muted-foreground">{selectedOrder.clients?.email}</p>
@@ -476,34 +435,28 @@ export default function OrdersDashboard() {
                   </div>
 
                   {/* Line Items */}
-                  <div
-                    className="rounded-2xl p-4"
-                    style={{ background: "hsl(0 0% 11%)", border: "1px solid hsl(0 0% 16%)" }}
-                  >
+                  <div className="rounded-2xl p-4 bg-muted/50 border border-border">
                     <p className="text-xs text-muted-foreground mb-3 font-semibold uppercase tracking-wide">Services</p>
                     {(selectedOrder.line_items || []).map((item, i) => (
                       <div key={i} className="flex justify-between py-1.5 text-sm">
                         <span className="text-foreground">{item.name}</span>
-                        <span className="font-medium">${(item.price || 0).toLocaleString()}</span>
+                        <span className="font-medium text-foreground">${(item.price || 0).toLocaleString()}</span>
                       </div>
                     ))}
                     {selectedOrder.discount_pct > 0 && (
-                      <div className="flex justify-between py-1.5 text-sm text-green-400">
+                      <div className="flex justify-between py-1.5 text-sm text-green-600">
                         <span>Discount ({selectedOrder.discount_pct}%)</span>
                         <span>−${(selectedOrder.discount_usd || 0).toLocaleString()}</span>
                       </div>
                     )}
-                    <div className="flex justify-between pt-2 mt-1 border-t border-border/50 font-bold text-sm">
+                    <div className="flex justify-between pt-2 mt-1 border-t border-border font-bold text-sm">
                       <span>Total</span>
                       <span className="text-gradient-copper">${(selectedOrder.total_usd || 0).toLocaleString()} USD</span>
                     </div>
                   </div>
 
                   {/* Status Update */}
-                  <div
-                    className="rounded-2xl p-4"
-                    style={{ background: "hsl(0 0% 11%)", border: "1px solid hsl(0 0% 16%)" }}
-                  >
+                  <div className="rounded-2xl p-4 bg-muted/50 border border-border">
                     <p className="text-xs text-muted-foreground mb-3 font-semibold uppercase tracking-wide">
                       Update Status
                     </p>
@@ -516,7 +469,7 @@ export default function OrdersDashboard() {
                           className={`py-2 px-3 rounded-xl text-xs font-medium border transition-all text-left ${
                             selectedOrder.status === status
                               ? style.class
-                              : "border-border text-muted-foreground hover:border-border/80"
+                              : "border-border text-muted-foreground hover:border-primary/30"
                           }`}
                         >
                           {style.label}
@@ -529,10 +482,7 @@ export default function OrdersDashboard() {
                   </div>
 
                   {/* Admin Notes */}
-                  <div
-                    className="rounded-2xl p-4"
-                    style={{ background: "hsl(0 0% 11%)", border: "1px solid hsl(0 0% 16%)" }}
-                  >
+                  <div className="rounded-2xl p-4 bg-muted/50 border border-border">
                     <p className="text-xs text-muted-foreground mb-2 font-semibold uppercase tracking-wide">
                       Internal Notes
                     </p>
@@ -545,8 +495,7 @@ export default function OrdersDashboard() {
                     />
                     <button
                       onClick={saveAdminNotes}
-                      className="mt-2 px-4 py-2 rounded-xl text-xs font-medium text-primary-foreground"
-                      style={{ background: "hsl(25 85% 55%)" }}
+                      className="mt-2 px-4 py-2 rounded-xl text-xs font-medium text-primary-foreground bg-primary hover:bg-primary/90 transition-colors"
                     >
                       Save Notes
                     </button>
@@ -554,10 +503,7 @@ export default function OrdersDashboard() {
 
                   {/* Full Conversation Transcript */}
                   {selectedOrder.chat_summary && (
-                    <div
-                      className="rounded-2xl p-4"
-                      style={{ background: "hsl(0 0% 11%)", border: "1px solid hsl(0 0% 16%)" }}
-                    >
+                    <div className="rounded-2xl p-4 bg-muted/50 border border-border">
                       <p className="text-xs text-muted-foreground mb-3 font-semibold uppercase tracking-wide">
                         💬 Full Conversation
                       </p>
@@ -573,11 +519,11 @@ export default function OrdersDashboard() {
                                   style={{ background: "linear-gradient(135deg, hsl(25 85% 55%), hsl(35 100% 70%))" }}>G</div>
                               )}
                               <div
-                                className="text-xs leading-relaxed rounded-xl px-3 py-2 max-w-[85%]"
-                                style={isUser
-                                  ? { background: "hsl(25 85% 55% / 0.15)", border: "1px solid hsl(25 85% 55% / 0.25)", color: "hsl(25 85% 75%)" }
-                                  : { background: "hsl(0 0% 8%)", border: "1px solid hsl(0 0% 14%)", color: "hsl(0 0% 70%)" }
-                                }
+                                className={`text-xs leading-relaxed rounded-xl px-3 py-2 max-w-[85%] ${
+                                  isUser
+                                    ? "bg-primary/10 border border-primary/20 text-foreground"
+                                    : "bg-muted border border-border text-foreground"
+                                }`}
                               >
                                 {text}
                               </div>
