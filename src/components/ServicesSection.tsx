@@ -58,19 +58,20 @@ const cardVariants = {
 
 const ServicesSection = () => {
   return (
-    <section id="services" className="py-20 px-6">
+    <section id="services" className="py-24 px-6">
       <div className="mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-14"
+          className="mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
+          <p className="text-[11px] font-semibold tracking-[0.2em] uppercase text-muted-foreground mb-4 border border-border rounded-full px-4 py-1.5 inline-block">Our Services</p>
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 max-w-2xl">
             What We <span className="text-gradient-copper">Offer</span>
           </h2>
-          <p className="text-sm text-muted-foreground max-w-lg mx-auto">
+          <p className="text-base text-muted-foreground max-w-lg">
             Three powerful services to get your business online, automated, and looking amazing.
           </p>
         </motion.div>
@@ -93,7 +94,7 @@ const ServicesSection = () => {
 
                 <h3 className="text-lg font-bold mb-1">{service.title}</h3>
                 <p className="text-xs text-primary font-medium mb-3">{service.tagline}</p>
-                <p className="text-muted-foreground text-xs leading-relaxed mb-5">{service.description}</p>
+                <p className="text-muted-foreground text-sm leading-relaxed mb-5">{service.description}</p>
 
                 <div className="mb-5">
                   <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Starting from</span>
@@ -102,7 +103,7 @@ const ServicesSection = () => {
 
                 <ul className="space-y-2.5 mb-6">
                   {service.features.map((feature) => (
-                    <li key={feature} className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <li key={feature} className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Check className="w-3.5 h-3.5 text-primary flex-shrink-0" />
                       {feature}
                     </li>
@@ -114,7 +115,7 @@ const ServicesSection = () => {
                   whileTap={{ scale: 0.97 }}
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
                   href="#contact"
-                  className={`w-full inline-flex items-center justify-center gap-2 py-3 rounded-2xl text-xs font-semibold transition-all duration-300 ${
+                  className={`w-full inline-flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-semibold transition-all duration-300 ${
                     service.popular
                       ? "btn-ios bg-primary text-primary-foreground"
                       : "btn-ios-ghost text-foreground"

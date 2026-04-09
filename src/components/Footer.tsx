@@ -6,9 +6,9 @@ const Footer = () => {
           designers<span className="text-primary">.guru</span>
         </span>
         <div className="flex items-center gap-8">
-          <a href="#services" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Services</a>
-          <a href="#work" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Work</a>
-          <a href="#contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Contact</a>
+          <a href="#services" className="text-[11px] tracking-[0.15em] uppercase font-semibold text-muted-foreground hover:text-foreground transition-colors">Services</a>
+          <a href="#work" className="text-[11px] tracking-[0.15em] uppercase font-semibold text-muted-foreground hover:text-foreground transition-colors">Work</a>
+          <a href="#contact" className="text-[11px] tracking-[0.15em] uppercase font-semibold text-muted-foreground hover:text-foreground transition-colors">Contact</a>
         </div>
         <p className="text-xs text-muted-foreground">© 2026 designers.guru</p>
       </div>

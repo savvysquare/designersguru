@@ -9,9 +9,9 @@ const TechMarquee = () => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className="mx-auto max-w-5xl relative overflow-hidden rounded-3xl border border-primary/20 bg-primary/5 p-8 md:p-10 text-center"
+        className="mx-auto max-w-5xl relative overflow-hidden rounded-3xl border border-primary/15 bg-primary/5 p-8 md:p-10 text-center"
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-primary/10 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/8 via-transparent to-primary/8 pointer-events-none" />
         <div className="relative z-10">
           <div className="inline-flex items-center gap-2 mb-4">
             <Sparkles className="w-4 h-4 text-primary" />
@@ -22,7 +22,7 @@ const TechMarquee = () => {
             We Don't Just Build — We Help You{" "}
             <span className="text-gradient-copper">Grow</span>
           </h3>
-          <p className="text-xs md:text-sm text-muted-foreground max-w-lg mx-auto leading-relaxed">
+          <p className="text-sm text-muted-foreground max-w-lg mx-auto leading-relaxed">
             From stunning websites to smart automations, we give small businesses the tools 
             big companies use — at prices that make sense.
           </p>

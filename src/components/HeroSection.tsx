@@ -1,111 +1,152 @@
 import { motion } from "framer-motion";
-import { Mail, MessageCircle, Bot } from "lucide-react";
-
-const EMAIL_SUBJECT = encodeURIComponent("I'd like to work with Guru Designers");
-const EMAIL_BODY = encodeURIComponent(
-  "Hi Guru Designers,\n\nI came across your website and I'm interested in working with you.\n\nHere's a bit about what I'm looking for:\n\n[Please describe your project or goals here]\n\nLooking forward to hearing from you!\n\nBest regards,"
-);
-const WHATSAPP_MESSAGE = encodeURIComponent(
-  "Hi! I just visited designers.guru and I'd love to discuss a project with your team. 🙌"
-);
+import { ArrowRight, Bot } from "lucide-react";
 
 const HeroSection = () => {
   return (
     <section id="home" className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Radial glow */}
-      <div className="absolute inset-0 gradient-radial" />
-
-      {/* Animated floating orbs */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          animate={{ y: [0, -30, 0], x: [0, 15, 0], scale: [1, 1.1, 1] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-1/4 right-1/4 w-72 h-72 rounded-full bg-primary/8 blur-[80px]"
-        />
-        <motion.div
-          animate={{ y: [0, 20, 0], x: [0, -20, 0], scale: [1, 0.9, 1] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-          className="absolute bottom-1/3 left-1/4 w-96 h-96 rounded-full bg-copper-glow/6 blur-[100px]"
-        />
-        <motion.div
-          animate={{ y: [0, -15, 0], rotate: [0, 5, 0] }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-          className="absolute top-1/3 left-1/2 w-48 h-48 rounded-full bg-primary/5 blur-[60px]"
-        />
+      {/* Subtle grid background */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.04]">
+        <div className="w-full h-full" style={{
+          backgroundImage: `
+            linear-gradient(to right, hsl(0 0% 0% / 0.15) 1px, transparent 1px),
+            linear-gradient(to bottom, hsl(0 0% 0% / 0.15) 1px, transparent 1px)
+          `,
+          backgroundSize: '80px 80px',
+        }} />
       </div>
 
-      <div className="relative z-10 mx-auto max-w-7xl w-full px-6 pt-32 pb-20 flex flex-col items-center text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.6 }}
-          className="inline-flex items-center gap-2 glass-surface rounded-full px-4 py-2 mb-8"
-        >
-          <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-          <span className="text-xs text-muted-foreground tracking-wide uppercase">Only 20 spots left this quarter</span>
-        </motion.div>
+      <div className="relative z-10 mx-auto max-w-7xl w-full px-6 pt-28 pb-20">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Left — Text */}
+          <div>
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.7 }}
+              className="text-5xl md:text-6xl lg:text-[5.5rem] font-display font-bold leading-[1.05] tracking-tight mb-6"
+            >
+              10x{" "}
+              <br className="hidden md:block" />
+              <span className="text-gradient-copper">your business</span> with{" "}
+              <br className="hidden md:block" />
+              designs <em className="font-display italic not-italic font-bold" style={{ fontStyle: 'italic' }}>that work</em>
+            </motion.h1>
 
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.7 }}
-          className="text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight mb-6 max-w-4xl"
-        >
-          We Build{" "}
-          <span className="text-gradient-copper">Websites</span>
-          <br />
-          That Get Results
-        </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+              className="text-base md:text-lg text-muted-foreground max-w-md mb-10 leading-relaxed"
+            >
+              We build brands and AI systems
+              that don't just look good — they work harder than
+              your whole marketing team.
+            </motion.p>
 
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.6 }}
-          className="text-base md:text-lg text-muted-foreground max-w-xl mb-10 leading-relaxed"
-        >
-          Beautiful designs. Smart technology. Real growth.
-          We help businesses stand out online and turn visitors into customers.
-        </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.6 }}
+              className="flex flex-col sm:flex-row gap-3"
+            >
+              <motion.button
+                whileHover={{ scale: 1.04, y: -2 }}
+                whileTap={{ scale: 0.96 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                onClick={() => window.dispatchEvent(new Event("open-guru-chat"))}
+                className="btn-ios inline-flex items-center justify-center gap-2.5 px-8 py-3.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold"
+              >
+                <Bot className="w-4 h-4" />
+                Talk to Guru
+              </motion.button>
+              <motion.a
+                whileHover={{ scale: 1.04, y: -2 }}
+                whileTap={{ scale: 0.96 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                href="#contact"
+                className="btn-ios-ghost inline-flex items-center justify-center gap-2.5 px-8 py-3.5 text-foreground rounded-full text-sm font-medium"
+              >
+                Let's talk
+                <ArrowRight className="w-4 h-4" />
+              </motion.a>
+            </motion.div>
+          </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7, duration: 0.6 }}
-          className="flex flex-col sm:flex-row gap-3"
-        >
-          <motion.a
-            whileHover={{ scale: 1.04, y: -2 }}
-            whileTap={{ scale: 0.96 }}
-            transition={{ type: "spring", stiffness: 400, damping: 17 }}
-            href={`mailto:hello@designers.guru?subject=${EMAIL_SUBJECT}&body=${EMAIL_BODY}`}
-            className="btn-ios-ghost inline-flex items-center justify-center gap-2.5 px-8 py-3.5 text-foreground rounded-2xl text-sm font-medium tracking-wide"
+          {/* Right — Growth Chart Graphic */}
+          <motion.div
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.5, duration: 0.8 }}
+            className="relative hidden lg:block"
           >
-            <Mail className="w-4 h-4" />
-            Send Us an Email
-          </motion.a>
-          <motion.button
-            whileHover={{ scale: 1.04, y: -2 }}
-            whileTap={{ scale: 0.96 }}
-            transition={{ type: "spring", stiffness: 400, damping: 17 }}
-            onClick={() => window.dispatchEvent(new Event("open-guru-chat"))}
-            className="btn-ios inline-flex items-center justify-center gap-2.5 px-8 py-3.5 bg-primary text-primary-foreground rounded-2xl text-sm font-semibold tracking-wide"
-          >
-            <Bot className="w-4 h-4" />
-            Talk to Guru
-          </motion.button>
-          <motion.a
-            whileHover={{ scale: 1.04, y: -2 }}
-            whileTap={{ scale: 0.96 }}
-            transition={{ type: "spring", stiffness: 400, damping: 17 }}
-            href={`https://wa.me/2349061989669?text=${WHATSAPP_MESSAGE}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-ios-ghost inline-flex items-center justify-center gap-2.5 px-8 py-3.5 text-foreground rounded-2xl text-sm font-medium tracking-wide"
-          >
-            <MessageCircle className="w-4 h-4" />
-            Chat on WhatsApp
-          </motion.a>
-        </motion.div>
+            <div className="relative w-full aspect-square max-w-lg ml-auto">
+              {/* Grid background */}
+              <svg viewBox="0 0 400 400" className="absolute inset-0 w-full h-full opacity-[0.08]">
+                {[0, 80, 160, 240, 320, 400].map((pos) => (
+                  <g key={pos}>
+                    <line x1={pos} y1="0" x2={pos} y2="400" stroke="currentColor" strokeWidth="0.5" />
+                    <line x1="0" y1={pos} x2="400" y2={pos} stroke="currentColor" strokeWidth="0.5" />
+                  </g>
+                ))}
+                {/* Y-axis labels */}
+                <text x="8" y="328" fontSize="10" fill="currentColor" opacity="0.5">1k</text>
+                <text x="8" y="248" fontSize="10" fill="currentColor" opacity="0.5">10k</text>
+                <text x="8" y="168" fontSize="10" fill="currentColor" opacity="0.5">100k</text>
+              </svg>
+
+              {/* Growth curve */}
+              <svg viewBox="0 0 400 400" className="absolute inset-0 w-full h-full">
+                <defs>
+                  <linearGradient id="curveGrad" x1="0" y1="1" x2="1" y2="0">
+                    <stop offset="0%" stopColor="hsl(25, 85%, 55%)" stopOpacity="0.2" />
+                    <stop offset="100%" stopColor="hsl(25, 85%, 55%)" />
+                  </linearGradient>
+                  <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="hsl(25, 85%, 55%)" stopOpacity="0.08" />
+                    <stop offset="100%" stopColor="hsl(25, 85%, 55%)" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+                {/* Area fill */}
+                <path
+                  d="M 40 360 Q 120 340 180 300 Q 250 250 290 180 Q 340 80 370 60 L 370 400 L 40 400 Z"
+                  fill="url(#areaGrad)"
+                />
+                {/* Main curve */}
+                <path
+                  d="M 40 360 Q 120 340 180 300 Q 250 250 290 180 Q 340 80 370 60"
+                  fill="none"
+                  stroke="url(#curveGrad)"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                />
+                {/* End dot */}
+                <circle cx="370" cy="60" r="12" fill="hsl(25, 85%, 55%)" />
+                <circle cx="370" cy="60" r="20" fill="hsl(25, 85%, 55%)" opacity="0.2" />
+                <circle cx="370" cy="60" r="28" fill="hsl(25, 85%, 55%)" opacity="0.08" />
+              </svg>
+
+              {/* Stats card floating */}
+              <motion.div
+                animate={{ y: [0, -8, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute top-1/3 left-1/4 bg-card rounded-2xl px-8 py-5 shadow-lg border border-border"
+              >
+                <p className="text-3xl md:text-4xl font-display font-bold text-foreground">+320%</p>
+                <p className="text-sm text-muted-foreground mt-1">Monthly revenue</p>
+              </motion.div>
+
+              {/* GD badge */}
+              <div className="absolute bottom-8 right-8 w-14 h-14 bg-primary rounded-2xl flex items-center justify-center">
+                <span className="text-primary-foreground font-display font-bold text-sm">GD</span>
+              </div>
+
+              {/* Brand watermark */}
+              <div className="absolute bottom-8 left-8">
+                <span className="font-display text-sm font-bold text-foreground opacity-30">designers.guru</span>
+              </div>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </section>
   );
