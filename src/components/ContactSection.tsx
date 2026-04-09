@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Mail, MessageCircle, Bot } from "lucide-react";
+import { Mail, MessageCircle, Bot, ArrowRight } from "lucide-react";
 
 const EMAIL_SUBJECT = encodeURIComponent("I'd like to work with Guru Designers");
 const EMAIL_BODY = encodeURIComponent(
@@ -11,7 +11,7 @@ const WHATSAPP_MESSAGE = encodeURIComponent(
 
 const ContactSection = () => {
   return (
-    <section id="contact" className="py-20 px-6">
+    <section id="contact" className="py-24 px-6">
       <div className="mx-auto max-w-4xl text-center">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -20,10 +20,10 @@ const ContactSection = () => {
           transition={{ duration: 0.6 }}
         >
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">
-            Let's <span className="text-gradient-copper">Talk</span>
+            Ready to <span className="text-gradient-copper">scale</span>?
           </h2>
-          <p className="text-sm text-muted-foreground mb-10 max-w-md mx-auto">
-            Have a project in mind? Reach out and let's make it happen.
+          <p className="text-base text-muted-foreground mb-10 max-w-md mx-auto">
+            Have a project in mind? Let's make it happen.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <motion.a
@@ -31,7 +31,7 @@ const ContactSection = () => {
               whileTap={{ scale: 0.96 }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
               href={`mailto:hello@designers.guru?subject=${EMAIL_SUBJECT}&body=${EMAIL_BODY}`}
-              className="btn-ios-ghost inline-flex items-center gap-2.5 px-8 py-3.5 text-foreground rounded-2xl text-sm font-medium"
+              className="btn-ios-ghost inline-flex items-center gap-2.5 px-8 py-3.5 text-foreground rounded-full text-sm font-medium"
             >
               <Mail className="w-4 h-4" />
               Send Us an Email
@@ -41,7 +41,7 @@ const ContactSection = () => {
               whileTap={{ scale: 0.96 }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
               onClick={() => window.dispatchEvent(new Event("open-guru-chat"))}
-              className="btn-ios inline-flex items-center gap-2.5 px-8 py-3.5 bg-primary text-primary-foreground rounded-2xl text-sm font-semibold"
+              className="btn-ios inline-flex items-center gap-2.5 px-8 py-3.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold"
             >
               <Bot className="w-4 h-4" />
               Talk to Guru
@@ -53,7 +53,7 @@ const ContactSection = () => {
               href={`https://wa.me/2349061989669?text=${WHATSAPP_MESSAGE}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-ios-ghost inline-flex items-center gap-2.5 px-8 py-3.5 text-foreground rounded-2xl text-sm font-medium"
+              className="btn-ios-ghost inline-flex items-center gap-2.5 px-8 py-3.5 text-foreground rounded-full text-sm font-medium"
             >
               <MessageCircle className="w-4 h-4" />
               Chat on WhatsApp

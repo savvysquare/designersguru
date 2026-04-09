@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ArrowRight } from "lucide-react";
 
 const navLinks = [
-  { label: "Home", href: "#home" },
   { label: "Services", href: "#services" },
   { label: "Work", href: "#work" },
   { label: "Results", href: "#results" },
@@ -25,21 +24,21 @@ const Navbar = () => {
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className={`fixed top-0 left-0 right-0 z-50 px-4 py-3 transition-all duration-300 ${
-        scrolled ? "bg-background/80 backdrop-blur-xl border-b border-border/50" : ""
+      className={`fixed top-0 left-0 right-0 z-50 px-6 py-4 transition-all duration-300 ${
+        scrolled ? "bg-background/90 backdrop-blur-xl border-b border-border/50" : "bg-background"
       }`}
     >
       <div className="mx-auto max-w-7xl flex items-center justify-between">
-        <a href="#home" className="font-display text-lg font-bold tracking-tight text-foreground">
+        <a href="#home" className="font-display text-xl font-bold tracking-tight text-foreground">
           designers<span className="text-primary">.guru</span>
         </a>
 
-        <div className="hidden md:flex items-center gap-0.5 glass-surface rounded-full px-1.5 py-1">
+        <div className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
             <a
               key={link.label}
               href={link.href}
-              className="px-4 py-2 text-[13px] font-medium text-muted-foreground hover:text-foreground transition-all duration-200 rounded-full hover:bg-primary/10"
+              className="text-[11px] font-semibold tracking-[0.15em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-200"
             >
               {link.label}
             </a>
@@ -51,17 +50,18 @@ const Navbar = () => {
           whileTap={{ scale: 0.95 }}
           transition={{ type: "spring", stiffness: 400, damping: 17 }}
           href="#contact"
-          className="hidden md:inline-flex btn-ios px-5 py-2 bg-primary text-primary-foreground rounded-full text-[13px] font-semibold"
+          className="hidden md:inline-flex items-center gap-2 btn-dark px-5 py-2.5 rounded-full text-[11px] font-semibold tracking-[0.1em] uppercase"
         >
-          Get Started
+          Start a Project
+          <ArrowRight className="w-3.5 h-3.5" />
         </motion.a>
 
         <motion.button
           whileTap={{ scale: 0.9 }}
           onClick={() => setIsOpen(!isOpen)}
-          className="md:hidden p-2 rounded-xl glass-surface text-foreground"
+          className="md:hidden p-2 rounded-xl text-foreground"
         >
-          {isOpen ? <X size={20} /> : <Menu size={20} />}
+          {isOpen ? <X size={22} /> : <Menu size={22} />}
         </motion.button>
       </div>
 
@@ -72,7 +72,7 @@ const Navbar = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.98 }}
             transition={{ type: "spring", stiffness: 400, damping: 30 }}
-            className="md:hidden mt-3 mx-auto max-w-7xl glass-surface rounded-2xl p-4 space-y-1"
+            className="md:hidden mt-3 mx-auto max-w-7xl bg-card rounded-2xl border border-border p-4 space-y-1"
           >
             {navLinks.map((link, i) => (
               <motion.a
@@ -82,7 +82,7 @@ const Navbar = () => {
                 transition={{ delay: i * 0.05 }}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className="block px-4 py-3 text-[15px] font-medium text-foreground hover:text-primary hover:bg-primary/5 rounded-xl transition-all"
+                className="block px-4 py-3 text-[13px] font-semibold tracking-[0.1em] uppercase text-foreground hover:text-primary rounded-xl transition-all"
               >
                 {link.label}
               </motion.a>
@@ -94,9 +94,9 @@ const Navbar = () => {
               whileTap={{ scale: 0.97 }}
               href="#contact"
               onClick={() => setIsOpen(false)}
-              className="block w-full text-center px-6 py-3 mt-2 btn-ios bg-primary text-primary-foreground rounded-xl text-sm font-semibold"
+              className="block w-full text-center px-6 py-3 mt-2 btn-dark rounded-xl text-sm font-semibold tracking-[0.1em] uppercase"
             >
-              Get Started
+              Start a Project
             </motion.a>
           </motion.div>
         )}
