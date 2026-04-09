@@ -23,7 +23,7 @@ const HeroSection = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.7 }}
-              className="text-5xl md:text-6xl lg:text-[5.5rem] font-display font-bold leading-[1.05] tracking-tight mb-6"
+              className="text-4xl md:text-5xl lg:text-[4rem] font-display font-bold leading-[1.08] tracking-tight mb-6"
             >
               10x{" "}
               <br className="hidden md:block" />
