@@ -38,19 +38,19 @@ const projects = [
 
 const WorkSection = () => {
   return (
-    <section id="work" className="py-20 px-6">
+    <section id="work" className="py-24 px-6">
       <div className="mx-auto max-w-7xl">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mb-12 text-center"
+          className="mb-16 text-center"
         >
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">
             Our <span className="text-gradient-copper">Work</span>
           </h2>
-          <p className="text-sm text-muted-foreground max-w-lg mx-auto">
+          <p className="text-base text-muted-foreground max-w-lg mx-auto">
             See what we've built. Every project is crafted to look great and perform even better.
           </p>
         </motion.div>

@@ -65,13 +65,12 @@ const ServicesSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mb-16"
+          className="mb-16 text-center"
         >
-          <p className="text-[11px] font-semibold tracking-[0.2em] uppercase text-muted-foreground mb-4 border border-border rounded-full px-4 py-1.5 inline-block">Our Services</p>
-          <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 max-w-2xl">
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">
             What We <span className="text-gradient-copper">Offer</span>
           </h2>
-          <p className="text-base text-muted-foreground max-w-lg">
+          <p className="text-base text-muted-foreground max-w-lg mx-auto">
             Three powerful services to get your business online, automated, and looking amazing.
           </p>
         </motion.div>
