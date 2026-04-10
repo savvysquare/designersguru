@@ -6,6 +6,27 @@ import {
 } from "lucide-react";
 import { getSessionToken, parseCartFromMessage, checkInvoiceTrigger, checkContactTrigger, LineItem } from "@/lib/chat-utils";
 
+// ─── Dark theme color constants for the chat modal ────────────────────────────
+// The chat is a dark modal over a light site, so we can't use semantic tokens
+const C = {
+  bg: "hsl(0 0% 7%)",
+  bgElevated: "hsl(0 0% 9%)",
+  bgInput: "hsl(0 0% 10%)",
+  bgSubtle: "hsl(0 0% 12%)",
+  border: "hsl(0 0% 16%)",
+  borderSubtle: "hsl(0 0% 14%)",
+  borderFaint: "hsl(0 0% 12%)",
+  text: "hsl(0 0% 95%)",
+  textSecondary: "hsl(0 0% 65%)",
+  textMuted: "hsl(0 0% 50%)",
+  copper: "hsl(25 85% 55%)",
+  copperLight: "hsl(25 85% 65%)",
+  copperGlow: "hsl(35 100% 70%)",
+  green: "hsl(142 70% 55%)",
+  greenBg: "hsl(142 70% 45%)",
+  red: "hsl(0 84% 65%)",
+};
+
 interface Message {
   role: "user" | "assistant";
   content: string;
@@ -37,7 +58,7 @@ const TRANCHE_PLANS = [
     label: "Pay in Full",
     description: "One payment — best value",
     badge: "Recommended",
-    badgeColor: "hsl(142 70% 45%)",
+    badgeColor: C.greenBg,
     getTranches: (total: number) => [{ label: "Full Payment", amount: total, pct: 100 }],
   },
   {
@@ -45,7 +66,7 @@ const TRANCHE_PLANS = [
     label: "60 / 40 Split",
     description: "60% now to start, 40% on delivery",
     badge: "Popular",
-    badgeColor: "hsl(25 85% 55%)",
+    badgeColor: C.copper,
     getTranches: (total: number) => [
       { label: "Deposit (60%)", amount: Math.round(total * 0.6), pct: 60 },
       { label: "Final Payment (40%)", amount: Math.round(total * 0.4), pct: 40 },
@@ -113,100 +134,62 @@ function ContactFormCard({ onSubmit }: { onSubmit: (name: string, email: string,
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ type: "spring", stiffness: 300, damping: 24 }}
       className="w-full rounded-2xl overflow-hidden my-2"
-      style={{ background: "hsl(0 0% 9%)", border: "1px solid hsl(25 85% 55% / 0.3)" }}
+      style={{ background: C.bgElevated, border: `1px solid ${C.copper}33` }}
     >
       <div
         className="px-4 py-3 flex items-center gap-2.5"
-        style={{ background: "linear-gradient(135deg, hsl(25 85% 55% / 0.12), hsl(35 100% 70% / 0.06))", borderBottom: "1px solid hsl(0 0% 15%)" }}
+        style={{ background: `linear-gradient(135deg, ${C.copper}1f, ${C.copperGlow}0f)`, borderBottom: `1px solid ${C.borderSubtle}` }}
       >
         <div
-          className="w-8 h-8 rounded-xl flex items-center justify-center text-primary-foreground"
-          style={{ background: "linear-gradient(135deg, hsl(25 85% 55%), hsl(35 100% 70%))" }}
+          className="w-8 h-8 rounded-xl flex items-center justify-center"
+          style={{ background: `linear-gradient(135deg, ${C.copper}, ${C.copperGlow})` }}
         >
-          <User className="w-4 h-4" />
+          <User className="w-4 h-4 text-white" />
         </div>
         <div>
-          <p className="text-xs font-semibold text-foreground">Your Details</p>
-          <p className="text-[10px] text-muted-foreground">Almost there — just need these to generate your invoice</p>
+          <p className="text-xs font-semibold" style={{ color: C.text }}>Your Details</p>
+          <p className="text-[10px]" style={{ color: C.textSecondary }}>Almost there — just need these to generate your invoice</p>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="px-4 py-3 space-y-3">
-        {/* Name */}
-        <div className="space-y-1">
-          <label className="text-[10px] uppercase tracking-wide text-muted-foreground flex items-center gap-1">
-            <User className="w-3 h-3" /> Full Name
-          </label>
-          <input
-            type="text"
-            value={name}
-            onChange={e => { setName(e.target.value); setErrors(p => ({ ...p, name: undefined })); }}
-            placeholder="John Smith"
-            autoComplete="name"
-            className="w-full rounded-xl px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-all"
-            style={{
-              background: "hsl(0 0% 7%)",
-              border: `1px solid ${errors.name ? "hsl(0 84% 60% / 0.6)" : "hsl(0 0% 18%)"}`,
-            }}
-            onFocus={e => (e.target.style.borderColor = "hsl(25 85% 55% / 0.6)")}
-            onBlur={e => (e.target.style.borderColor = errors.name ? "hsl(0 84% 60% / 0.6)" : "hsl(0 0% 18%)")}
-          />
-          {errors.name && <p className="text-[10px] text-red-400">{errors.name}</p>}
-        </div>
-
-        {/* Email */}
-        <div className="space-y-1">
-          <label className="text-[10px] uppercase tracking-wide text-muted-foreground flex items-center gap-1">
-            <Mail className="w-3 h-3" /> Email Address
-          </label>
-          <input
-            type="email"
-            value={email}
-            onChange={e => { setEmail(e.target.value); setErrors(p => ({ ...p, email: undefined })); }}
-            placeholder="john@company.com"
-            autoComplete="email"
-            className="w-full rounded-xl px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-all"
-            style={{
-              background: "hsl(0 0% 7%)",
-              border: `1px solid ${errors.email ? "hsl(0 84% 60% / 0.6)" : "hsl(0 0% 18%)"}`,
-            }}
-            onFocus={e => (e.target.style.borderColor = "hsl(25 85% 55% / 0.6)")}
-            onBlur={e => (e.target.style.borderColor = errors.email ? "hsl(0 84% 60% / 0.6)" : "hsl(0 0% 18%)")}
-          />
-          {errors.email && <p className="text-[10px] text-red-400">{errors.email}</p>}
-        </div>
-
-        {/* Phone */}
-        <div className="space-y-1">
-          <label className="text-[10px] uppercase tracking-wide text-muted-foreground flex items-center gap-1">
-            <Phone className="w-3 h-3" /> Phone / WhatsApp
-          </label>
-          <input
-            type="tel"
-            value={phone}
-            onChange={e => { setPhone(e.target.value); setErrors(p => ({ ...p, phone: undefined })); }}
-            placeholder="+1 234 567 8900"
-            autoComplete="tel"
-            className="w-full rounded-xl px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-all"
-            style={{
-              background: "hsl(0 0% 7%)",
-              border: `1px solid ${errors.phone ? "hsl(0 84% 60% / 0.6)" : "hsl(0 0% 18%)"}`,
-            }}
-            onFocus={e => (e.target.style.borderColor = "hsl(25 85% 55% / 0.6)")}
-            onBlur={e => (e.target.style.borderColor = errors.phone ? "hsl(0 84% 60% / 0.6)" : "hsl(0 0% 18%)")}
-          />
-          {errors.phone && <p className="text-[10px] text-red-400">{errors.phone}</p>}
-        </div>
+        {[
+          { label: "Full Name", icon: User, value: name, setter: setName, errorKey: "name" as const, placeholder: "John Smith", type: "text", autoComplete: "name" },
+          { label: "Email Address", icon: Mail, value: email, setter: setEmail, errorKey: "email" as const, placeholder: "john@company.com", type: "email", autoComplete: "email" },
+          { label: "Phone / WhatsApp", icon: Phone, value: phone, setter: setPhone, errorKey: "phone" as const, placeholder: "+1 234 567 8900", type: "tel", autoComplete: "tel" },
+        ].map((field) => (
+          <div key={field.label} className="space-y-1">
+            <label className="text-[10px] uppercase tracking-wide flex items-center gap-1" style={{ color: C.textSecondary }}>
+              <field.icon className="w-3 h-3" /> {field.label}
+            </label>
+            <input
+              type={field.type}
+              value={field.value}
+              onChange={e => { field.setter(e.target.value); setErrors(p => ({ ...p, [field.errorKey]: undefined })); }}
+              placeholder={field.placeholder}
+              autoComplete={field.autoComplete}
+              className="w-full rounded-xl px-3 py-2.5 text-sm outline-none transition-all"
+              style={{
+                background: C.bg,
+                border: `1px solid ${errors[field.errorKey] ? `${C.red}99` : C.border}`,
+                color: C.text,
+              }}
+              onFocus={e => (e.target.style.borderColor = `${C.copper}99`)}
+              onBlur={e => (e.target.style.borderColor = errors[field.errorKey] ? `${C.red}99` : C.border)}
+            />
+            {errors[field.errorKey] && <p className="text-[10px]" style={{ color: C.red }}>{errors[field.errorKey]}</p>}
+          </div>
+        ))}
 
         <motion.button
           type="submit"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           disabled={submitting}
-          className="w-full py-3 rounded-xl flex items-center justify-center gap-2 text-primary-foreground font-semibold text-sm disabled:opacity-60"
+          className="w-full py-3 rounded-xl flex items-center justify-center gap-2 text-white font-semibold text-sm disabled:opacity-60"
           style={{
-            background: "linear-gradient(135deg, hsl(25 85% 55%), hsl(35 100% 70%))",
-            boxShadow: "0 4px 16px hsl(25 85% 55% / 0.35)",
+            background: `linear-gradient(135deg, ${C.copper}, ${C.copperGlow})`,
+            boxShadow: `0 4px 16px ${C.copper}59`,
           }}
         >
           {submitting
@@ -214,7 +197,7 @@ function ContactFormCard({ onSubmit }: { onSubmit: (name: string, email: string,
             : <>Generate My Invoice</>
           }
         </motion.button>
-        <p className="text-[10px] text-center text-muted-foreground">
+        <p className="text-[10px] text-center" style={{ color: C.textMuted }}>
           <Shield className="w-3 h-3 inline mr-1" />
           Your details are secure and private
         </p>
@@ -224,13 +207,7 @@ function ContactFormCard({ onSubmit }: { onSubmit: (name: string, email: string,
 }
 
 // ─── In-chat Invoice Card ─────────────────────────────────────────────────────
-function InvoiceCard({
-  data,
-  autoShowPayment,
-}: {
-  data: InvoiceData;
-  autoShowPayment?: boolean;
-}) {
+function InvoiceCard({ data, autoShowPayment }: { data: InvoiceData; autoShowPayment?: boolean }) {
   const dueDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
   return (
     <motion.div
@@ -238,28 +215,26 @@ function InvoiceCard({
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ type: "spring", stiffness: 300, damping: 24 }}
       className="w-full rounded-2xl overflow-hidden my-2"
-      style={{ background: "hsl(0 0% 9%)", border: "1px solid hsl(0 0% 18%)" }}
+      style={{ background: C.bgElevated, border: `1px solid ${C.border}` }}
     >
       {/* Header */}
       <div
         className="px-4 py-3 flex items-center justify-between"
-        style={{ background: "linear-gradient(135deg, hsl(25 85% 55% / 0.12), hsl(35 100% 70% / 0.06))", borderBottom: "1px solid hsl(0 0% 15%)" }}
+        style={{ background: `linear-gradient(135deg, ${C.copper}1f, ${C.copperGlow}0f)`, borderBottom: `1px solid ${C.borderSubtle}` }}
       >
         <div className="flex items-center gap-2.5">
           <div
-            className="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold text-primary-foreground"
-            style={{ background: "linear-gradient(135deg, hsl(25 85% 55%), hsl(35 100% 70%))" }}
-          >
-            GD
-          </div>
+            className="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold text-white"
+            style={{ background: `linear-gradient(135deg, ${C.copper}, ${C.copperGlow})` }}
+          >GD</div>
           <div>
-            <p className="text-xs font-semibold text-foreground">Guru Designers</p>
-            <p className="text-[10px] text-muted-foreground">designers.guru</p>
+            <p className="text-xs font-semibold" style={{ color: C.text }}>Guru Designers</p>
+            <p className="text-[10px]" style={{ color: C.textSecondary }}>designers.guru</p>
           </div>
         </div>
         <div className="text-right">
-          <p className="text-[10px] text-muted-foreground font-mono">{data.invoiceNumber}</p>
-          <p className="text-[10px] text-muted-foreground">
+          <p className="text-[10px] font-mono" style={{ color: C.textSecondary }}>{data.invoiceNumber}</p>
+          <p className="text-[10px]" style={{ color: C.textSecondary }}>
             Due {dueDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
           </p>
         </div>
@@ -268,25 +243,25 @@ function InvoiceCard({
       <div className="px-4 py-3 space-y-3">
         {/* Billed to */}
         <div>
-          <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-0.5">Billed to</p>
-          <p className="text-sm font-semibold text-foreground">{data.clientName}</p>
-          <p className="text-xs text-muted-foreground">{data.clientEmail}</p>
-          {data.clientPhone && <p className="text-xs text-muted-foreground">{data.clientPhone}</p>}
+          <p className="text-[10px] uppercase tracking-wide mb-0.5" style={{ color: C.textSecondary }}>Billed to</p>
+          <p className="text-sm font-semibold" style={{ color: C.text }}>{data.clientName}</p>
+          <p className="text-xs" style={{ color: C.textSecondary }}>{data.clientEmail}</p>
+          {data.clientPhone && <p className="text-xs" style={{ color: C.textSecondary }}>{data.clientPhone}</p>}
         </div>
 
         {/* Line items */}
-        <div className="rounded-xl overflow-hidden" style={{ border: "1px solid hsl(0 0% 14%)" }}>
+        <div className="rounded-xl overflow-hidden" style={{ border: `1px solid ${C.borderFaint}` }}>
           {data.lineItems.map((item, i) => (
             <div
               key={i}
               className="px-3 py-2.5 flex justify-between items-start"
-              style={{ borderBottom: i < data.lineItems.length - 1 ? "1px solid hsl(0 0% 12%)" : "none" }}
+              style={{ borderBottom: i < data.lineItems.length - 1 ? `1px solid ${C.borderFaint}` : "none" }}
             >
               <div>
-                <p className="text-xs font-medium text-foreground">{item.name}</p>
-                {item.description && <p className="text-[10px] text-muted-foreground mt-0.5">{item.description}</p>}
+                <p className="text-xs font-medium" style={{ color: C.text }}>{item.name}</p>
+                {item.description && <p className="text-[10px] mt-0.5" style={{ color: C.textSecondary }}>{item.description}</p>}
               </div>
-              <p className="text-xs font-semibold text-foreground ml-2 whitespace-nowrap">${item.price.toLocaleString()}</p>
+              <p className="text-xs font-semibold ml-2 whitespace-nowrap" style={{ color: C.text }}>${item.price.toLocaleString()}</p>
             </div>
           ))}
         </div>
@@ -294,28 +269,28 @@ function InvoiceCard({
         {/* Totals */}
         <div className="space-y-1">
           {data.discountPct > 0 && (
-            <div className="flex justify-between text-xs text-green-400">
+            <div className="flex justify-between text-xs" style={{ color: C.green }}>
               <span>Bundle Discount ({data.discountPct}%)</span>
               <span>−${data.discountAmount.toLocaleString()}</span>
             </div>
           )}
-          <div className="flex justify-between items-center pt-1 border-t border-border/40">
-            <span className="text-sm font-bold text-foreground">Total Due</span>
-            <span className="text-sm font-bold" style={{ color: "hsl(25 85% 65%)" }}>
+          <div className="flex justify-between items-center pt-1" style={{ borderTop: `1px solid ${C.borderSubtle}` }}>
+            <span className="text-sm font-bold" style={{ color: C.text }}>Total Due</span>
+            <span className="text-sm font-bold" style={{ color: C.copperLight }}>
               ${data.total.toLocaleString()} USD
             </span>
           </div>
         </div>
 
         {autoShowPayment && (
-          <div className="rounded-xl px-3 py-2 text-[10px] text-green-400 flex items-center gap-1.5"
-            style={{ background: "hsl(142 70% 45% / 0.08)", border: "1px solid hsl(142 70% 45% / 0.2)" }}>
+          <div className="rounded-xl px-3 py-2 text-[10px] flex items-center gap-1.5"
+            style={{ background: `${C.greenBg}14`, border: `1px solid ${C.greenBg}33`, color: C.green }}>
             <CheckCircle className="w-3 h-3 flex-shrink-0" />
             Payment details ready below ↓
           </div>
         )}
 
-        <p className="text-[10px] text-center text-muted-foreground">
+        <p className="text-[10px] text-center" style={{ color: C.textMuted }}>
           <Shield className="w-3 h-3 inline mr-1" />
           Secure invoice · 7-day validity
         </p>
@@ -335,20 +310,20 @@ function CopyField({ label, value }: { label: string; value: string }) {
   return (
     <div
       className="flex items-center justify-between gap-2 px-3 py-2 rounded-xl group cursor-pointer"
-      style={{ background: "hsl(0 0% 7%)", border: "1px solid hsl(0 0% 14%)" }}
+      style={{ background: C.bg, border: `1px solid ${C.borderFaint}` }}
       onClick={handleCopy}
     >
       <div className="min-w-0">
-        <p className="text-[9px] uppercase tracking-wider text-muted-foreground mb-0.5">{label}</p>
-        <p className="text-xs font-medium text-foreground">{value}</p>
+        <p className="text-[9px] uppercase tracking-wider mb-0.5" style={{ color: C.textMuted }}>{label}</p>
+        <p className="text-xs font-medium" style={{ color: C.text }}>{value}</p>
       </div>
       <div
         className="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center transition-all"
-        style={{ background: copied ? "hsl(142 70% 45% / 0.15)" : "hsl(0 0% 12%)" }}
+        style={{ background: copied ? `${C.greenBg}26` : C.bgSubtle }}
       >
         {copied
-          ? <Check className="w-3 h-3 text-green-400" />
-          : <Copy className="w-3 h-3 text-muted-foreground" />
+          ? <Check className="w-3 h-3" style={{ color: C.green }} />
+          : <Copy className="w-3 h-3" style={{ color: C.textMuted }} />
         }
       </div>
     </div>
@@ -364,16 +339,13 @@ function PaymentCard({ data }: { data: InvoiceData }) {
 
   const isNigerian = selectedRegion === "nigerian";
 
-  // Fetch live NGN rate whenever Nigerian tab is selected
   useEffect(() => {
     if (!isNigerian || ngnRate !== null) return;
     setRateLoading(true);
     fetch("https://open.er-api.com/v6/latest/USD")
       .then((r) => r.json())
-      .then((d) => {
-        if (d?.rates?.NGN) setNgnRate(d.rates.NGN);
-      })
-      .catch(() => setNgnRate(1600)) // fallback rate
+      .then((d) => { if (d?.rates?.NGN) setNgnRate(d.rates.NGN); })
+      .catch(() => setNgnRate(1600))
       .finally(() => setRateLoading(false));
   }, [isNigerian, ngnRate]);
 
@@ -394,15 +366,15 @@ function PaymentCard({ data }: { data: InvoiceData }) {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       className="w-full rounded-2xl overflow-hidden my-2"
-      style={{ background: "hsl(0 0% 9%)", border: "1px solid hsl(0 0% 18%)" }}
+      style={{ background: C.bgElevated, border: `1px solid ${C.border}` }}
     >
       {/* Header */}
-      <div className="px-4 py-3 border-b border-border/40">
-        <p className="text-sm font-semibold text-foreground">How to Pay</p>
-        <p className="text-xs text-muted-foreground">
+      <div className="px-4 py-3" style={{ borderBottom: `1px solid ${C.borderSubtle}` }}>
+        <p className="text-sm font-semibold" style={{ color: C.text }}>How to Pay</p>
+        <p className="text-xs" style={{ color: C.textSecondary }}>
           {data.invoiceNumber} · ${data.total.toLocaleString()} USD total
           {isNigerian && ngnRate && (
-            <span className="ml-1" style={{ color: "hsl(142 70% 55%)" }}>
+            <span className="ml-1" style={{ color: C.green }}>
               · ₦{Math.round(data.total * ngnRate).toLocaleString("en-NG")}
             </span>
           )}
@@ -412,7 +384,7 @@ function PaymentCard({ data }: { data: InvoiceData }) {
       <div className="px-4 py-3 space-y-4">
         {/* Payment Plan */}
         <div>
-          <p className="text-[10px] uppercase tracking-wide text-muted-foreground mb-2">Payment Plan</p>
+          <p className="text-[10px] uppercase tracking-wide mb-2" style={{ color: C.textSecondary }}>Payment Plan</p>
           <div className="space-y-2">
             {TRANCHE_PLANS.map((p) => (
               <button
@@ -420,20 +392,20 @@ function PaymentCard({ data }: { data: InvoiceData }) {
                 onClick={() => setSelectedPlan(p.id)}
                 className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border text-left transition-all"
                 style={{
-                  borderColor: selectedPlan === p.id ? "hsl(25 85% 55% / 0.6)" : "hsl(0 0% 16%)",
-                  background: selectedPlan === p.id ? "hsl(25 85% 55% / 0.07)" : "transparent",
+                  borderColor: selectedPlan === p.id ? `${C.copper}99` : C.border,
+                  background: selectedPlan === p.id ? `${C.copper}12` : "transparent",
                 }}
               >
                 <div
                   className="w-3.5 h-3.5 rounded-full border-2 flex-shrink-0 transition-all"
                   style={{
-                    borderColor: selectedPlan === p.id ? "hsl(25 85% 55%)" : "hsl(0 0% 35%)",
-                    background: selectedPlan === p.id ? "hsl(25 85% 55%)" : "transparent",
+                    borderColor: selectedPlan === p.id ? C.copper : C.textMuted,
+                    background: selectedPlan === p.id ? C.copper : "transparent",
                   }}
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-semibold text-foreground">{p.label}</span>
+                    <span className="text-xs font-semibold" style={{ color: C.text }}>{p.label}</span>
                     <span
                       className="text-[9px] px-1.5 py-0.5 rounded-full font-bold"
                       style={{ background: `${p.badgeColor}22`, color: p.badgeColor }}
@@ -441,9 +413,9 @@ function PaymentCard({ data }: { data: InvoiceData }) {
                       {p.badge}
                     </span>
                   </div>
-                  <p className="text-[10px] text-muted-foreground">{p.description}</p>
+                  <p className="text-[10px]" style={{ color: C.textSecondary }}>{p.description}</p>
                 </div>
-                <span className="text-xs font-bold text-foreground whitespace-nowrap">
+                <span className="text-xs font-bold whitespace-nowrap" style={{ color: C.text }}>
                   {rateLoading && isNigerian
                     ? <Loader2 className="w-3 h-3 animate-spin inline" />
                     : formatAmt(p.getTranches(data.total)[0].amount)
@@ -455,20 +427,20 @@ function PaymentCard({ data }: { data: InvoiceData }) {
 
           {/* Schedule breakdown */}
           {tranches.length > 1 && (
-            <div className="mt-2 rounded-xl p-2.5 space-y-1.5" style={{ background: "hsl(0 0% 7%)", border: "1px solid hsl(0 0% 13%)" }}>
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">Payment Schedule</p>
+            <div className="mt-2 rounded-xl p-2.5 space-y-1.5" style={{ background: C.bg, border: `1px solid ${C.borderFaint}` }}>
+              <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: C.textSecondary }}>Payment Schedule</p>
               {tranches.map((t, i) => (
                 <div key={i} className="flex justify-between items-center text-xs">
                   <div className="flex items-center gap-1.5">
-                    <div className="w-1.5 h-1.5 rounded-full" style={{ background: i === 0 ? "hsl(25 85% 55%)" : "hsl(0 0% 30%)" }} />
-                    <span className={i === 0 ? "text-foreground" : "text-muted-foreground"}>{t.label}</span>
+                    <div className="w-1.5 h-1.5 rounded-full" style={{ background: i === 0 ? C.copper : C.textMuted }} />
+                    <span style={{ color: i === 0 ? C.text : C.textSecondary }}>{t.label}</span>
                   </div>
-                  <span className={i === 0 ? "font-semibold text-foreground" : "text-muted-foreground"}>
+                  <span style={{ color: i === 0 ? C.text : C.textSecondary, fontWeight: i === 0 ? 600 : 400 }}>
                     {formatAmt(t.amount)}
                   </span>
                 </div>
               ))}
-              <p className="text-[10px] text-muted-foreground pt-1 border-t border-border/30">
+              <p className="text-[10px] pt-1" style={{ color: C.textSecondary, borderTop: `1px solid ${C.borderFaint}` }}>
                 ⚡ Work starts after 1st payment · delivered before final payment is due
               </p>
             </div>
@@ -477,7 +449,7 @@ function PaymentCard({ data }: { data: InvoiceData }) {
 
         {/* Region selector */}
         <div>
-          <p className="text-[10px] uppercase tracking-wide text-muted-foreground mb-2">Your Location</p>
+          <p className="text-[10px] uppercase tracking-wide mb-2" style={{ color: C.textSecondary }}>Your Location</p>
           <div className="grid grid-cols-2 gap-2">
             {(Object.keys(BANK_ACCOUNTS) as Array<keyof typeof BANK_ACCOUNTS>).map((key) => {
               const acc = BANK_ACCOUNTS[key];
@@ -487,12 +459,12 @@ function PaymentCard({ data }: { data: InvoiceData }) {
                   onClick={() => setSelectedRegion(key)}
                   className="px-3 py-2.5 rounded-xl border text-left transition-all"
                   style={{
-                    borderColor: selectedRegion === key ? "hsl(25 85% 55% / 0.6)" : "hsl(0 0% 16%)",
-                    background: selectedRegion === key ? "hsl(25 85% 55% / 0.07)" : "transparent",
+                    borderColor: selectedRegion === key ? `${C.copper}99` : C.border,
+                    background: selectedRegion === key ? `${C.copper}12` : "transparent",
                   }}
                 >
                   <p className="text-sm">{acc.flag}</p>
-                  <p className="text-xs font-semibold text-foreground mt-0.5">{acc.label}</p>
+                  <p className="text-xs font-semibold mt-0.5" style={{ color: C.text }}>{acc.label}</p>
                 </button>
               );
             })}
@@ -503,10 +475,10 @@ function PaymentCard({ data }: { data: InvoiceData }) {
         <div>
           <div className="flex items-center gap-1.5 mb-2">
             {selectedRegion === "international"
-              ? <Globe className="w-3 h-3 text-muted-foreground" />
-              : <Building2 className="w-3 h-3 text-muted-foreground" />
+              ? <Globe className="w-3 h-3" style={{ color: C.textSecondary }} />
+              : <Building2 className="w-3 h-3" style={{ color: C.textSecondary }} />
             }
-            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
+            <p className="text-[10px] uppercase tracking-wide" style={{ color: C.textSecondary }}>
               {account.label} Bank Account — tap any field to copy
             </p>
           </div>
@@ -518,42 +490,42 @@ function PaymentCard({ data }: { data: InvoiceData }) {
         </div>
 
         {/* Amount to transfer */}
-        <div className="rounded-xl p-3" style={{ background: "hsl(25 85% 55% / 0.08)", border: "1px solid hsl(25 85% 55% / 0.2)" }}>
-          <p className="text-[10px] uppercase tracking-wide text-muted-foreground mb-1">Amount to Transfer Now</p>
+        <div className="rounded-xl p-3" style={{ background: `${C.copper}14`, border: `1px solid ${C.copper}33` }}>
+          <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: C.textSecondary }}>Amount to Transfer Now</p>
           {rateLoading && isNigerian ? (
             <div className="flex items-center gap-2">
-              <Loader2 className="w-4 h-4 animate-spin" style={{ color: "hsl(25 85% 65%)" }} />
-              <span className="text-sm text-muted-foreground">Fetching live rate…</span>
+              <Loader2 className="w-4 h-4 animate-spin" style={{ color: C.copperLight }} />
+              <span className="text-sm" style={{ color: C.textSecondary }}>Fetching live rate…</span>
             </div>
           ) : (
             <>
-              <p className="text-lg font-bold" style={{ color: "hsl(25 85% 65%)" }}>
+              <p className="text-lg font-bold" style={{ color: C.copperLight }}>
                 {formatAmt(tranches[0].amount)}
               </p>
               {isNigerian && ngnRate && (
-                <p className="text-[10px] text-muted-foreground mt-0.5">
+                <p className="text-[10px] mt-0.5" style={{ color: C.textSecondary }}>
                   ≈ ${tranches[0].amount.toLocaleString()} USD · rate: ₦{Math.round(ngnRate).toLocaleString()}/$ (live)
                 </p>
               )}
             </>
           )}
-          <p className="text-[10px] text-muted-foreground mt-0.5">{tranches[0].label}</p>
+          <p className="text-[10px] mt-0.5" style={{ color: C.textSecondary }}>{tranches[0].label}</p>
         </div>
 
         {/* After transfer note */}
-        <div className="rounded-xl p-3 space-y-2.5" style={{ background: "hsl(0 0% 7%)", border: "1px solid hsl(0 0% 14%)" }}>
-          <p className="text-xs font-semibold text-foreground">After you transfer:</p>
-          <p className="text-[10px] text-muted-foreground leading-relaxed">
-            Send us your proof of payment — we'll confirm receipt and kick off your project within <strong className="text-foreground">24 hours</strong>.
+        <div className="rounded-xl p-3 space-y-2.5" style={{ background: C.bg, border: `1px solid ${C.borderFaint}` }}>
+          <p className="text-xs font-semibold" style={{ color: C.text }}>After you transfer:</p>
+          <p className="text-[10px] leading-relaxed" style={{ color: C.textSecondary }}>
+            Send us your proof of payment — we'll confirm receipt and kick off your project within <strong style={{ color: C.text }}>24 hours</strong>.
           </p>
           <div className="flex flex-col gap-2 pt-1">
             <a
               href="mailto:hello@designers.guru?subject=Proof%20of%20Payment&body=Hi%20Guru%20Designers%2C%0A%0AI%20have%20made%20a%20transfer%20and%20I%27m%20attaching%20my%20proof%20of%20payment%20below."
               className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all"
               style={{
-                background: "hsl(25 85% 55% / 0.12)",
-                border: "1px solid hsl(25 85% 55% / 0.35)",
-                color: "hsl(25 85% 65%)",
+                background: `${C.copper}1f`,
+                border: `1px solid ${C.copper}59`,
+                color: C.copperLight,
               }}
             >
               <Mail className="w-3.5 h-3.5 flex-shrink-0" />
@@ -565,9 +537,9 @@ function PaymentCard({ data }: { data: InvoiceData }) {
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all"
               style={{
-                background: "hsl(142 70% 45% / 0.10)",
-                border: "1px solid hsl(142 70% 45% / 0.35)",
-                color: "hsl(142 70% 55%)",
+                background: `${C.greenBg}1a`,
+                border: `1px solid ${C.greenBg}59`,
+                color: C.green,
               }}
             >
               <MessageCircle className="w-3.5 h-3.5 flex-shrink-0" />
@@ -576,7 +548,7 @@ function PaymentCard({ data }: { data: InvoiceData }) {
           </div>
         </div>
 
-        <p className="text-[10px] text-center text-muted-foreground">
+        <p className="text-[10px] text-center" style={{ color: C.textMuted }}>
           <Shield className="w-3 h-3 inline mr-1" />
           Bank transfer · Your details are used solely for project delivery
         </p>
@@ -610,7 +582,6 @@ export default function GuruChat() {
   useEffect(() => { messagesRef.current = messages; }, [messages]);
   useEffect(() => { cartRef.current = cart; }, [cart]);
 
-  // Listen for external "open-guru-chat" event (e.g. from hero/contact buttons)
   useEffect(() => {
     const handler = () => setIsOpen(true);
     window.addEventListener("open-guru-chat", handler);
@@ -678,19 +649,16 @@ export default function GuruChat() {
         }
       }
 
-      // Parse cart
       const cartParsed = parseCartFromMessage(assistantText);
       if (cartParsed?.items && cartParsed.items.length > 0) {
         setCart({ items: cartParsed.items, discountPct: 0, total: cartParsed.total || cartParsed.items.reduce((s, i) => s + i.price, 0) });
         setShowCart(true);
       }
 
-      // Contact collection trigger → show contact form
       if (checkContactTrigger(assistantText) && !showContactForm && !showInvoice) {
         setShowContactForm(true);
       }
 
-      // Legacy invoice trigger fallback
       if (checkInvoiceTrigger(assistantText) && !showContactForm && !showInvoice) {
         setShowContactForm(true);
       }
@@ -805,10 +773,10 @@ export default function GuruChat() {
             exit={{ scale: 0, opacity: 0 }}
             transition={{ type: "spring", stiffness: 400, damping: 25 }}
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3.5 rounded-2xl text-primary-foreground text-sm font-semibold shadow-2xl"
+            className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3.5 rounded-2xl text-white text-sm font-semibold shadow-2xl"
             style={{
-              background: "linear-gradient(135deg, hsl(25 85% 55%), hsl(35 100% 70%))",
-              boxShadow: "0 8px 32px hsl(25 85% 55% / 0.45), 0 2px 8px hsl(0 0% 0% / 0.3)",
+              background: `linear-gradient(135deg, ${C.copper}, ${C.copperGlow})`,
+              boxShadow: `0 8px 32px ${C.copper}73, 0 2px 8px hsl(0 0% 0% / 0.3)`,
             }}
           >
             <motion.span
@@ -841,39 +809,40 @@ export default function GuruChat() {
               transition={{ type: "spring", stiffness: 350, damping: 28 }}
               className="fixed inset-x-4 bottom-4 top-16 z-50 sm:inset-auto sm:bottom-6 sm:right-6 sm:w-[420px] sm:h-[680px] flex flex-col rounded-3xl overflow-hidden"
               style={{
-                background: "hsl(0 0% 7%)",
-                border: "1px solid hsl(0 0% 14%)",
-                boxShadow: "0 24px 80px hsl(0 0% 0% / 0.6), 0 0 0 1px hsl(25 85% 55% / 0.1)",
+                background: C.bg,
+                border: `1px solid ${C.borderSubtle}`,
+                boxShadow: `0 24px 80px hsl(0 0% 0% / 0.6), 0 0 0 1px ${C.copper}1a`,
               }}
             >
               {/* Header */}
               <div
-                className="flex items-center gap-3 px-5 py-4 border-b border-border/50"
-                style={{ background: "linear-gradient(135deg, hsl(0 0% 9%), hsl(0 0% 7%))" }}
+                className="flex items-center gap-3 px-5 py-4"
+                style={{ background: `linear-gradient(135deg, ${C.bgElevated}, ${C.bg})`, borderBottom: `1px solid ${C.borderSubtle}` }}
               >
                 <div className="relative">
                   <div
-                    className="w-10 h-10 rounded-2xl flex items-center justify-center text-lg font-bold text-primary-foreground"
-                    style={{ background: "linear-gradient(135deg, hsl(25 85% 55%), hsl(35 100% 70%))" }}
+                    className="w-10 h-10 rounded-2xl flex items-center justify-center text-lg font-bold text-white"
+                    style={{ background: `linear-gradient(135deg, ${C.copper}, ${C.copperGlow})` }}
                   >G</div>
-                  <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-green-500 border-2 border-[hsl(0_0%_7%)]" />
+                  <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2" style={{ background: C.green, borderColor: C.bg }} />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-semibold text-foreground">Guru</p>
-                  <p className="text-xs text-muted-foreground">Guru Designers · Online now</p>
+                  <p className="text-sm font-semibold" style={{ color: C.text }}>Guru Designers</p>
+                  <p className="text-xs" style={{ color: C.textSecondary }}>Online now</p>
                 </div>
                 <div className="flex items-center gap-2">
                   {cart.items.length > 0 && (
                     <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => setShowCart(!showCart)}
-                      className="relative p-2 rounded-xl hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors">
+                      className="relative p-2 rounded-xl transition-colors" style={{ color: C.textSecondary }}>
                       <ShoppingCart className="w-4 h-4" />
-                      <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-primary text-primary-foreground text-[10px] flex items-center justify-center font-bold">
+                      <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-white text-[10px] flex items-center justify-center font-bold"
+                        style={{ background: C.copper }}>
                         {cart.items.length}
                       </span>
                     </motion.button>
                   )}
                   <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => setIsOpen(false)}
-                    className="p-2 rounded-xl hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
+                    className="p-2 rounded-xl transition-colors" style={{ color: C.textSecondary }}>
                     <X className="w-4 h-4" />
                   </motion.button>
                 </div>
@@ -884,22 +853,23 @@ export default function GuruChat() {
                 {showCart && cart.items.length > 0 && (
                   <motion.div
                     initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
-                    className="overflow-hidden border-b border-border/50" style={{ background: "hsl(0 0% 9%)" }}
+                    className="overflow-hidden" style={{ background: C.bgElevated, borderBottom: `1px solid ${C.borderSubtle}` }}
                   >
                     <div className="px-4 py-3">
-                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 flex items-center justify-between">
+                      <p className="text-xs font-semibold uppercase tracking-wide mb-2 flex items-center justify-between"
+                        style={{ color: C.textSecondary }}>
                         <span>📋 Your Package</span>
                         <button onClick={() => setShowCart(false)}><ChevronDown className="w-3 h-3" /></button>
                       </p>
                       {cart.items.map((item, i) => (
                         <div key={i} className="flex justify-between text-sm py-1">
-                          <span className="text-muted-foreground truncate mr-2">{item.name}</span>
-                          <span className="text-foreground font-medium whitespace-nowrap">${item.price.toLocaleString()}</span>
+                          <span className="truncate mr-2" style={{ color: C.textSecondary }}>{item.name}</span>
+                          <span className="font-medium whitespace-nowrap" style={{ color: C.text }}>${item.price.toLocaleString()}</span>
                         </div>
                       ))}
-                      <div className="flex justify-between text-sm pt-2 mt-1 border-t border-border/50 font-semibold">
-                        <span className="text-foreground">Total</span>
-                        <span style={{ color: "hsl(25 85% 65%)" }}>${cart.total.toLocaleString()}</span>
+                      <div className="flex justify-between text-sm pt-2 mt-1 font-semibold" style={{ borderTop: `1px solid ${C.borderSubtle}` }}>
+                        <span style={{ color: C.text }}>Total</span>
+                        <span style={{ color: C.copperLight }}>${cart.total.toLocaleString()}</span>
                       </div>
                     </div>
                   </motion.div>
@@ -912,13 +882,13 @@ export default function GuruChat() {
                   <motion.div key={idx} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}
                     className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                     {msg.role === "assistant" && (
-                      <div className="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold text-primary-foreground mr-2 flex-shrink-0 mt-0.5"
-                        style={{ background: "linear-gradient(135deg, hsl(25 85% 55%), hsl(35 100% 70%))" }}>G</div>
+                      <div className="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold text-white mr-2 flex-shrink-0 mt-0.5"
+                        style={{ background: `linear-gradient(135deg, ${C.copper}, ${C.copperGlow})` }}>G</div>
                     )}
-                    <div className={`max-w-[78%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${msg.role === "user" ? "rounded-tr-sm text-primary-foreground" : "rounded-tl-sm text-foreground"}`}
+                    <div className={`max-w-[78%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${msg.role === "user" ? "rounded-tr-sm" : "rounded-tl-sm"}`}
                       style={msg.role === "user"
-                        ? { background: "linear-gradient(135deg, hsl(25 85% 55%), hsl(35 100% 70%))" }
-                        : { background: "hsl(0 0% 10%)", border: "1px solid hsl(0 0% 16%)" }
+                        ? { background: `linear-gradient(135deg, ${C.copper}, ${C.copperGlow})`, color: "white" }
+                        : { background: C.bgInput, border: `1px solid ${C.border}`, color: C.text }
                       }>
                       <div dangerouslySetInnerHTML={{ __html: formatMessage(msg.content) }} className="[&_ul]:pl-1 [&_li]:text-sm" />
                     </div>
@@ -927,13 +897,13 @@ export default function GuruChat() {
 
                 {isLoading && (
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start items-end gap-2">
-                    <div className="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold text-primary-foreground"
-                      style={{ background: "linear-gradient(135deg, hsl(25 85% 55%), hsl(35 100% 70%))" }}>G</div>
-                    <div className="px-4 py-3 rounded-2xl rounded-tl-sm" style={{ background: "hsl(0 0% 10%)", border: "1px solid hsl(0 0% 16%)" }}>
+                    <div className="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold text-white"
+                      style={{ background: `linear-gradient(135deg, ${C.copper}, ${C.copperGlow})` }}>G</div>
+                    <div className="px-4 py-3 rounded-2xl rounded-tl-sm" style={{ background: C.bgInput, border: `1px solid ${C.border}` }}>
                       <div className="flex gap-1 items-center h-4">
                         {[0, 1, 2].map((i) => (
                           <motion.div key={i} animate={{ y: [0, -4, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.15 }}
-                            className="w-1.5 h-1.5 rounded-full bg-primary/70" />
+                            className="w-1.5 h-1.5 rounded-full" style={{ background: `${C.copper}b3` }} />
                         ))}
                       </div>
                     </div>
@@ -943,8 +913,8 @@ export default function GuruChat() {
                 {/* Contact Form */}
                 {(showContactForm || invoiceGenerating) && !showInvoice && (
                   <div className="flex justify-start">
-                    <div className="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold text-primary-foreground mr-2 flex-shrink-0 mt-0.5"
-                      style={{ background: "linear-gradient(135deg, hsl(25 85% 55%), hsl(35 100% 70%))" }}>G</div>
+                    <div className="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold text-white mr-2 flex-shrink-0 mt-0.5"
+                      style={{ background: `linear-gradient(135deg, ${C.copper}, ${C.copperGlow})` }}>G</div>
                     <div className="flex-1 min-w-0">
                       {showContactForm && !invoiceGenerating && (
                         <ContactFormCard onSubmit={handleContactFormSubmit} />
@@ -954,12 +924,12 @@ export default function GuruChat() {
                           initial={{ opacity: 0, y: 8 }}
                           animate={{ opacity: 1, y: 0 }}
                           className="w-full rounded-2xl px-4 py-4 flex items-center gap-3"
-                          style={{ background: "hsl(0 0% 9%)", border: "1px solid hsl(25 85% 55% / 0.3)" }}
+                          style={{ background: C.bgElevated, border: `1px solid ${C.copper}4d` }}
                         >
-                          <Loader2 className="w-5 h-5 animate-spin flex-shrink-0" style={{ color: "hsl(25 85% 55%)" }} />
+                          <Loader2 className="w-5 h-5 animate-spin flex-shrink-0" style={{ color: C.copper }} />
                           <div>
-                            <p className="text-sm font-semibold text-foreground">Generating your invoice…</p>
-                            <p className="text-xs text-muted-foreground mt-0.5">Just a moment</p>
+                            <p className="text-sm font-semibold" style={{ color: C.text }}>Generating your invoice…</p>
+                            <p className="text-xs mt-0.5" style={{ color: C.textSecondary }}>Just a moment</p>
                           </div>
                         </motion.div>
                       )}
@@ -968,13 +938,13 @@ export default function GuruChat() {
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           className="w-full rounded-2xl px-4 py-3 space-y-2"
-                          style={{ background: "hsl(0 0% 9%)", border: "1px solid hsl(0 84% 60% / 0.4)" }}
+                          style={{ background: C.bgElevated, border: `1px solid ${C.red}66` }}
                         >
-                          <p className="text-xs text-red-400">{invoiceError}</p>
+                          <p className="text-xs" style={{ color: C.red }}>{invoiceError}</p>
                           <button
                             onClick={() => { setInvoiceError(""); setShowContactForm(true); }}
                             className="text-xs font-semibold px-3 py-1.5 rounded-xl"
-                            style={{ background: "hsl(25 85% 55% / 0.15)", color: "hsl(25 85% 65%)" }}
+                            style={{ background: `${C.copper}26`, color: C.copperLight }}
                           >Try again</button>
                         </motion.div>
                       )}
@@ -985,8 +955,8 @@ export default function GuruChat() {
                 {/* Invoice */}
                 {showInvoice && invoiceData && (
                   <div className="flex justify-start">
-                    <div className="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold text-primary-foreground mr-2 flex-shrink-0 mt-0.5"
-                      style={{ background: "linear-gradient(135deg, hsl(25 85% 55%), hsl(35 100% 70%))" }}>G</div>
+                    <div className="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold text-white mr-2 flex-shrink-0 mt-0.5"
+                      style={{ background: `linear-gradient(135deg, ${C.copper}, ${C.copperGlow})` }}>G</div>
                     <div className="flex-1 min-w-0">
                       <InvoiceCard data={invoiceData} autoShowPayment={showPayment} />
                     </div>
@@ -996,8 +966,8 @@ export default function GuruChat() {
                 {/* Payment / Bank Details */}
                 {showPayment && invoiceData && (
                   <div className="flex justify-start">
-                    <div className="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold text-primary-foreground mr-2 flex-shrink-0 mt-0.5"
-                      style={{ background: "linear-gradient(135deg, hsl(25 85% 55%), hsl(35 100% 70%))" }}>G</div>
+                    <div className="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold text-white mr-2 flex-shrink-0 mt-0.5"
+                      style={{ background: `linear-gradient(135deg, ${C.copper}, ${C.copperGlow})` }}>G</div>
                     <div className="flex-1 min-w-0">
                       <PaymentCard data={invoiceData} />
                     </div>
@@ -1012,7 +982,11 @@ export default function GuruChat() {
                 <div className="px-4 pb-2 flex flex-wrap gap-2">
                   {["I need a website", "AI automation help", "Brand identity", "Full package quote"].map((q) => (
                     <button key={q} onClick={() => streamChat(q)}
-                      className="text-xs px-3 py-1.5 rounded-full border border-border hover:border-primary/50 text-muted-foreground hover:text-primary transition-all">
+                      className="text-xs px-3 py-1.5 rounded-full border transition-all"
+                      style={{ borderColor: C.border, color: C.textSecondary }}
+                      onMouseEnter={e => { e.currentTarget.style.borderColor = `${C.copper}80`; e.currentTarget.style.color = C.copperLight; }}
+                      onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.textSecondary; }}
+                    >
                       {q}
                     </button>
                   ))}
@@ -1020,19 +994,21 @@ export default function GuruChat() {
               )}
 
               {/* Input */}
-              <div className="px-4 pb-4 pt-2 border-t border-border/50">
+              <div className="px-4 pb-4 pt-2" style={{ borderTop: `1px solid ${C.borderSubtle}` }}>
                 <div className="flex items-center gap-2 rounded-2xl px-4 py-2.5"
-                  style={{ background: "hsl(0 0% 10%)", border: "1px solid hsl(0 0% 18%)" }}>
+                  style={{ background: C.bgInput, border: `1px solid ${C.border}` }}>
                   <input ref={inputRef} value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={handleKey}
                     placeholder="Type a message..." disabled={isLoading}
-                    className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none" />
+                    className="flex-1 bg-transparent text-sm outline-none"
+                    style={{ color: C.text }}
+                  />
                   <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={handleSend} disabled={!input.trim() || isLoading}
                     className="w-8 h-8 rounded-xl flex items-center justify-center disabled:opacity-40 transition-all"
-                    style={{ background: input.trim() && !isLoading ? "linear-gradient(135deg, hsl(25 85% 55%), hsl(35 100% 70%))" : "hsl(0 0% 14%)" }}>
-                    {isLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin text-muted-foreground" /> : <Send className="w-3.5 h-3.5 text-white" />}
+                    style={{ background: input.trim() && !isLoading ? `linear-gradient(135deg, ${C.copper}, ${C.copperGlow})` : C.borderSubtle }}>
+                    {isLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" style={{ color: C.textMuted }} /> : <Send className="w-3.5 h-3.5 text-white" />}
                   </motion.button>
                 </div>
-                <p className="text-[10px] text-center text-muted-foreground mt-2">Powered by Guru Designers · designers.guru</p>
+                <p className="text-[10px] text-center mt-2" style={{ color: C.textMuted }}>Powered by Guru Designers · designers.guru</p>
               </div>
             </motion.div>
           </>
