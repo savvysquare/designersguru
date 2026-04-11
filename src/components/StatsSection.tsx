@@ -17,7 +17,7 @@ const StatsSection = () => {
             <span className="text-[11px] font-semibold tracking-[0.15em] text-primary uppercase">
               Results
             </span>
-            <h2 className="text-[40px] md:text-[48px] font-bold leading-[1.1] tracking-[-0.02em] whitespace-pre-line">
+            <h2 className="text-4xl md:text-5xl lg:text-[4rem] font-display font-bold leading-[1.08] tracking-tight">
               <span className="opacity-50">Our focus is simple</span>{"\n"}
               Design to <span className="text-gradient-copper">convert</span>
             </h2>
