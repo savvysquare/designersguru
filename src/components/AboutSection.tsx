@@ -14,12 +14,6 @@ const team = [
     image: "https://picsum.photos/seed/konrad/600/800",
     xProfile: "#",
   },
-  {
-    name: "Carla Lopez",
-    role: "Head of Marketing",
-    image: "https://picsum.photos/seed/carla/600/800",
-    xProfile: "#",
-  },
 ];
 
 const AboutSection = () => {
@@ -57,7 +51,7 @@ const AboutSection = () => {
         </div>
 
         {/* Team Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10 max-w-3xl mx-auto">
           {team.map((member, i) => (
             <motion.a
               key={member.name}
