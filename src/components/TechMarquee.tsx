@@ -2,14 +2,14 @@ import { motion } from "framer-motion";
 
 const TechMarquee = () => {
   return (
-    <section className="py-24 px-6 md:px-[60px] bg-background">
+    <section className="min-h-screen flex items-center justify-center px-6 md:px-[60px] bg-background">
       <div className="max-w-5xl mx-auto text-center">
         <motion.h2
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
-          className="text-3xl md:text-5xl lg:text-[56px] font-bold leading-[1.15] tracking-tight text-foreground"
+          className="text-3xl md:text-5xl lg:text-[56px] font-semibold leading-[1.15] tracking-tight text-foreground"
         >
           We help businesses{" "}
           <motion.span
