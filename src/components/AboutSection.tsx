@@ -3,13 +3,13 @@ import { ArrowUpRight } from "lucide-react";
 
 const team = [
   {
-    name: "Sarah Farine",
-    role: "Founder & Creative Director",
+    name: "Ola",
+    role: "Marketing & Creative Director",
     image: "https://picsum.photos/seed/sarah/600/800",
     xProfile: "#",
   },
   {
-    name: "Konrad Cheung",
+    name: "Timi oye",
     role: "Head of Design",
     image: "https://picsum.photos/seed/konrad/600/800",
     xProfile: "#",
@@ -33,9 +33,9 @@ const AboutSection = () => {
               The Team
             </span>
             <h2 className="text-[36px] md:text-[48px] font-semibold leading-[1.1] tracking-[-0.02em]">
-              <span className="text-muted-foreground">Meet the people</span>
+              <span className="text-muted-foreground">Meet the team</span>
               <br />
-              behind <span className="text-gradient-copper">every pixel</span>
+              behind <span className="text-gradient-copper">designers.guru</span>
             </h2>
           </motion.div>
 
@@ -44,9 +44,9 @@ const AboutSection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.15, duration: 0.5 }}
-            className="text-muted-foreground text-[15px] leading-relaxed max-w-[300px] md:pt-14"
+            className="text-muted-foreground text-[15px] leading-relaxed max-w-[450px] md:pt-14"
           >
-            A tight-knit crew of designers, strategists & builders obsessed with making brands unforgettable.
+            We're designers, marketers, developers & AI strategists — a single studio that handles every layer of your digital presence, from brand identity to intelligent automation
           </motion.p>
         </div>
 
