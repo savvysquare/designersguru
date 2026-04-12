@@ -14,12 +14,6 @@ const team = [
     image: "https://picsum.photos/seed/konrad/600/800",
     xProfile: "#",
   },
-  {
-    name: "Carla Lopez",
-    role: "Head of Marketing",
-    image: "https://picsum.photos/seed/carla/600/800",
-    xProfile: "#",
-  },
 ];
 
 const AboutSection = () => {
