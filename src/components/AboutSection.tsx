@@ -1,11 +1,13 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
+import teamOla from "@/assets/team-ola.png";
+import teamTimi from "@/assets/team-timi.png";
 
 const team = [
   {
     name: "Ola",
     role: "Marketing & Creative Director",
-    image: "https://picsum.photos/seed/sarah/600/800",
+    image: teamOla,
     xProfile: "#",
   },
   {
