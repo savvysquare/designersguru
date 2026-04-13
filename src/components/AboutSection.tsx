@@ -13,7 +13,7 @@ const team = [
   {
     name: "Timi oye",
     role: "Head of Design",
-    image: "https://picsum.photos/seed/konrad/600/800",
+    image: teamTimi,
     xProfile: "#",
   },
 ];
