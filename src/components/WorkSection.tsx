@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ExternalLink } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import portfolioPrepper from "@/assets/portfolio-prepper.png";
 import portfolioJikona from "@/assets/portfolio-jikona.png";
 import portfolioFastforward from "@/assets/portfolio-fastforward.png";
@@ -77,9 +77,9 @@ const WorkSection = () => {
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-end p-4">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/90 text-black text-[11px] font-semibold">
-                    Visit Site <ExternalLink className="w-3 h-3" />
-                  </span>
+                  <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                    <ArrowUpRight className="w-5 h-5 text-primary-foreground" />
+                  </div>
                 </div>
               </div>
               <div className="p-5">
