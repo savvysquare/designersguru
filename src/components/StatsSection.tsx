@@ -119,17 +119,15 @@ const StatsSection = () => {
               <p className="text-xl md:text-2xl font-medium leading-snug opacity-90">
                 We've helped businesses across industries ship faster, look better, and convert more
               </p>
-              <div className="space-y-2">
-                <div className="flex gap-1">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <Star key={i} size={16} className="fill-emerald-400 text-emerald-400" />
-                  ))}
-                </div>
-                <div className="text-2xl font-bold">5/5</div>
-              </div>
             </div>
 
-            <div className="relative z-10 mt-8 md:mt-0">
+            <div className="relative z-10 mt-8 md:mt-0 space-y-2">
+              <div className="flex gap-1 items-center">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <Star key={i} size={16} className="fill-yellow-400 text-yellow-400" />
+                ))}
+                <span className="text-2xl font-bold ml-2">5/5</span>
+              </div>
               <div className="text-[11px] font-medium tracking-[0.1em] opacity-50 uppercase">
                 Trusted by clients worldwide
               </div>
