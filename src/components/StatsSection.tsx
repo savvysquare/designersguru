@@ -44,8 +44,6 @@ const cardVariants = {
     },
   }),
 };
-  }),
-};
 
 const StatsSection = () => {
   return (
