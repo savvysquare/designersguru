@@ -1,5 +1,5 @@
 import { motion, useInView } from "framer-motion";
-import { ArrowUpRight, Star, Circle } from "lucide-react";
+import { Star, Circle } from "lucide-react";
 import { useRef, useEffect, useState } from "react";
 
 const AnimatedCounter = ({ value, suffix = "", prefix = "" }: { value: number; suffix?: string; prefix?: string }) => {
@@ -94,10 +94,10 @@ const StatsSection = () => {
               whileInView="visible"
               viewport={{ once: true, margin: "-60px" }}
               whileHover={{ y: -4, transition: { type: "spring", stiffness: 300, damping: 20 } }}
-              className="border border-border rounded-3xl p-8 flex flex-col justify-between h-[180px]"
+              className="border border-border rounded-3xl p-8 flex flex-col justify-between h-[220px]"
             >
               <span className="text-[11px] font-semibold tracking-[0.15em] text-muted-foreground uppercase">
-                10+ Partners
+                20+ Clients Served
               </span>
               <div className="flex -space-x-3">
                 {[1, 2, 3, 4].map((i) => (
@@ -111,7 +111,7 @@ const StatsSection = () => {
                   >
                     <img
                       src={`https://picsum.photos/seed/guru${i}/100/100`}
-                      alt="Partner"
+                      alt="Client"
                       className="w-full h-full object-cover"
                       referrerPolicy="no-referrer"
                       loading="lazy"
@@ -119,6 +119,9 @@ const StatsSection = () => {
                   </motion.div>
                 ))}
               </div>
+              <p className="text-sm text-muted-foreground leading-snug">
+                Brands that trust us keep coming back — and send their friends.
+              </p>
             </motion.div>
 
             <motion.div
@@ -128,17 +131,20 @@ const StatsSection = () => {
               whileInView="visible"
               viewport={{ once: true, margin: "-60px" }}
               whileHover={{ y: -4, transition: { type: "spring", stiffness: 300, damping: 20 } }}
-              className="bg-card rounded-3xl p-8 shadow-sm border border-border flex flex-col justify-between h-[280px]"
+              className="bg-card rounded-3xl p-8 shadow-sm border border-border flex flex-col justify-between h-[300px]"
             >
-              <p className="text-base font-medium leading-snug max-w-[200px] text-foreground">
-                Results that keep clients coming back for more
-              </p>
+              <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                Completion rate
+              </div>
               <div>
                 <AnimatedCounter value={100} suffix="%" />
-                <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mt-1">
-                  Completion rate
+                <div className="text-[11px] font-bold text-foreground uppercase tracking-wider mt-1">
+                  Every project, delivered
                 </div>
               </div>
+              <p className="text-sm text-muted-foreground leading-snug">
+                On time, on brief, no exceptions.
+              </p>
             </motion.div>
           </div>
 
@@ -150,14 +156,19 @@ const StatsSection = () => {
             whileInView="visible"
             viewport={{ once: true, margin: "-60px" }}
             whileHover={{ y: -4, transition: { type: "spring", stiffness: 300, damping: 20 } }}
-            className="bg-card rounded-3xl p-8 shadow-sm border border-border flex flex-col justify-between h-auto md:h-[480px]"
+            className="bg-card rounded-3xl p-8 shadow-sm border border-border flex flex-col justify-between h-auto md:h-[540px]"
           >
-            <p className="text-base font-medium leading-snug max-w-[220px] text-foreground">
-              Through our custom-tailored design systems
-            </p>
+            <div>
+              <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-4">
+                What sets us apart
+              </div>
+              <p className="text-base font-medium leading-snug text-foreground">
+                Design, marketing, AI automation & web — one studio, zero handoff friction. You get a team that thinks end-to-end, not in silos.
+              </p>
+            </div>
             <div className="space-y-8 mt-8 md:mt-0">
               <div>
-                <AnimatedCounter value={15} suffix="+" />
+                <AnimatedCounter value={30} suffix="+" />
                 <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mt-1">
                   Projects delivered
                 </div>
@@ -171,7 +182,7 @@ const StatsSection = () => {
               >
                 <Circle className="w-2 h-2 fill-emerald-500 text-emerald-500" />
                 <span className="text-[11px] font-semibold tracking-wider uppercase text-foreground">
-                  Available now
+                  Taking on new projects
                 </span>
               </motion.div>
             </div>
@@ -185,16 +196,15 @@ const StatsSection = () => {
             whileInView="visible"
             viewport={{ once: true, margin: "-60px" }}
             whileHover={{ y: -4, transition: { type: "spring", stiffness: 300, damping: 20 } }}
-            className="rounded-3xl p-10 flex flex-col justify-between h-auto md:h-[480px] relative overflow-hidden group"
+            className="rounded-3xl p-10 flex flex-col justify-between h-auto md:h-[540px] relative overflow-hidden group"
             style={{ background: "hsl(0 0% 8%)", color: "hsl(0 0% 95%)" }}
           >
-            <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
-              <ArrowUpRight size={240} strokeWidth={1} />
-            </div>
-
-            <div className="relative z-10 space-y-8">
-              <p className="text-xl md:text-2xl font-medium leading-snug opacity-90">
-                We've helped businesses across industries ship faster, look better, and convert more
+            <div className="relative z-10">
+              <div className="text-[11px] font-semibold tracking-[0.15em] uppercase opacity-50 mb-6">
+                What our clients say
+              </div>
+              <p className="text-2xl md:text-3xl font-semibold leading-snug italic">
+                Brands leave us looking sharper, growing faster, and working smarter.
               </p>
             </div>
 
