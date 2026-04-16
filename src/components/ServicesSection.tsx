@@ -58,7 +58,7 @@ const cardVariants = {
 
 const ServicesSection = () => {
   return (
-    <section id="services" className="py-24 px-6">
+    <section id="services" aria-label="Our services — Websites, AI Automations, Branding" className="py-24 px-6">
       <div className="mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

@@ -38,7 +38,7 @@ const projects = [
 
 const WorkSection = () => {
   return (
-    <section id="work" className="py-24 px-6">
+    <section id="work" aria-label="Our portfolio of client work" className="py-24 px-6">
       <div className="mx-auto max-w-7xl">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -72,7 +72,7 @@ const WorkSection = () => {
               <div className="aspect-[4/3] overflow-hidden relative">
                 <img
                   src={project.image}
-                  alt={project.title}
+                  alt={`${project.title} — ${project.category} project by designers.guru`}
                   className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700"
                   loading="lazy"
                 />
