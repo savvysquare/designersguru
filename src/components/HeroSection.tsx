@@ -3,7 +3,7 @@ import { ArrowRight, Bot } from "lucide-react";
 
 const HeroSection = () => {
   return (
-    <section id="home" className="relative min-h-screen flex items-center overflow-hidden">
+    <section id="home" aria-label="Hero — 10x your business with designs that work" className="relative min-h-screen flex items-center overflow-hidden">
       {/* Subtle grid background */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.04]">
         <div className="w-full h-full" style={{

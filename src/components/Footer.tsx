@@ -22,7 +22,7 @@ const footerLinks = {
 
 const Footer = () => {
   return (
-    <footer className="bg-foreground text-background pt-14 pb-8 px-6 md:px-[60px] rounded-t-[32px]">
+    <footer role="contentinfo" className="bg-foreground text-background pt-14 pb-8 px-6 md:px-[60px] rounded-t-[32px]">
       <div className="mx-auto max-w-7xl">
         {/* Top grid */}
         <div className="grid grid-cols-1 md:grid-cols-[1.4fr_1fr_1fr_1fr] gap-10 md:gap-8 mb-14">
