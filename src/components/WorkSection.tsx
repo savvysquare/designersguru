@@ -1,37 +1,30 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import portfolioPrepper from "@/assets/portfolio-prepper.png";
-import portfolioJikona from "@/assets/portfolio-jikona.png";
-import portfolioFastforward from "@/assets/portfolio-fastforward.png";
-import portfolioOlacv from "@/assets/portfolio-olacv.png";
+import portfolioLoop from "@/assets/portfolio-loop.webp";
 
 const projects = [
   {
     title: "Prepper Learning",
     category: "EdTech Platform",
     description: "A chat-based learning platform helping 93k+ users learn faster.",
-    image: portfolioPrepper,
     url: "https://prepperlearning.com",
   },
   {
     title: "Jikona Evalora",
     category: "Corporate Website",
     description: "Research & analytics firm turning data into decisions across Africa.",
-    image: portfolioJikona,
     url: "https://jikonaevalora.com",
   },
   {
     title: "FastForward Fund",
     category: "Venture Studio",
     description: "A venture fund backing African founders building transformational companies.",
-    image: portfolioFastforward,
     url: "https://fastforward.fund",
   },
   {
     title: "Ola.cv",
     category: "Domain Registrar",
     description: "The go-to platform for .cv domains trusted by professionals in 150+ countries.",
-    image: portfolioOlacv,
     url: "https://ola.cv",
   },
 ];
@@ -69,12 +62,15 @@ const WorkSection = () => {
               whileHover={{ y: -4, transition: { type: "spring", stiffness: 300, damping: 20 } }}
               className="group relative overflow-hidden rounded-2xl bg-card border border-border hover:border-primary/20 cursor-pointer transition-all duration-300"
             >
-              <div className="aspect-[4/3] overflow-hidden relative">
+              <div className="aspect-[4/3] overflow-hidden relative bg-secondary">
                 <img
-                  src={project.image}
-                  alt={`${project.title} — ${project.category} project by designers.guru`}
+                  src={portfolioLoop}
+                  alt={`Selected client work by designers.guru — featuring ${project.title} (${project.category})`}
+                  width={800}
+                  height={600}
                   className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700"
                   loading="lazy"
+                  decoding="async"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-end p-4">
                   <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center translate-y-2 group-hover:translate-y-0 transition-all duration-300">
