@@ -3,8 +3,9 @@ import { Quote } from "lucide-react";
 
 const TestimonialSection = () => {
   return (
-    <section className="py-20 px-6">
-      <div className="mx-auto max-w-4xl text-center">
+    <section className="py-24 px-6 md:px-[60px]">
+      <div className="max-w-7xl mx-auto">
+        <div className="max-w-4xl mx-auto text-center">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
