@@ -61,6 +61,7 @@ const ContactSection = () => {
             </motion.a>
           </div>
         </motion.div>
+        </div>
       </div>
     </section>
   );
