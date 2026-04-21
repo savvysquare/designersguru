@@ -58,8 +58,8 @@ const cardVariants = {
 
 const ServicesSection = () => {
   return (
-    <section id="services" aria-label="Our services — Websites, AI Automations, Branding" className="py-24 px-6">
-      <div className="mx-auto max-w-6xl">
+    <section id="services" aria-label="Our services — Websites, AI Automations, Branding" className="py-24 px-6 md:px-[60px]">
+      <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}

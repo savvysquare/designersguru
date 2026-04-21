@@ -36,7 +36,7 @@ const cardVariants = {
 const AboutSection = () => {
   return (
     <section id="about" className="py-24 md:py-32 px-6 md:px-[60px] bg-background" style={{ perspective: "1200px" }}>
-      <div className="mx-auto max-w-6xl">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-16">
           <motion.div

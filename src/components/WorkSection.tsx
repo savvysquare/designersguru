@@ -38,8 +38,8 @@ const projects = [
 
 const WorkSection = () => {
   return (
-    <section id="work" aria-label="Our portfolio of client work" className="py-24 px-6">
-      <div className="mx-auto max-w-7xl">
+    <section id="work" aria-label="Our portfolio of client work" className="py-24 px-6 md:px-[60px]">
+      <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
