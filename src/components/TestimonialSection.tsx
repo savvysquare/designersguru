@@ -22,6 +22,7 @@ const TestimonialSection = () => {
             <p className="text-sm text-muted-foreground">Founder, Jikona Evalora</p>
           </div>
         </motion.div>
+        </div>
       </div>
     </section>
   );
