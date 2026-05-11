@@ -229,7 +229,7 @@ function InvoiceCard({ data, autoShowPayment }: { data: InvoiceData; autoShowPay
           >GD</div>
           <div>
             <p className="text-xs font-semibold" style={{ color: C.text }}>Guru Designers</p>
-            <p className="text-[10px]" style={{ color: C.textSecondary }}>designers.guru</p>
+            <p className="text-[10px]" style={{ color: C.textSecondary }}>Guru Designers</p>
           </div>
         </div>
         <div className="text-right">
@@ -1008,7 +1008,7 @@ export default function GuruChat() {
                     {isLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" style={{ color: C.textMuted }} /> : <Send className="w-3.5 h-3.5 text-white" />}
                   </motion.button>
                 </div>
-                <p className="text-[10px] text-center mt-2" style={{ color: C.textMuted }}>Powered by Guru Designers · designers.guru</p>
+                <p className="text-[10px] text-center mt-2" style={{ color: C.textMuted }}>Powered by Guru Designers</p>
               </div>
             </motion.div>
           </>

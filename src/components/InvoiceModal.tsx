@@ -68,7 +68,6 @@ export default function InvoiceModal({
               </div>
               <div>
                 <p className="font-semibold text-foreground text-sm">Guru Designers</p>
-                <p className="text-xs text-muted-foreground">designers.guru</p>
               </div>
             </div>
             <div className="flex items-center gap-2">

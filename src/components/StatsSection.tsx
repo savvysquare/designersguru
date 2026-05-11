@@ -47,7 +47,7 @@ const StatsSection = () => {
           <div>
             <div className="tag-label bg-background/10 text-background/80 mb-12">Customer Story</div>
             <h3 className="text-3xl md:text-5xl font-medium leading-tight mb-12 text-background">
-              "Working with designers.guru was a game-changer. They understood our vision from day one and delivered a brand presence that truly represents who we are. Professional, creative, and remarkably reliable."
+              "Working with Guru Designers was a game-changer. They understood our vision from day one and delivered a brand presence that truly represents who we are. Professional, creative, and remarkably reliable."
             </h3>
           </div>
 

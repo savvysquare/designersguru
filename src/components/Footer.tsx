@@ -66,7 +66,7 @@ const Footer = () => {
 
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 border-t border-border pt-8">
           <div className="flex items-center gap-4 text-sm font-medium text-foreground/50">
-            <p>© 2026 designers.guru. All rights reserved.</p>
+            <p>© 2026 Guru Designers. All rights reserved.</p>
           </div>
           <div className="flex items-center gap-6 text-sm font-medium text-foreground/50">
             <a href="#" className="hover:text-foreground transition-colors">Privacy Policy</a>

@@ -5,7 +5,7 @@ const EMAIL_BODY = encodeURIComponent(
   "Hi Guru Designers,\n\nI came across your website and I'm interested in working with you.\n\nHere's a bit about what I'm looking for:\n\n[Please describe your project or goals here]\n\nLooking forward to hearing from you!\n\nBest regards,"
 );
 const WHATSAPP_MESSAGE = encodeURIComponent(
-  "Hi! I just visited designers.guru and I'd love to discuss a project with your team. 🙌"
+  "Hi! I just visited Guru Designers and I'd love to discuss a project with your team. 🙌"
 );
 
 const ContactSection = () => {

@@ -4,7 +4,7 @@ import teamTimi from "@/assets/team-timi.png";
 
 const team = [
   {
-    name: "Ola",
+    name: "Ola Awo",
     role: "Marketing & Creative Director",
     image: teamOla,
     xProfile: "#",
@@ -44,7 +44,7 @@ const AboutSection = () => {
               <img
                 src={member.image}
                 alt={member.name}
-                className="w-full h-full object-cover object-top"
+                className={`w-full h-full object-cover object-top ${member.name === "Ola Awo" ? "scale-[1.4] translate-y-3" : ""}`}
                 loading="lazy"
               />
             </div>
