@@ -54,7 +54,7 @@ const ServicesSection = () => {
               {service.description}
             </p>
 
-            <ul className="space-y-3">
+            <ul className="space-y-3 mb-12">
               {service.features.map((feature) => (
                 <li key={feature} className="flex items-center gap-3 text-sm font-semibold">
                   <div className="w-1.5 h-1.5 rounded-full bg-foreground/30" />
@@ -62,6 +62,13 @@ const ServicesSection = () => {
                 </li>
               ))}
             </ul>
+
+            <a 
+              href="#contact" 
+              className="mt-auto inline-flex items-center justify-center px-6 py-4 rounded-full bg-white text-foreground font-bold hover:bg-foreground hover:text-white transition-all duration-300 shadow-sm hover:shadow-md"
+            >
+              Start a Project
+            </a>
           </motion.div>
         ))}
       </div>
