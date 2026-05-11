@@ -27,7 +27,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr_1fr_1fr] gap-12 lg:gap-8 mb-24">
           <div className="space-y-6 pr-8">
             <span className="font-display text-2xl font-bold text-foreground flex items-center gap-2">
-              designers<span className="text-primary">.guru</span>
+              Guru<span className="text-primary"> Designers</span>
             </span>
             <p className="text-base text-foreground/60 max-w-sm font-medium">
               We're designers, marketers, developers & AI strategists — one premium studio for your entire digital presence.
