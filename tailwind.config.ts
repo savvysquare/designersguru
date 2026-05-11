@@ -16,6 +16,7 @@ export default {
       fontFamily: {
         display: ["Outfit", "sans-serif"],
         body: ["Instrument Sans", "sans-serif"],
+        accent: ["Manrope", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",

@@ -12,6 +12,7 @@ const projects = [
     description: "A chat-based learning platform helping 93k+ users learn faster.",
     image: portfolioPrepper,
     url: "https://prepperlearning.com",
+    colSpan: "lg:col-span-2",
   },
   {
     title: "Jikona Evalora",
@@ -19,6 +20,7 @@ const projects = [
     description: "Research & analytics firm turning data into decisions across Africa.",
     image: portfolioJikona,
     url: "https://jikonaevalora.com",
+    colSpan: "lg:col-span-1",
   },
   {
     title: "FastForward Fund",
@@ -26,6 +28,7 @@ const projects = [
     description: "A venture fund backing African founders building transformational companies.",
     image: portfolioFastforward,
     url: "https://fastforward.fund",
+    colSpan: "lg:col-span-1",
   },
   {
     title: "Ola.cv",
@@ -33,29 +36,32 @@ const projects = [
     description: "The go-to platform for .cv domains trusted by professionals in 150+ countries.",
     image: portfolioOlacv,
     url: "https://ola.cv",
+    colSpan: "lg:col-span-2",
   },
 ];
 
 const WorkSection = () => {
   return (
-    <section id="work" aria-label="Our portfolio of client work" className="py-24 px-6 md:px-[60px]">
-      <div className="max-w-7xl mx-auto">
+    <section id="work" aria-label="Our portfolio of client work" className="py-24 px-6 md:px-[60px] relative">
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
+      
+      <div className="max-w-7xl mx-auto relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6 }}
           className="mb-16 text-center"
         >
-          <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">
-            Our <span className="text-gradient-copper">Work</span>
+          <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-4">
+            Proof of <span className="text-gradient-copper">Work</span>.
           </h2>
-          <p className="text-base text-muted-foreground max-w-lg mx-auto">
-            See what we've built. Every project is crafted to look great and perform even better.
+          <p className="text-lg text-muted-foreground max-w-xl mx-auto">
+            See what we've built. Every project is crafted to look great, convert visitors, and perform flawlessly.
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {projects.map((project, i) => (
             <motion.a
               key={project.title}
@@ -64,30 +70,34 @@ const WorkSection = () => {
               rel="noopener noreferrer"
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.5 }}
-              whileHover={{ y: -4, transition: { type: "spring", stiffness: 300, damping: 20 } }}
-              className="group relative overflow-hidden rounded-2xl bg-card border border-border hover:border-primary/20 cursor-pointer transition-all duration-300"
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ delay: i * 0.1, duration: 0.6 }}
+              className="group bento-card p-4 sm:p-6 flex flex-col h-full cursor-pointer"
             >
-              <div className="aspect-[4/3] overflow-hidden relative">
+              <div className="relative w-full aspect-[16/10] overflow-hidden rounded-2xl mb-6 bg-secondary/50">
                 <img
                   src={project.image}
-                  alt={`${project.title} — ${project.category} project by designers.guru`}
-                  className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700"
+                  alt={`${project.title} — ${project.category} project`}
+                  className="w-full h-full object-cover object-top transform group-hover:scale-105 transition-transform duration-700 ease-out"
                   loading="lazy"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-end p-4">
-                  <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                    <ArrowUpRight className="w-5 h-5 text-primary-foreground" />
+                
+                {/* Hover overlay with icon */}
+                <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-end p-6">
+                  <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 delay-100 shadow-lg shadow-primary/30">
+                    <ArrowUpRight className="w-6 h-6 text-primary-foreground" />
                   </div>
                 </div>
               </div>
-              <div className="p-5">
-                <span className="text-[10px] font-semibold tracking-widest text-primary uppercase">
-                  {project.category}
-                </span>
-                <h3 className="text-base font-bold mt-1.5 mb-1">{project.title}</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">{project.description}</p>
+
+              <div className="flex flex-col flex-grow px-2 pb-2">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-bold tracking-widest text-primary uppercase">
+                    {project.category}
+                  </span>
+                </div>
+                <h3 className="text-2xl font-bold mb-2 group-hover:text-primary transition-colors">{project.title}</h3>
+                <p className="text-base text-muted-foreground leading-relaxed">{project.description}</p>
               </div>
             </motion.a>
           ))}

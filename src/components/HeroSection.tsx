@@ -3,151 +3,80 @@ import { ArrowRight, Bot } from "lucide-react";
 
 const HeroSection = () => {
   return (
-    <section id="home" aria-label="Hero — 10x your business with designs that work" className="relative min-h-screen flex items-center overflow-hidden">
+    <section id="home" aria-label="Hero — 10x your business with designs that work" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+      {/* Stage Glow Background */}
+      <div className="absolute inset-0 pointer-events-none hero-stage-glow opacity-60 dark:opacity-100" />
+      
       {/* Subtle grid background */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.04]">
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03] dark:opacity-[0.02]">
         <div className="w-full h-full" style={{
           backgroundImage: `
-            linear-gradient(to right, hsl(0 0% 0% / 0.15) 1px, transparent 1px),
-            linear-gradient(to bottom, hsl(0 0% 0% / 0.15) 1px, transparent 1px)
+            linear-gradient(to right, hsl(var(--foreground)) 1px, transparent 1px),
+            linear-gradient(to bottom, hsl(var(--foreground)) 1px, transparent 1px)
           `,
-          backgroundSize: '80px 80px',
+          backgroundSize: '100px 100px',
         }} />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto w-full px-6 md:px-[60px] pt-28 pb-20">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left — Text */}
-          <div>
-            <motion.h1
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.7 }}
-              className="text-4xl md:text-5xl lg:text-[4rem] font-display font-bold leading-[1.08] tracking-tight mb-6"
-            >
-              10x{" "}
-              <br className="hidden md:block" />
-              <span className="text-gradient-copper">your business</span> with{" "}
-              <br className="hidden md:block" />
-              designs <em className="font-display italic not-italic font-bold" style={{ fontStyle: 'italic' }}>that work</em>
-            </motion.h1>
+      <div className="relative z-10 max-w-5xl mx-auto w-full px-6 flex flex-col items-center text-center">
+        {/* Top Badge */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.1, duration: 0.5, ease: "easeOut" }}
+          className="mb-8 px-4 py-1.5 rounded-full border border-border bg-background/50 backdrop-blur-md text-xs font-semibold uppercase tracking-widest text-muted-foreground flex items-center gap-2"
+        >
+          <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+          Creative Agency
+        </motion.div>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.6 }}
-              className="text-base md:text-lg text-muted-foreground max-w-md mb-10 leading-relaxed"
-            >
-              We build brands and AI systems
-              that don't just look good — they work harder than
-              your whole marketing team.
-            </motion.p>
+        {/* Headline */}
+        <motion.h1
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="text-5xl md:text-7xl lg:text-[5.5rem] font-display font-black leading-[1.05] tracking-tight mb-8"
+        >
+          10x <span className="text-gradient-copper">your business</span> <br className="hidden md:block" />
+          with designs <em className="font-display italic not-italic font-black text-muted-foreground/80">that work</em>.
+        </motion.h1>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.6 }}
-              className="flex flex-col sm:flex-row gap-3"
-            >
-              <motion.button
-                whileHover={{ scale: 1.04, y: -2 }}
-                whileTap={{ scale: 0.96 }}
-                transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                onClick={() => window.dispatchEvent(new Event("open-guru-chat"))}
-                className="btn-ios inline-flex items-center justify-center gap-2.5 px-8 py-3.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold"
-              >
-                <Bot className="w-4 h-4" />
-                Talk to Guru
-              </motion.button>
-              <motion.a
-                whileHover={{ scale: 1.04, y: -2 }}
-                whileTap={{ scale: 0.96 }}
-                transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                href="#contact"
-                className="btn-ios-ghost inline-flex items-center justify-center gap-2.5 px-8 py-3.5 text-foreground rounded-full text-sm font-medium"
-              >
-                Let's talk
-                <ArrowRight className="w-4 h-4" />
-              </motion.a>
-            </motion.div>
-          </div>
+        {/* Subtitle */}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="text-lg md:text-xl text-muted-foreground max-w-2xl mb-12 leading-relaxed"
+        >
+          We build brands and AI systems that don't just look good — they work harder than your whole marketing team. Every story deserves a digital stage.
+        </motion.p>
 
-          {/* Right — Growth Chart Graphic */}
-          <motion.div
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-            className="relative hidden lg:block"
+        {/* CTAs */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto"
+        >
+          <button
+            onClick={() => window.dispatchEvent(new Event("open-guru-chat"))}
+            className="btn-premium inline-flex items-center justify-center gap-2"
           >
-            <div className="relative w-full aspect-square max-w-lg ml-auto">
-              {/* Grid background */}
-              <svg viewBox="0 0 400 400" className="absolute inset-0 w-full h-full opacity-[0.08]">
-                {[0, 80, 160, 240, 320, 400].map((pos) => (
-                  <g key={pos}>
-                    <line x1={pos} y1="0" x2={pos} y2="400" stroke="currentColor" strokeWidth="0.5" />
-                    <line x1="0" y1={pos} x2="400" y2={pos} stroke="currentColor" strokeWidth="0.5" />
-                  </g>
-                ))}
-                {/* Y-axis labels */}
-                <text x="8" y="328" fontSize="10" fill="currentColor" opacity="0.5">1k</text>
-                <text x="8" y="248" fontSize="10" fill="currentColor" opacity="0.5">10k</text>
-                <text x="8" y="168" fontSize="10" fill="currentColor" opacity="0.5">100k</text>
-              </svg>
-
-              {/* Growth curve */}
-              <svg viewBox="0 0 400 400" className="absolute inset-0 w-full h-full">
-                <defs>
-                  <linearGradient id="curveGrad" x1="0" y1="1" x2="1" y2="0">
-                    <stop offset="0%" stopColor="hsl(25, 85%, 55%)" stopOpacity="0.2" />
-                    <stop offset="100%" stopColor="hsl(25, 85%, 55%)" />
-                  </linearGradient>
-                  <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="hsl(25, 85%, 55%)" stopOpacity="0.08" />
-                    <stop offset="100%" stopColor="hsl(25, 85%, 55%)" stopOpacity="0" />
-                  </linearGradient>
-                </defs>
-                {/* Area fill */}
-                <path
-                  d="M 40 360 Q 120 340 180 300 Q 250 250 290 180 Q 340 80 370 60 L 370 400 L 40 400 Z"
-                  fill="url(#areaGrad)"
-                />
-                {/* Main curve */}
-                <path
-                  d="M 40 360 Q 120 340 180 300 Q 250 250 290 180 Q 340 80 370 60"
-                  fill="none"
-                  stroke="url(#curveGrad)"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                />
-                {/* End dot */}
-                <circle cx="370" cy="60" r="12" fill="hsl(25, 85%, 55%)" />
-                <circle cx="370" cy="60" r="20" fill="hsl(25, 85%, 55%)" opacity="0.2" />
-                <circle cx="370" cy="60" r="28" fill="hsl(25, 85%, 55%)" opacity="0.08" />
-              </svg>
-
-              {/* Stats card floating */}
-              <motion.div
-                animate={{ y: [0, -8, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute top-1/3 left-1/4 bg-card rounded-2xl px-8 py-5 shadow-lg border border-border"
-              >
-                <p className="text-3xl md:text-4xl font-display font-bold text-foreground">+320%</p>
-                <p className="text-sm text-muted-foreground mt-1">Monthly revenue</p>
-              </motion.div>
-
-              {/* GD badge */}
-              <div className="absolute bottom-8 right-8 w-14 h-14 bg-primary rounded-2xl flex items-center justify-center">
-                <span className="text-primary-foreground font-display font-bold text-sm">GD</span>
-              </div>
-
-              {/* Brand watermark */}
-              <div className="absolute bottom-8 left-8">
-                <span className="font-display text-sm font-bold text-foreground opacity-30">designers.guru</span>
-              </div>
-            </div>
-          </motion.div>
-        </div>
+            <Bot className="w-5 h-5" />
+            Talk to Guru
+          </button>
+          <a
+            href="#contact"
+            className="btn-premium-outline inline-flex items-center justify-center gap-2"
+          >
+            Let's Talk
+            <ArrowRight className="w-5 h-5" />
+          </a>
+        </motion.div>
       </div>
+
+      {/* Bottom Gradient Fade */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent pointer-events-none" />
     </section>
   );
 };
