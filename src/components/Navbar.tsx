@@ -20,93 +20,71 @@ const Navbar = () => {
   }, []);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-6 px-6 pointer-events-none">
-      <motion.nav
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className={`pointer-events-auto flex items-center justify-between w-full max-w-5xl px-6 py-3 rounded-full transition-all duration-500 border ${
-          scrolled 
-            ? "glass-card shadow-2xl shadow-black/10 scale-95" 
-            : "bg-background/50 backdrop-blur-md border-transparent"
-        }`}
-      >
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-white/90 backdrop-blur-md border-b border-border shadow-sm py-3" : "bg-transparent py-5"}`}>
+      <nav className="max-w-[1400px] mx-auto px-6 md:px-12 flex items-center justify-between w-full">
         <div className="flex items-center gap-12">
-          <a href="#home" className="group flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-black text-lg transition-transform group-hover:rotate-12">
-              D
-            </div>
-            <span className="font-display text-lg font-bold tracking-tight text-foreground hidden sm:block">
-              designers<span className="text-primary">guru</span>
+          <a href="#home" className="flex items-center gap-2">
+            <span className="font-display text-xl font-bold tracking-tight text-foreground">
+              designers<span className="text-primary">.guru</span>
             </span>
           </a>
+        </div>
 
-          <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                className="text-[12px] font-medium tracking-wide text-muted-foreground hover:text-primary transition-all duration-300"
-              >
-                {link.label}
-              </a>
-            ))}
-          </div>
+        <div className="hidden md:flex items-center gap-8">
+          {navLinks.map((link) => (
+            <a
+              key={link.label}
+              href={link.href}
+              className="text-[14px] font-semibold text-muted-foreground hover:text-foreground transition-colors duration-200"
+            >
+              {link.label}
+            </a>
+          ))}
         </div>
 
         <div className="flex items-center gap-4">
-          <motion.a
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+          <a
             href="#contact"
-            className="hidden sm:inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-2.5 rounded-full text-[12px] font-semibold transition-all shadow-lg shadow-primary/20 hover:shadow-primary/30"
+            className="hidden sm:inline-flex items-center justify-center bg-primary text-primary-foreground px-5 py-2.5 rounded-full text-[14px] font-bold transition-all hover:bg-primary/90 hover:scale-[1.02]"
           >
-            Let's Talk
-            <ArrowRight className="w-3.5 h-3.5" />
-          </motion.a>
+            Start a project
+          </a>
 
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 rounded-full hover:bg-secondary transition-colors"
+            className="md:hidden p-2 rounded-full hover:bg-secondary transition-colors text-foreground"
           >
-            {isOpen ? <X size={20} /> : <Menu size={20} />}
+            {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
-      </motion.nav>
+      </nav>
 
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: -20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: -20 }}
-            className="absolute top-24 left-6 right-6 p-6 glass-card rounded-[2rem] md:hidden pointer-events-auto"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden bg-white border-b border-border overflow-hidden"
           >
-            <div className="flex flex-col gap-4">
-              {navLinks.map((link, i) => (
-                <motion.a
+            <div className="px-6 py-4 flex flex-col gap-2">
+              {navLinks.map((link) => (
+                <a
                   key={link.label}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.1 }}
                   href={link.href}
                   onClick={() => setIsOpen(false)}
-                  className="text-xl font-medium p-4 rounded-2xl hover:bg-primary/5 transition-colors"
+                  className="text-lg font-semibold py-3 border-b border-border/50 text-foreground"
                 >
                   {link.label}
-                </motion.a>
+                </a>
               ))}
-              <hr className="border-border/50 my-2" />
-              <motion.a
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
+              <a
                 href="#contact"
-                className="w-full py-4 rounded-2xl bg-primary text-primary-foreground text-center font-bold text-lg"
                 onClick={() => setIsOpen(false)}
+                className="mt-4 w-full py-4 rounded-xl bg-primary text-primary-foreground text-center font-bold text-lg"
               >
-                Start a Project
-              </motion.a>
+                Start a project
+              </a>
             </div>
           </motion.div>
         )}

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Manrope:wght@200..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@500;600&display=swap');
 
 @tailwind base;
 
@@ -12,75 +12,43 @@ html {
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 8%;
+    --background: 120 10% 98%; /* #F8F9F8 equivalent, slightly warm/neutral off-white */
+    --foreground: 220 20% 10%; /* Very dark charcoal */
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 8%;
+    --card-foreground: 220 20% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 8%;
+    --popover-foreground: 220 20% 10%;
 
-    --primary: 25 85% 55%;
-    --primary-foreground: 0 0% 8%;
+    --primary: 25 85% 55%; /* Keep the Copper */
+    --primary-foreground: 0 0% 100%;
 
     --secondary: 30 15% 94%;
     --secondary-foreground: 0 0% 20%;
 
     --muted: 30 10% 93%;
-    --muted-foreground: 0 0% 30%;
+    --muted-foreground: 220 10% 40%; /* Gray */
 
     --accent: 25 85% 55%;
-    --accent-foreground: 0 0% 8%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 30 10% 88%;
-    --input: 30 10% 88%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
     --ring: 25 85% 55%;
 
-    --radius: 1.25rem;
+    --radius: 1.5rem; /* 24px default radius for the Crescent look */
 
     --copper: 25 85% 55%;
-    --copper-glow: 25 100% 65%;
-    --copper-dark: 25 70% 35%;
     
-    --surface-glass: 0 0% 100% / 0.7;
-    --border-glass: 0 0% 100% / 0.1;
-  }
-
-  .dark {
-    --background: 0 0% 4%;
-    --foreground: 0 0% 98%;
-
-    --card: 0 0% 6%;
-    --card-foreground: 0 0% 98%;
-
-    --popover: 0 0% 6%;
-    --popover-foreground: 0 0% 98%;
-
-    --primary: 25 85% 55%;
-    --primary-foreground: 0 0% 8%;
-
-    --secondary: 0 0% 12%;
-    --secondary-foreground: 0 0% 98%;
-
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 70%;
-
-    --accent: 25 85% 55%;
-    --accent-foreground: 0 0% 8%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 0 0% 15%;
-    --input: 0 0% 15%;
-    --ring: 25 85% 55%;
-    
-    --surface-glass: 0 0% 8% / 0.7;
-    --border-glass: 0 0% 100% / 0.05;
+    /* Warm Pastels for cards instead of Crescent's cool pastels */
+    --pastel-orange: 25 100% 95%; 
+    --pastel-peach: 15 100% 96%;
+    --pastel-sand: 40 50% 95%;
+    --pastel-gray: 220 10% 96%;
   }
 }
 
@@ -94,7 +62,7 @@ html {
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display tracking-tight;
+    @apply font-display tracking-tight text-foreground;
   }
 }
 
@@ -104,73 +72,23 @@ html {
     background-image: linear-gradient(135deg, hsl(25 85% 55%), hsl(35 100% 65%));
   }
 
-  .text-gradient-silver {
-    @apply bg-clip-text text-transparent bg-gradient-to-br from-foreground/90 to-foreground/40;
+  .crescent-card {
+    @apply relative overflow-hidden rounded-[24px] p-8 lg:p-12 transition-transform duration-300;
   }
 
-  .glass-card {
-    background: hsl(var(--surface-glass));
-    backdrop-filter: blur(20px);
-    border: 1px solid hsl(var(--border-glass));
-    @apply shadow-xl shadow-black/5;
+  .tag-label {
+    @apply font-mono text-[11px] font-bold tracking-[0.15em] uppercase px-3 py-1.5 rounded-full inline-flex items-center;
   }
 
-  .bento-card {
-    @apply relative overflow-hidden rounded-[2.5rem] p-8 glass-card transition-all duration-500 hover:scale-[1.01];
+  .btn-primary {
+    @apply relative inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-semibold transition-all duration-300;
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02];
   }
 
-  .bento-card::before {
-    content: '';
-    @apply absolute inset-0 opacity-0 transition-opacity duration-500 bg-gradient-to-br from-primary/10 to-transparent;
+  .btn-outline {
+    @apply relative inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-semibold transition-all duration-300;
+    @apply bg-white border border-border text-foreground hover:bg-muted hover:scale-[1.02];
   }
-
-  .bento-card:hover::before {
-    @apply opacity-100;
-  }
-
-  .hero-stage-glow {
-    background: radial-gradient(circle at 50% -20%, hsl(25 85% 55% / 0.15) 0%, transparent 70%);
-  }
-
-  .animate-reveal {
-    animation: reveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  }
-
-  .animate-float {
-    animation: float 6s ease-in-out infinite;
-  }
-
-  .btn-premium {
-    @apply relative overflow-hidden px-8 py-4 rounded-full font-medium transition-all duration-300;
-    @apply bg-primary text-primary-foreground shadow-lg shadow-primary/20;
-    @apply hover:scale-105 hover:shadow-xl hover:shadow-primary/30 active:scale-95;
-  }
-
-  .btn-premium-outline {
-    @apply relative overflow-hidden px-8 py-4 rounded-full font-medium transition-all duration-300;
-    @apply border border-border bg-background/50 backdrop-blur-md;
-    @apply hover:bg-secondary/50 hover:border-primary/30 active:scale-95;
-  }
-}
-
-@keyframes reveal {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
-}
-
-@keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-.animate-marquee {
-  animation: marquee 40s linear infinite;
 }
 
 /* ── Custom Scrollbar ───────────────────────────────────────────────────── */
@@ -183,7 +101,7 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-muted rounded-full;
+  @apply bg-border rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
