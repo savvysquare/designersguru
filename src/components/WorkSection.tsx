@@ -39,7 +39,7 @@ const WorkSection = () => {
   return (
     <section id="work" className="py-24 px-6 md:px-12 max-w-[1400px] mx-auto">
       <div className="mb-16">
-        <div className="tag-label bg-white border border-border text-foreground mb-6">Our Work</div>
+        <div className="tag-label bg-white border border-border text-foreground mb-6">Our Works</div>
         <h2 className="text-4xl md:text-6xl font-bold tracking-tight max-w-2xl">
           Selected <span className="text-primary">projects</span>.
         </h2>
