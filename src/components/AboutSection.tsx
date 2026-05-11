@@ -44,8 +44,8 @@ const AboutSection = () => {
               <img
                 src={member.image}
                 alt={member.name}
-                className={`w-full h-full object-cover ${
-                  member.name === "Ola Awo" ? "object-top scale-[1.4] translate-y-3" : "object-top scale-[1.02] -translate-y-[12%]"
+                className={`w-full h-full ${
+                  member.name === "Ola Awo" ? "object-cover object-top scale-[1.4] translate-y-3" : "object-contain bg-white"
                 }`}
                 loading="lazy"
               />
