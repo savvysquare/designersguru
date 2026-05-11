@@ -22,8 +22,8 @@ const footerLinks = {
 
 const Footer = () => {
   return (
-    <footer className="bg-white pt-24 pb-12 px-6 md:px-12 border-t border-border">
-      <div className="max-w-[1400px] mx-auto">
+    <footer className="bg-white pt-24 pb-12 border-t border-border">
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr_1fr_1fr] gap-12 lg:gap-8 mb-24">
           <div className="space-y-6 pr-8">
             <span className="font-display text-2xl font-bold text-foreground flex items-center gap-2">
