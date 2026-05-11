@@ -28,7 +28,7 @@ const TestimonialSection = () => {
               </div>
               <div>
                 <p className="font-bold text-lg text-background">Ife</p>
-                <p className="text-sm font-semibold tracking-widest text-muted-foreground uppercase opacity-80 mt-1">Founder, Jikona Evalora</p>
+                <p className="text-sm font-semibold tracking-widest text-background/70 uppercase mt-1">Founder, Jikona Evalora</p>
               </div>
             </div>
           </div>
