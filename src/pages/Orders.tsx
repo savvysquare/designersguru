@@ -182,13 +182,13 @@ export default function OrdersDashboard() {
         >
           <div className="text-center mb-8">
             <div
-              className="w-16 h-16 rounded-3xl flex items-center justify-center text-xl font-bold text-primary-foreground mx-auto mb-4"
+              className="w-16 h-16 rounded-[24px] flex items-center justify-center text-2xl font-bold text-primary-foreground mx-auto mb-4 shadow-xl shadow-primary/20"
               style={{ background: "linear-gradient(135deg, hsl(25 85% 55%), hsl(35 100% 70%))" }}
             >
-              GD
+              G
             </div>
             <h1 className="text-2xl font-bold text-foreground">Admin Access</h1>
-            <p className="text-muted-foreground text-sm mt-1">Guru Designers Orders Dashboard</p>
+            <p className="text-muted-foreground text-sm mt-1">Guru Designers Dashboard</p>
           </div>
 
           <form
@@ -242,9 +242,9 @@ export default function OrdersDashboard() {
     <div className="min-h-screen bg-background">
       {/* Top Nav */}
       <div className="px-6 py-4 flex items-center justify-between border-b border-border sticky top-0 z-30 bg-card/95 backdrop-blur-sm">
-        <div className="font-display font-bold text-base text-foreground">
-          designers<span className="text-primary">.guru</span>
-          <span className="ml-3 text-xs text-muted-foreground font-normal">Orders</span>
+        <div className="font-display font-bold text-base text-foreground tracking-tight">
+          Guru <span className="text-primary">Designers</span>
+          <span className="ml-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">Orders Dashboard</span>
         </div>
         <div className="flex items-center gap-3">
           <button onClick={fetchOrders} className="p-2 rounded-xl hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
