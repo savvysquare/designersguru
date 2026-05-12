@@ -7,13 +7,13 @@ const team = [
     name: "Ola Awo",
     role: "Marketing & Creative Director",
     image: teamOla,
-    xProfile: "#",
+    xProfile: "https://olayemiawoyemi.cv",
   },
   {
     name: "Timi Oye",
     role: "Head of Design",
     image: teamTimi,
-    xProfile: "#",
+    xProfile: "https://timistudio.lovable.app",
   },
 ];
 
