@@ -21,7 +21,7 @@ const HeroSection = () => {
             transition={{ duration: 0.7, delay: 0.1 }}
             className="text-[56px] leading-[1.05] md:text-[80px] lg:text-[100px] font-black tracking-[-0.04em] text-foreground mb-8"
           >
-            Design that <br /> <span className="text-primary">works.</span>
+            Designs that <br /> <span className="text-primary">work.</span>
           </motion.h1>
 
           <motion.div
