@@ -9,16 +9,16 @@ import { getSessionToken, parseCartFromMessage, checkInvoiceTrigger, checkContac
 // ─── Dark theme color constants for the chat modal ────────────────────────────
 // The chat is a dark modal over a light site, so we can't use semantic tokens
 const C = {
-  bg: "hsl(0 0% 7%)",
-  bgElevated: "hsl(0 0% 9%)",
-  bgInput: "hsl(0 0% 10%)",
-  bgSubtle: "hsl(0 0% 12%)",
-  border: "hsl(0 0% 16%)",
-  borderSubtle: "hsl(0 0% 14%)",
-  borderFaint: "hsl(0 0% 12%)",
-  text: "hsl(0 0% 95%)",
-  textSecondary: "hsl(0 0% 65%)",
-  textMuted: "hsl(0 0% 50%)",
+  bg: "hsl(120 10% 98.5%)",
+  bgElevated: "hsl(0 0% 100%)",
+  bgInput: "hsl(0 0% 100%)",
+  bgSubtle: "hsl(30 15% 94%)",
+  border: "hsl(0 0% 90%)",
+  borderSubtle: "hsl(0 0% 94%)",
+  borderFaint: "hsl(0 0% 96%)",
+  text: "hsl(220 20% 10%)",
+  textSecondary: "hsl(220 10% 40%)",
+  textMuted: "hsl(220 10% 60%)",
   copper: "hsl(25 85% 55%)",
   copperLight: "hsl(25 85% 65%)",
   copperGlow: "hsl(35 100% 70%)",
@@ -133,12 +133,12 @@ function ContactFormCard({ onSubmit }: { onSubmit: (name: string, email: string,
       initial={{ opacity: 0, y: 12, scale: 0.97 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ type: "spring", stiffness: 300, damping: 24 }}
-      className="w-full rounded-2xl overflow-hidden my-2"
-      style={{ background: C.bgElevated, border: `1px solid ${C.copper}33` }}
+      className="w-full rounded-[20px] overflow-hidden my-2 shadow-sm"
+      style={{ background: C.bgElevated, border: `1px solid ${C.border}` }}
     >
       <div
         className="px-4 py-3 flex items-center gap-2.5"
-        style={{ background: `linear-gradient(135deg, ${C.copper}1f, ${C.copperGlow}0f)`, borderBottom: `1px solid ${C.borderSubtle}` }}
+        style={{ background: `linear-gradient(135deg, ${C.copper}0a, ${C.copperGlow}05)`, borderBottom: `1px solid ${C.borderFaint}` }}
       >
         <div
           className="w-8 h-8 rounded-xl flex items-center justify-center"
@@ -214,13 +214,13 @@ function InvoiceCard({ data, autoShowPayment }: { data: InvoiceData; autoShowPay
       initial={{ opacity: 0, y: 12, scale: 0.97 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ type: "spring", stiffness: 300, damping: 24 }}
-      className="w-full rounded-2xl overflow-hidden my-2"
+      className="w-full rounded-[20px] overflow-hidden my-2 shadow-sm"
       style={{ background: C.bgElevated, border: `1px solid ${C.border}` }}
     >
       {/* Header */}
       <div
         className="px-4 py-3 flex items-center justify-between"
-        style={{ background: `linear-gradient(135deg, ${C.copper}1f, ${C.copperGlow}0f)`, borderBottom: `1px solid ${C.borderSubtle}` }}
+        style={{ background: `linear-gradient(135deg, ${C.copper}0a, ${C.copperGlow}05)`, borderBottom: `1px solid ${C.borderFaint}` }}
       >
         <div className="flex items-center gap-2.5">
           <div
@@ -773,21 +773,21 @@ export default function GuruChat() {
             exit={{ scale: 0, opacity: 0 }}
             transition={{ type: "spring", stiffness: 400, damping: 25 }}
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3.5 rounded-2xl text-white text-sm font-semibold shadow-2xl"
+            className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-6 py-4 rounded-[24px] text-white text-sm font-bold shadow-xl transition-transform hover:scale-[1.05]"
             style={{
               background: `linear-gradient(135deg, ${C.copper}, ${C.copperGlow})`,
-              boxShadow: `0 8px 32px ${C.copper}73, 0 2px 8px hsl(0 0% 0% / 0.3)`,
+              boxShadow: `0 12px 32px ${C.copper}40`,
             }}
           >
             <motion.span
-              animate={{ scale: [1, 1.2, 1] }}
+              animate={{ scale: [1, 1.15, 1] }}
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              className="relative flex items-center justify-center w-7 h-7"
+              className="relative flex items-center justify-center w-6 h-6"
             >
-              <span className="absolute inset-0 rounded-full bg-white/25 animate-ping" />
+              <span className="absolute inset-0 rounded-full bg-white/30 animate-ping" />
               <MessageCircle className="w-5 h-5 relative z-10" />
             </motion.span>
-            <span className="hidden sm:block">💬 Talk to Guru</span>
+            <span className="hidden sm:block">Talk to Guru</span>
           </motion.button>
         )}
       </AnimatePresence>
@@ -807,11 +807,10 @@ export default function GuruChat() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 60, scale: 0.95 }}
               transition={{ type: "spring", stiffness: 350, damping: 28 }}
-              className="fixed inset-x-4 bottom-4 top-16 z-50 sm:inset-auto sm:bottom-6 sm:right-6 sm:w-[420px] sm:h-[680px] flex flex-col rounded-3xl overflow-hidden"
+              className="fixed inset-x-4 bottom-4 top-16 z-50 sm:inset-auto sm:bottom-6 sm:right-6 sm:w-[420px] sm:h-[680px] flex flex-col rounded-[24px] overflow-hidden border border-border"
               style={{
                 background: C.bg,
-                border: `1px solid ${C.borderSubtle}`,
-                boxShadow: `0 24px 80px hsl(0 0% 0% / 0.6), 0 0 0 1px ${C.copper}1a`,
+                boxShadow: `0 32px 100px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px ${C.copper}1a`,
               }}
             >
               {/* Header */}
@@ -821,14 +820,14 @@ export default function GuruChat() {
               >
                 <div className="relative">
                   <div
-                    className="w-10 h-10 rounded-2xl flex items-center justify-center text-lg font-bold text-white"
+                    className="w-10 h-10 rounded-[12px] flex items-center justify-center text-lg font-bold text-white shadow-md shadow-primary/20"
                     style={{ background: `linear-gradient(135deg, ${C.copper}, ${C.copperGlow})` }}
                   >G</div>
-                  <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2" style={{ background: C.green, borderColor: C.bg }} />
+                  <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2" style={{ background: C.green, borderColor: "white" }} />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-semibold" style={{ color: C.text }}>Guru Designers</p>
-                  <p className="text-xs" style={{ color: C.textSecondary }}>Online now</p>
+                  <p className="text-sm font-bold tracking-tight" style={{ color: C.text }}>Guru Designers</p>
+                  <p className="text-[11px] font-medium" style={{ color: C.textSecondary }}>Online now</p>
                 </div>
                 <div className="flex items-center gap-2">
                   {cart.items.length > 0 && (
@@ -882,10 +881,10 @@ export default function GuruChat() {
                   <motion.div key={idx} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}
                     className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                     {msg.role === "assistant" && (
-                      <div className="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold text-white mr-2 flex-shrink-0 mt-0.5"
+                      <div className="w-7 h-7 rounded-[8px] flex items-center justify-center text-[10px] font-bold text-white mr-2 flex-shrink-0 mt-0.5"
                         style={{ background: `linear-gradient(135deg, ${C.copper}, ${C.copperGlow})` }}>G</div>
                     )}
-                    <div className={`max-w-[78%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${msg.role === "user" ? "rounded-tr-sm" : "rounded-tl-sm"}`}
+                    <div className={`max-w-[85%] rounded-[18px] px-4 py-3 text-sm leading-relaxed ${msg.role === "user" ? "rounded-tr-none" : "rounded-tl-none shadow-sm"}`}
                       style={msg.role === "user"
                         ? { background: `linear-gradient(135deg, ${C.copper}, ${C.copperGlow})`, color: "white" }
                         : { background: C.bgInput, border: `1px solid ${C.border}`, color: C.text }
@@ -995,20 +994,20 @@ export default function GuruChat() {
 
               {/* Input */}
               <div className="px-4 pb-4 pt-2" style={{ borderTop: `1px solid ${C.borderSubtle}` }}>
-                <div className="flex items-center gap-2 rounded-2xl px-4 py-2.5"
+                <div className="flex items-center gap-2 rounded-[18px] px-4 py-2.5 transition-all focus-within:shadow-md focus-within:shadow-black/5"
                   style={{ background: C.bgInput, border: `1px solid ${C.border}` }}>
                   <input ref={inputRef} value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={handleKey}
                     placeholder="Type a message..." disabled={isLoading}
-                    className="flex-1 bg-transparent text-sm outline-none"
+                    className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground/50"
                     style={{ color: C.text }}
                   />
                   <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={handleSend} disabled={!input.trim() || isLoading}
-                    className="w-8 h-8 rounded-xl flex items-center justify-center disabled:opacity-40 transition-all"
+                    className="w-8 h-8 rounded-[10px] flex items-center justify-center disabled:opacity-40 transition-all shadow-sm"
                     style={{ background: input.trim() && !isLoading ? `linear-gradient(135deg, ${C.copper}, ${C.copperGlow})` : C.borderSubtle }}>
                     {isLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" style={{ color: C.textMuted }} /> : <Send className="w-3.5 h-3.5 text-white" />}
                   </motion.button>
                 </div>
-                <p className="text-[10px] text-center mt-2" style={{ color: C.textMuted }}>Powered by Guru Designers</p>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-center mt-3" style={{ color: C.textMuted }}>Powered by Guru Designers</p>
               </div>
             </motion.div>
           </>
