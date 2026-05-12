@@ -20,7 +20,7 @@ const team = [
 const AboutSection = () => {
   return (
     <section id="about" className="py-24 px-6 md:px-12 max-w-[1400px] mx-auto">
-      <div className="mb-16 max-w-2xl text-center md:text-left mx-auto md:mx-0">
+      <div className="mb-16 max-w-2xl">
         <div className="tag-label bg-white border border-border text-foreground mb-6">Our Team</div>
         <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
           Meet the <span className="text-primary">experts</span>.
