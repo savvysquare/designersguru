@@ -226,7 +226,7 @@ function InvoiceCard({ data, autoShowPayment }: { data: InvoiceData; autoShowPay
           <div
             className="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold text-white"
             style={{ background: `linear-gradient(135deg, ${C.copper}, ${C.copperGlow})` }}
-          >GD</div>
+          >G</div>
           <div>
             <p className="text-xs font-semibold" style={{ color: C.text }}>Guru Designers</p>
             <p className="text-[10px]" style={{ color: C.textSecondary }}>Guru Designers</p>

@@ -47,27 +47,27 @@ export default function InvoiceModal({
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
           transition={{ type: "spring", stiffness: 300, damping: 25 }}
           onClick={(e) => e.stopPropagation()}
-          className="w-full max-w-md rounded-3xl overflow-hidden"
+          className="w-full max-w-md rounded-[24px] overflow-hidden"
           style={{
-            background: "hsl(0 0% 7%)",
-            border: "1px solid hsl(0 0% 16%)",
-            boxShadow: "0 32px 80px hsl(0 0% 0% / 0.7)",
+            background: "hsl(120 10% 98.5%)",
+            border: "1px solid hsl(0 0% 90%)",
+            boxShadow: "0 32px 100px -12px rgba(0, 0, 0, 0.15)",
           }}
         >
           {/* Header */}
           <div
             className="px-6 py-5 flex items-center justify-between"
-            style={{ background: "linear-gradient(135deg, hsl(25 85% 55% / 0.15), hsl(35 100% 70% / 0.08))", borderBottom: "1px solid hsl(0 0% 14%)" }}
+            style={{ background: "linear-gradient(135deg, hsl(25 85% 55% / 0.05), hsl(35 100% 70% / 0.02))", borderBottom: "1px solid hsl(0 0% 94%)" }}
           >
             <div className="flex items-center gap-3">
               <div
-                className="w-10 h-10 rounded-2xl flex items-center justify-center font-bold text-primary-foreground"
+                className="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-primary-foreground shadow-md shadow-primary/20"
                 style={{ background: "linear-gradient(135deg, hsl(25 85% 55%), hsl(35 100% 70%))" }}
               >
-                GD
+                G
               </div>
               <div>
-                <p className="font-semibold text-foreground text-sm">Guru Designers</p>
+                <p className="font-bold text-foreground text-sm tracking-tight">Guru Designers</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -102,10 +102,10 @@ export default function InvoiceModal({
 
             {/* Line Items */}
             <div
-              className="rounded-2xl overflow-hidden"
-              style={{ border: "1px solid hsl(0 0% 14%)" }}
+              className="rounded-[20px] overflow-hidden"
+              style={{ border: "1px solid hsl(0 0% 90%)" }}
             >
-              <div className="px-4 py-2.5 text-xs text-muted-foreground grid grid-cols-[1fr_auto] gap-4 border-b border-border/50">
+              <div className="px-4 py-2.5 text-[10px] uppercase font-bold tracking-wider text-muted-foreground grid grid-cols-[1fr_auto] gap-4 border-b border-border/50 bg-muted/30">
                 <span>Description</span>
                 <span className="text-right">Amount</span>
               </div>
@@ -113,7 +113,7 @@ export default function InvoiceModal({
                 <div
                   key={i}
                   className="px-4 py-3 grid grid-cols-[1fr_auto] gap-4"
-                  style={{ borderBottom: i < data.lineItems.length - 1 ? "1px solid hsl(0 0% 10%)" : "none" }}
+                  style={{ borderBottom: i < data.lineItems.length - 1 ? "1px solid hsl(0 0% 94%)" : "none" }}
                 >
                   <div>
                     <p className="text-sm font-medium text-foreground">{item.name}</p>
