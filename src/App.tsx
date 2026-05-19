@@ -7,6 +7,8 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Checkout from "./pages/Checkout";
 import Orders from "./pages/Orders";
+import Brief from "./pages/Brief";
+import Briefs from "./pages/Briefs";
 
 const queryClient = new QueryClient();
 
