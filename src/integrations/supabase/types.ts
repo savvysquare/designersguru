@@ -14,6 +14,93 @@ export type Database = {
   }
   public: {
     Tables: {
+      briefs: {
+        Row: {
+          additional_notes: string | null
+          admin_notes: string | null
+          brand_colors: string | null
+          brand_fonts: string | null
+          brand_notes: string | null
+          budget_range: string | null
+          client_email: string
+          client_name: string
+          client_phone: string | null
+          company_name: string | null
+          created_at: string
+          document_urls: Json | null
+          goals: string | null
+          has_logo: boolean | null
+          id: string
+          image_urls: Json | null
+          inspiration: string | null
+          logo_urls: Json | null
+          project_description: string | null
+          project_title: string
+          project_type: string
+          status: string
+          target_audience: string | null
+          timeline: string | null
+          updated_at: string
+          wants_logo_design: boolean | null
+        }
+        Insert: {
+          additional_notes?: string | null
+          admin_notes?: string | null
+          brand_colors?: string | null
+          brand_fonts?: string | null
+          brand_notes?: string | null
+          budget_range?: string | null
+          client_email: string
+          client_name: string
+          client_phone?: string | null
+          company_name?: string | null
+          created_at?: string
+          document_urls?: Json | null
+          goals?: string | null
+          has_logo?: boolean | null
+          id?: string
+          image_urls?: Json | null
+          inspiration?: string | null
+          logo_urls?: Json | null
+          project_description?: string | null
+          project_title: string
+          project_type: string
+          status?: string
+          target_audience?: string | null
+          timeline?: string | null
+          updated_at?: string
+          wants_logo_design?: boolean | null
+        }
+        Update: {
+          additional_notes?: string | null
+          admin_notes?: string | null
+          brand_colors?: string | null
+          brand_fonts?: string | null
+          brand_notes?: string | null
+          budget_range?: string | null
+          client_email?: string
+          client_name?: string
+          client_phone?: string | null
+          company_name?: string | null
+          created_at?: string
+          document_urls?: Json | null
+          goals?: string | null
+          has_logo?: boolean | null
+          id?: string
+          image_urls?: Json | null
+          inspiration?: string | null
+          logo_urls?: Json | null
+          project_description?: string | null
+          project_title?: string
+          project_type?: string
+          status?: string
+          target_audience?: string | null
+          timeline?: string | null
+          updated_at?: string
+          wants_logo_design?: boolean | null
+        }
+        Relationships: []
+      }
       chat_messages: {
         Row: {
           content: string
