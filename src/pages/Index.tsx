@@ -2,7 +2,7 @@ import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import TechMarquee from "@/components/TechMarquee";
 import ServicesSection from "@/components/ServicesSection";
-import WorkSection from "@/components/WorkSection";
+import WorksSection from "@/components/WorkSection";
 import StatsSection from "@/components/StatsSection";
 import AboutSection from "@/components/AboutSection";
 import TestimonialSection from "@/components/TestimonialSection";
