@@ -49,7 +49,7 @@ const WorkSection = () => {
             >
               <div className="w-full aspect-[4/3] rounded-[24px] overflow-hidden mb-6 transition-transform duration-500 group-hover:scale-[1.02]">
                 <img
-                  src={screenshotUrl(project.url)}
+                  src={screenshotUrl(project.url, project.refresh)}
                   alt={`${project.title} — ${project.category} website by Guru Designers`}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   loading="lazy"
