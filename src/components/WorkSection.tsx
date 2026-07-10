@@ -76,4 +76,4 @@ const WorksSection = () => {
   );
 };
 
-export default WorkSection;
+export default WorksSection;
