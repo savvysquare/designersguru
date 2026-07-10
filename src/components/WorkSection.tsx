@@ -17,7 +17,8 @@ const projects = [
 
 const screenshotUrl = (url: string, refresh?: string) => {
   const clean = url.replace(/^https?:\/\//, "");
-  return `https://s.wordpress.com/mshots/v1/${encodeURIComponent("https://" + clean)}?w=1200&h=900${refresh ? `&refresh=${refresh}` : ""}`;
+  const cacheBuster = refresh ? `?mshots_refresh=${refresh}` : "";
+  return `https://s.wordpress.com/mshots/v1/${encodeURIComponent("https://" + clean + cacheBuster)}?w=1200&h=900${refresh ? `&refresh=${refresh}` : ""}`;
 };
 
 const WorkSection = () => {
