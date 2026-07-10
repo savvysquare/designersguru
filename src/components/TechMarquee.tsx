@@ -29,27 +29,27 @@ const TechMarquee = () => {
           style={{ opacity, y }}
           className="text-3xl md:text-5xl lg:text-[56px] font-semibold leading-[1.15] tracking-tight text-foreground"
         >
-          We help businesses{" "}
+          We build{" "}
           <motion.span
             className="inline-block w-7 h-7 md:w-9 md:h-9 rounded-lg bg-primary align-middle mx-1 cursor-pointer"
             style={{ rotate: box1Rotate, scale: box1Scale }}
           />{" "}
-          to innovate
+          digital products
           <br className="hidden md:block" />{" "}
-          and{" "}
+          that{" "}
           <motion.span
             className="inline-block w-7 h-7 md:w-9 md:h-9 rounded-lg bg-foreground align-middle mx-1 cursor-pointer"
             style={{ rotate: box2Rotate, scale: box2Scale }}
           />{" "}
-          remain highly relevant to
+          make brands
           <br className="hidden md:block" />{" "}
-          their customers by developing{" "}
+          impossible to{" "}
           <motion.span
             className="inline-block w-7 h-7 md:w-9 md:h-9 rounded-lg bg-foreground align-middle mx-1 cursor-pointer"
             style={{ rotate: box3Rotate, scale: box3Scale }}
           />
           <br className="hidden md:block" />{" "}
-          edge digital products
+          ignore
         </motion.h2>
       </div>
     </section>
