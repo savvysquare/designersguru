@@ -9,7 +9,7 @@ const projects = [
   { title: "Jikona Evalora", category: "Corporate Website", url: "https://jikonaevalora.com", bgColor: "bg-pastel-peach" },
   { title: "Olayemi Awoyemi", category: "Personal Portfolio", url: "https://olayemiawoyemi.cv", bgColor: "bg-[#EAEAEA]" },
   { title: "Assistic Care Services", category: "Healthcare", url: "https://assisticcareservices.com", bgColor: "bg-pastel-gray" },
-  { title: "House Fada", category: "Real Estate", url: "https://housefada.com", bgColor: "bg-pastel-peach", refresh: "20250710" },
+  { title: "House Fada", category: "Real Estate", url: "https://housefada.com", bgColor: "bg-pastel-peach", refresh: "20250710a" },
   { title: "Avion Mobile Massage", category: "Wellness", url: "https://avionmobilemassage.com", bgColor: "bg-[#EAEAEA]" },
   { title: "Finetune Music", category: "Music & Entertainment", url: "https://finetunemusic.com.ng", bgColor: "bg-pastel-gray" },
   { title: "Boot Party Ife Central", category: "Community", url: "https://bootpartyifecentral.org", bgColor: "bg-pastel-peach" },
@@ -17,7 +17,8 @@ const projects = [
 
 const screenshotUrl = (url: string, refresh?: string) => {
   const clean = url.replace(/^https?:\/\//, "");
-  return `https://s.wordpress.com/mshots/v1/${encodeURIComponent("https://" + clean)}?w=1200&h=900${refresh ? `&refresh=${refresh}` : ""}`;
+  const cacheBuster = refresh ? `?mshots_refresh=${refresh}` : "";
+  return `https://s.wordpress.com/mshots/v1/${encodeURIComponent("https://" + clean + cacheBuster)}?w=1200&h=900${refresh ? `&refresh=${refresh}` : ""}`;
 };
 
 const WorkSection = () => {
