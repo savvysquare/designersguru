@@ -1,80 +1,75 @@
 import { motion } from "framer-motion";
-import portfolioPrepper from "@/assets/portfolio-prepper.png";
-import portfolioJikona from "@/assets/portfolio-jikona.png";
-import portfolioFastforward from "@/assets/portfolio-fastforward.png";
-import portfolioOlacv from "@/assets/portfolio-olacv.png";
 
 const projects = [
-  {
-    title: "Prepper Learning",
-    category: "EdTech Platform",
-    image: portfolioPrepper,
-    url: "https://prepperlearning.com",
-    bgColor: "bg-[#EAEAEA]", // Soft neutral backgrounds for images
-  },
-  {
-    title: "Jikona Evalora",
-    category: "Corporate Website",
-    image: portfolioJikona,
-    url: "https://jikonaevalora.com",
-    bgColor: "bg-pastel-gray",
-  },
-  {
-    title: "FastForward Fund",
-    category: "Venture Studio",
-    image: portfolioFastforward,
-    url: "https://fastforward.fund",
-    bgColor: "bg-pastel-peach",
-  },
-  {
-    title: "Ola.cv",
-    category: "Domain Registrar",
-    image: portfolioOlacv,
-    url: "https://ola.cv",
-    bgColor: "bg-[#EAEAEA]",
-  },
+  { title: "Holistic Care Foundation", category: "Nonprofit", url: "https://holisticcarefoundation.com", bgColor: "bg-[#EAEAEA]" },
+  { title: "Premium UHVA", category: "Healthcare", url: "https://premiumuhva.com", bgColor: "bg-pastel-gray" },
+  { title: "Green People", category: "Sustainability", url: "https://greenpeople.ng", bgColor: "bg-pastel-peach" },
+  { title: "Osun Watch", category: "News & Media", url: "https://osunwatch.com", bgColor: "bg-[#EAEAEA]" },
+  { title: "Prefab World Cabin", category: "Architecture", url: "https://prefabworldcabin.com", bgColor: "bg-pastel-gray" },
+  { title: "Jikona Evalora", category: "Corporate Website", url: "https://jikonaevalora.com", bgColor: "bg-pastel-peach" },
+  { title: "Olayemi Awoyemi", category: "Personal Portfolio", url: "https://olayemiawoyemi.cv", bgColor: "bg-[#EAEAEA]" },
+  { title: "Assistic Care Services", category: "Healthcare", url: "https://assisticcareservices.com", bgColor: "bg-pastel-gray" },
+  { title: "House Fada", category: "Real Estate", url: "https://housefada.com", bgColor: "bg-pastel-peach" },
+  { title: "Avion Mobile Massage", category: "Wellness", url: "https://avionmobilemassage.com", bgColor: "bg-[#EAEAEA]" },
+  { title: "Finetune Music", category: "Music & Entertainment", url: "https://finetunemusic.com.ng", bgColor: "bg-pastel-gray" },
+  { title: "Boot Party Ife Central", category: "Community", url: "https://bootpartyifecentral.org", bgColor: "bg-pastel-peach" },
 ];
+
+const screenshotUrl = (url: string) => {
+  const clean = url.replace(/^https?:\/\//, "");
+  return `https://s.wordpress.com/mshots/v1/${encodeURIComponent("https://" + clean)}?w=1200&h=900`;
+};
 
 const WorkSection = () => {
   return (
-    <section id="work" className="py-24 px-6 md:px-12 max-w-[1400px] mx-auto">
-      <div className="mb-16">
-        <div className="tag-label bg-white border border-border text-foreground mb-6">Our Works</div>
-        <h2 className="text-4xl md:text-6xl font-bold tracking-tight max-w-2xl">
-          Selected <span className="text-primary">projects</span>.
-        </h2>
-      </div>
+    <section id="work" className="py-24 px-6 md:px-[60px]">
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-16 text-center">
+          <div className="tag-label bg-white border border-border text-foreground mb-6 inline-block">Our Works</div>
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">
+            Selected <span className="text-primary">projects</span>.
+          </h2>
+          <p className="text-base text-muted-foreground max-w-lg mx-auto">
+            A snapshot of brands we've helped shape across industries and continents.
+          </p>
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-16">
-        {projects.map((project, i) => (
-          <motion.a
-            key={project.title}
-            href={project.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ delay: (i % 2) * 0.1, duration: 0.5 }}
-            className="group cursor-pointer block"
-          >
-            <div className={`w-full aspect-[4/3] rounded-[24px] overflow-hidden ${project.bgColor} mb-6 p-8 md:p-12 transition-transform duration-500 group-hover:scale-[1.02]`}>
-              <img
-                src={project.image}
-                alt={project.title}
-                className="w-full h-full object-cover rounded-xl shadow-xl shadow-black/10 group-hover:-translate-y-2 transition-transform duration-500"
-                loading="lazy"
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-2xl font-bold mb-1 group-hover:text-primary transition-colors">{project.title}</h3>
-                <p className="text-sm font-medium text-foreground/50 uppercase tracking-wider">{project.category}</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-16">
+          {projects.map((project, i) => (
+            <motion.a
+              key={project.title}
+              href={project.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ delay: (i % 2) * 0.1, duration: 0.5 }}
+              className="group cursor-pointer block"
+            >
+              <div className={`w-full aspect-[4/3] rounded-[24px] overflow-hidden ${project.bgColor} mb-6 p-8 md:p-12 transition-transform duration-500 group-hover:scale-[1.02]`}>
+                <img
+                  src={screenshotUrl(project.url)}
+                  alt={`${project.title} — ${project.category} website by Guru Designers`}
+                  className="w-full h-full object-cover object-top rounded-xl shadow-xl shadow-black/10 group-hover:-translate-y-2 transition-transform duration-500 bg-white"
+                  loading="lazy"
+                />
               </div>
-            </div>
-          </motion.a>
-        ))}
+
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-2xl font-bold mb-1 group-hover:text-primary transition-colors">{project.title}</h3>
+                  <p className="text-sm font-medium text-foreground/50 uppercase tracking-wider">{project.category}</p>
+                </div>
+                <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:rotate-45">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7 17L17 7M17 7H8M17 7V16" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+              </div>
+            </motion.a>
+          ))}
+        </div>
       </div>
     </section>
   );
