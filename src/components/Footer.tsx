@@ -15,7 +15,7 @@ const footerLinks = {
   ],
   Resources: [
     { label: "Blog", href: "#" },
-    { label: "Case Studies", href: "#work" },
+    { label: "Case Studies", href: "#works" },
     { label: "FAQ", href: "#" },
   ],
 };
