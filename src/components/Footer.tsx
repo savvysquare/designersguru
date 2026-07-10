@@ -9,13 +9,13 @@ const footerLinks = {
   ],
   Company: [
     { label: "About Us", href: "#about" },
-    { label: "Our Works", href: "#work" },
+    { label: "Our Works", href: "#works" },
     { label: "Results", href: "#results" },
     { label: "Contact", href: "#contact" },
   ],
   Resources: [
     { label: "Blog", href: "#" },
-    { label: "Case Studies", href: "#work" },
+    { label: "Case Studies", href: "#works" },
     { label: "FAQ", href: "#" },
   ],
 };
