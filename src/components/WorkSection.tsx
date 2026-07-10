@@ -47,11 +47,11 @@ const WorkSection = () => {
               transition={{ delay: (i % 2) * 0.1, duration: 0.5 }}
               className="group cursor-pointer block"
             >
-              <div className={`w-full aspect-[4/3] rounded-[24px] overflow-hidden ${project.bgColor} mb-6 p-8 md:p-12 transition-transform duration-500 group-hover:scale-[1.02]`}>
+              <div className={`w-full aspect-[4/3] rounded-[24px] overflow-hidden ${project.bgColor} mb-6 flex items-center justify-center p-4 md:p-12 transition-transform duration-500 group-hover:scale-[1.02]`}>
                 <img
                   src={screenshotUrl(project.url)}
                   alt={`${project.title} — ${project.category} website by Guru Designers`}
-                  className="w-full h-full object-cover object-top rounded-xl shadow-xl shadow-black/10 group-hover:-translate-y-2 transition-transform duration-500 bg-white"
+                  className="max-w-full max-h-full w-auto h-auto object-contain rounded-xl shadow-xl shadow-black/10 group-hover:-translate-y-2 transition-transform duration-500 bg-white"
                   loading="lazy"
                 />
               </div>
