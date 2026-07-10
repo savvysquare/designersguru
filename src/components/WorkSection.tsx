@@ -21,9 +21,9 @@ const screenshotUrl = (url: string, refresh?: string) => {
   return `https://s.wordpress.com/mshots/v1/${encodeURIComponent("https://" + clean + cacheBuster)}?w=1200&h=900${refresh ? `&refresh=${refresh}` : ""}`;
 };
 
-const WorkSection = () => {
+const WorksSection = () => {
   return (
-    <section id="work" className="py-24 px-6 md:px-[60px]">
+    <section id="works" className="py-24 px-6 md:px-[60px]">
       <div className="max-w-7xl mx-auto">
         <div className="mb-16 text-center">
           <div className="tag-label bg-white border border-border text-foreground mb-6 inline-block">Our Works</div>
