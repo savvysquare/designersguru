@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 const projects = [
   { title: "Holistic Care Foundation", category: "Nonprofit", url: "https://holisticcarefoundation.com", bgColor: "bg-[#EAEAEA]" },
-  { title: "Premium UHVA", category: "Healthcare", url: "https://premiumuhva.com", bgColor: "bg-pastel-gray" },
+  { title: "Premium UHVA", category: "Healthcare", url: "https://premiumhva.com", bgColor: "bg-pastel-gray" },
   { title: "Green People", category: "Sustainability", url: "https://greenpeople.ng", bgColor: "bg-pastel-peach" },
   { title: "Osun Watch", category: "News & Media", url: "https://osunwatch.com", bgColor: "bg-[#EAEAEA]" },
   { title: "Prefab World Cabin", category: "Architecture", url: "https://prefabworldcabin.com", bgColor: "bg-pastel-gray" },
