@@ -10,6 +10,7 @@ const projects = [
   { title: "Olayemi Awoyemi", category: "Personal Portfolio", url: "https://olayemiawoyemi.cv", bgColor: "bg-[#EAEAEA]" },
   { title: "Assistic Care Services", category: "Healthcare", url: "https://assisticcareservices.com", bgColor: "bg-pastel-gray" },
   { title: "House Fada", category: "Real Estate", url: "https://housefada.com", bgColor: "bg-pastel-peach", refresh: "20250710a" },
+  { title: "Containeryard", category: "Logistics", url: "https://containeryard.com.ng", bgColor: "bg-[#EAEAEA]" },
   { title: "Avion Mobile Massage", category: "Wellness", url: "https://avionmobilemassage.com", bgColor: "bg-[#EAEAEA]" },
   { title: "Finetune Music", category: "Music & Entertainment", url: "https://finetunemusic.com.ng", bgColor: "bg-pastel-gray" },
   { title: "Boot Party Ife Central", category: "Community", url: "https://bootpartyifecentral.org", bgColor: "bg-pastel-peach" },
