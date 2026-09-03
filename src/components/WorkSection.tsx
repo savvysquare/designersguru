@@ -10,7 +10,9 @@ const projects = [
   { title: "Holistic Care Foundation", category: "Nonprofit", outcome: "Nonprofit, donation-ready presence", url: "https://holisticcarefoundation.com" },
   { title: "Jikona Evalora", category: "Corporate", outcome: "Corporate site that matches the calibre of the firm", url: "https://jikonaevalora.com" },
   { title: "Green People", category: "Civic movement", outcome: "Civic platform for organising and outreach", url: "https://greenpeople.ng" },
-  { title: "Osun Watch", category: "News & Media", outcome: "Newsroom presence built for fast publishing", url: "https://osunwatch.com" },
+  { title: "Osun Watch", category: "Civic Tech", outcome: "Citizen election platform — polling unit results sealed in a public hash chain for Osun State", url: "https://osunwatch.com" },
+  { title: "findjob.ng", category: "Jobs & Services", outcome: "Nigeria job and workmen directory — find work or call a plumber, tailor or mechanic, no login needed", url: "https://findjob.ng" },
+  { title: "prepare.ng", category: "EdTech", outcome: "Exam study app for Nigerian students — short lessons and instant practice for WASSCE, NECO, UTME and NABTEB", url: "https://prepare.ng" },
   { title: "Finetune Music", category: "Music & Entertainment", outcome: "Artist and label presence for releases and bookings", url: "https://finetunemusic.com.ng" },
   { title: "Boot Party Ife Central", category: "Political / community", outcome: "Community campaign presence and mobilisation hub", url: "https://bootpartyifecentral.org" },
 ];

@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 const HeroSection = () => {
   return (
-    <section id="home" className="pt-40 pb-20 px-6 md:px-[60px]">
+    <section id="home" className="pt-28 pb-16 px-6 md:px-[60px]">
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-12 lg:gap-24 items-start">
         {/* Left Side: Massive Typography */}
         <div className="flex flex-col items-start">
@@ -57,9 +57,9 @@ const HeroSection = () => {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="crescent-card bg-pastel-orange aspect-square flex flex-col justify-between"
           >
-            <span className="font-mono text-sm text-primary font-semibold">01</span>
+            <span className="font-mono text-xs text-primary font-bold tracking-widest uppercase">01</span>
             <div>
-              <p className="text-4xl md:text-5xl font-bold mb-2">30+</p>
+              <p className="text-3xl md:text-4xl font-black leading-none mb-2">30+</p>
               <p className="text-sm font-medium text-foreground/70">Sites and brands shipped</p>
             </div>
           </motion.div>
@@ -70,9 +70,9 @@ const HeroSection = () => {
             transition={{ duration: 0.5, delay: 0.4 }}
             className="crescent-card bg-pastel-sand aspect-square flex flex-col justify-between"
           >
-            <span className="font-mono text-sm text-foreground/50 font-semibold">02</span>
+            <span className="font-mono text-xs text-foreground/50 font-bold tracking-widest uppercase">02</span>
             <div>
-              <p className="text-2xl md:text-3xl font-bold mb-2">Senior team</p>
+              <p className="text-3xl md:text-4xl font-black leading-none mb-2">Senior team</p>
               <p className="text-sm font-medium text-foreground/70">No junior bench. Strategy to launch.</p>
             </div>
           </motion.div>
