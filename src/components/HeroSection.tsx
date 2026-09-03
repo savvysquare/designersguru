@@ -55,9 +55,9 @@ const HeroSection = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="bg-pastel-orange aspect-square rounded-[24px] p-6 md:p-8 flex flex-col justify-between overflow-hidden"
+            className="bg-pastel-orange aspect-square rounded-[24px] p-6 md:p-8 flex flex-col overflow-hidden"
           >
-            <span className="font-mono text-sm text-primary font-semibold">01</span>
+            <span className="font-mono text-sm text-primary font-semibold mb-8 block">01</span>
             <div>
               <p className="text-base md:text-xl font-bold leading-tight mb-2">30+</p>
               <p className="text-sm md:text-base font-medium text-foreground/70">Sites and brands shipped</p>
@@ -68,9 +68,9 @@ const HeroSection = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="bg-pastel-sand aspect-square rounded-[24px] p-6 md:p-8 flex flex-col justify-between overflow-hidden"
+            className="bg-pastel-sand aspect-square rounded-[24px] p-6 md:p-8 flex flex-col overflow-hidden"
           >
-            <span className="font-mono text-sm text-foreground/50 font-semibold">02</span>
+            <span className="font-mono text-sm text-foreground/50 font-semibold mb-8 block">02</span>
             <div>
               <p className="text-base md:text-xl font-bold leading-tight mb-2">Senior team</p>
               <p className="text-sm md:text-base font-medium text-foreground/70">No junior bench.</p>
@@ -81,9 +81,9 @@ const HeroSection = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.5 }}
-            className="col-span-2 bg-pastel-gray rounded-[24px] p-6 md:p-8 flex flex-col justify-between overflow-hidden"
+            className="col-span-2 bg-pastel-gray rounded-[24px] p-6 md:p-8 flex flex-col overflow-hidden"
           >
-            <span className="font-mono text-sm text-foreground/50 font-semibold">03</span>
+            <span className="font-mono text-sm text-foreground/50 font-semibold mb-8 block">03</span>
             <div>
               <p className="text-base md:text-xl font-bold leading-tight mb-2">Built for founders</p>
               <p className="text-sm md:text-base font-medium text-foreground/70">
