@@ -55,12 +55,12 @@ const HeroSection = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="crescent-card bg-pastel-orange aspect-square flex flex-col justify-between"
+            className="bg-pastel-orange aspect-square rounded-[24px] p-6 md:p-8 flex flex-col justify-between overflow-hidden"
           >
-            <span className="font-mono text-xs text-primary font-bold tracking-widest uppercase">01</span>
+            <span className="font-mono text-sm text-primary font-semibold">01</span>
             <div>
-              <p className="text-3xl md:text-4xl font-black leading-none mb-2">30+</p>
-              <p className="text-sm font-medium text-foreground/70">Sites and brands shipped</p>
+              <p className="text-xl md:text-2xl font-bold leading-tight mb-3">30+</p>
+              <p className="text-base font-medium text-foreground/70">Sites and brands shipped</p>
             </div>
           </motion.div>
 
@@ -68,12 +68,12 @@ const HeroSection = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="crescent-card bg-pastel-sand aspect-square flex flex-col justify-between"
+            className="bg-pastel-sand aspect-square rounded-[24px] p-6 md:p-8 flex flex-col justify-between overflow-hidden"
           >
-            <span className="font-mono text-xs text-foreground/50 font-bold tracking-widest uppercase">02</span>
+            <span className="font-mono text-sm text-foreground/50 font-semibold">02</span>
             <div>
-              <p className="text-3xl md:text-4xl font-black leading-none mb-2">Senior team</p>
-              <p className="text-sm font-medium text-foreground/70">No junior bench. Strategy to launch.</p>
+              <p className="text-xl md:text-2xl font-bold leading-tight mb-3">Senior team</p>
+              <p className="text-base font-medium text-foreground/70">No junior bench. Strategy to launch.</p>
             </div>
           </motion.div>
 
@@ -81,11 +81,11 @@ const HeroSection = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.5 }}
-            className="col-span-2 crescent-card bg-pastel-gray flex flex-col justify-between p-8"
+            className="col-span-2 bg-pastel-gray rounded-[24px] p-6 md:p-8 flex flex-col justify-between overflow-hidden"
           >
-            <span className="font-mono text-sm text-foreground/50 font-semibold mb-10">03</span>
+            <span className="font-mono text-sm text-foreground/50 font-semibold">03</span>
             <div>
-              <p className="text-xl md:text-2xl font-bold mb-3">Built for founders</p>
+              <p className="text-xl md:text-2xl font-bold leading-tight mb-3">Built for founders</p>
               <p className="text-base font-medium text-foreground/70">
                 Brand, web and automation in one studio — so you are not managing three vendors.
               </p>
