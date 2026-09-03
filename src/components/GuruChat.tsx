@@ -591,7 +591,7 @@ export default function GuruChat() {
   useEffect(() => {
     if (isOpen && messages.length === 0) {
       setTimeout(() => {
-        setMessages([{ role: "assistant", content: "Hey! 👋 I'm **Guru** — your project consultant at Guru Designers.\n\n**What brings you here today?**" }]);
+        setMessages([{ role: "assistant", content: "Hi — I'm **Guru**, the studio's project consultant.\n\n**What are you trying to fix: the brand, the website, or the follow-up?**" }]);
       }, 300);
     }
   }, [isOpen, messages.length]);
@@ -979,7 +979,7 @@ export default function GuruChat() {
               {/* Quick Replies */}
               {messages.length <= 1 && !isLoading && (
                 <div className="px-4 pb-2 flex flex-wrap gap-2">
-                  {["I need a website", "AI automation help", "Brand identity", "Full package quote"].map((q) => (
+                  {["Brand identity", "New website", "AI follow-up", "Not sure"].map((q) => (
                     <button key={q} onClick={() => streamChat(q)}
                       className="text-xs px-3 py-1.5 rounded-full border transition-all"
                       style={{ borderColor: C.border, color: C.textSecondary }}
